@@ -1,0 +1,43 @@
+@import '../scss/const';
+
+.root {
+    color: $secondary-color;
+    width: min(500px, 90vw);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: #fafafa;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    border-radius: $border-radius;
+
+    > * {
+        margin-bottom: 0.5rem;
+    }
+}
+
+button {
+    padding: 0.5rem;
+    text-transform: capitalize;
+    border: 1px solid #000000;
+    border-radius: $border-radius;
+    color: #ffffff;
+
+    &:hover {
+        filter: brightness(90%);
+    }
+}
+
+.primary-button {
+    background: #5cb85c;
+    border-color: #4cae4c;
+    font-size: 1.2rem;
+}
+
+.secondary-button {
+    background: #5bc0de;
+    border-color: #46b8da;
+    font-size: 0.9rem;
+}
