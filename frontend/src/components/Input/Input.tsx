@@ -6,7 +6,6 @@ interface Props {
     type: string
     placeholder?: string
     required?: boolean
-    autocomplete?: string
     options?: any
 }
 
@@ -18,7 +17,7 @@ const Input: React.FunctionComponent<Props> = (props) => {
                 type={props.type}
                 name={props.name}
                 placeholder={name}
-                autoComplete={props.autocomplete || props.name}
+                autoComplete={props.options.autocomplete || props.name}
                 aria-label={props.name}
                 required={props.required}
                 aria-required={props.required}

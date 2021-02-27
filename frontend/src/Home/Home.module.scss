@@ -7,37 +7,53 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    background: #fafafa;
-    padding: 2rem;
+    background: #f1f3f6;
+    padding: 2rem 2rem 1rem;
     display: flex;
     flex-direction: column;
     border-radius: $border-radius;
-
-    > * {
-        margin-bottom: 0.5rem;
-    }
+    box-shadow: $neomorphic-shadow;
 }
 
 button {
-    padding: 0.5rem;
+    color: #61677c;
+    font-weight: bold;
+    box-shadow: -5px -5px 20px $light-color, 5px 5px 20px $shadow-color;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+    padding: 0.7rem;
     text-transform: capitalize;
-    border: 1px solid #000000;
-    border-radius: $border-radius;
-    color: #ffffff;
+    display: inline-block;
+    margin-bottom: 1rem;
 
     &:hover {
-        filter: brightness(90%);
+        box-shadow: -2px -2px 5px $light-color, 2px 2px 5px $shadow-color;
+    }
+
+    &:active {
+        box-shadow: inset 1px 1px 2px $shadow-color,
+            inset -1px -1px 2px $light-color;
     }
 }
 
 .primary-button {
-    background: #5cb85c;
-    border-color: #4cae4c;
-    font-size: 1.2rem;
+    color: #0071e3;
 }
 
 .secondary-button {
-    background: #5bc0de;
-    border-color: #46b8da;
-    font-size: 0.9rem;
+    color: #0bda51;
+}
+
+span {
+    color: $shadow-color;
+    font-size: 10px;
+    text-align: center;
+    margin-top: 0.5rem;
+    user-select: none;
+
+    &:hover {
+        a {
+            text-decoration: underline;
+        }
+    }
 }

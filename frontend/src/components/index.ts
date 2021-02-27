@@ -1,2 +1,1 @@
-import Input from './Input/Input'
-export { Input }
+export { Input } from './Input'

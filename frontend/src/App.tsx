@@ -1,8 +1,8 @@
 import React, { Suspense } from 'react'
 import { Route, Switch } from 'react-router-dom'
-import Lobby from './Lobby'
 
 const Home = React.lazy(() => import('./Home'))
+const Lobby = React.lazy(() => import('./Lobby'))
 
 const App = () => {
     return (

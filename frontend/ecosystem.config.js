@@ -1,5 +1,5 @@
 module.exports = {
-    name: 'some frontend',
+    name: 'scribble frontend',
     script: 'serve',
     watch: true,
     env: {

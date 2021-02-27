@@ -23,8 +23,11 @@ const Home: React.FunctionComponent<Props> = () => {
                 name='name'
                 type='text'
                 placeholder='Enter your name'
-                autocomplete='off'
-                options={{ maxLength: 32 }}
+                options={{
+                    maxLength: 32,
+                    autocomplete: 'off',
+                    spellCheck: false
+                }}
             />
             <button className={styles['primary-button']} onClick={joinLobby}>
                 play
@@ -35,6 +38,11 @@ const Home: React.FunctionComponent<Props> = () => {
             >
                 create private room
             </button>
+
+            <span>
+                Made with love by{' '}
+                <a href='https://github.com/ManiacMaxo/'>ManiacMaxo</a>
+            </span>
         </div>
     )
 }
