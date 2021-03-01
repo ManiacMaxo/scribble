@@ -47,9 +47,6 @@ const askQuestions = () => {
 
     inquirer.prompt(questions).then((answers) => {
         // eslint-disable-next-line no-param-reassign
-        answers.filename = answers.filename.replace(/\b\w/g, (l) =>
-            l.toLowerCase()
-        )
         helper.createComponentFromTemplate(answers, () => {
             setTimeout(() => {
                 afterPageCreation(answers.filename)
