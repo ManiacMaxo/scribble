@@ -1,0 +1,101 @@
+@import '../scss/const';
+
+.root {
+    width: max(400px, 90vw);
+    height: 600px;
+
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+
+    display: grid;
+    grid-template-columns: 1fr 5fr 2fr;
+    grid-template-rows: 1fr 7fr;
+
+    border-radius: $border-radius;
+    box-shadow: $neomorphic-shadow;
+    padding: 1rem;
+    background: #f1f3f6;
+}
+
+header {
+    display: flex;
+    grid-column: 2 / 4;
+    grid-row: 1;
+    justify-content: space-around;
+    align-items: center;
+
+    .hint {
+        letter-spacing: 0.3rem;
+        font-weight: 900;
+    }
+}
+
+.canvas {
+    width: 100%;
+    height: 100%;
+    grid-column: 2;
+    grid-row: 2;
+}
+
+.users {
+    grid-column: 1;
+    grid-row: 1 / 3;
+}
+
+.chat {
+    grid-column: 3;
+    grid-row: 2;
+
+    ul {
+        overflow: scroll;
+        height: 90%;
+    }
+
+    input {
+        width: 100%;
+    }
+    input:disabled {
+        input:placeholder {
+            content: 'you are drawing';
+        }
+    }
+
+    .message {
+        background-color: #0f77ed;
+        border-radius: 10px;
+        color: #fff;
+        padding: 5px;
+        font-size: 0.8rem;
+        margin-bottom: 0.5rem;
+    }
+}
+
+.colors {
+    display: flex;
+    flex-flow: row wrap;
+
+    & > * {
+        width: 30px;
+        height: 30px;
+        margin: 0 2px;
+        display: inline-block;
+    }
+}
+
+.red {
+    background-color: red;
+}
+
+.green {
+    background-color: green;
+}
+
+.blue {
+    background-color: blue;
+}
+
+.black {
+    background-color: black;
+}

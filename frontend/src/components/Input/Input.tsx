@@ -6,6 +6,7 @@ interface Props {
     type: string
     placeholder?: string
     required?: boolean
+    label?: boolean
     options?: any
 }
 
@@ -23,7 +24,9 @@ const Input: React.FunctionComponent<Props> = (props) => {
                 aria-required={props.required}
                 {...props.options}
             />
-            <label htmlFor={props.name}>{name}</label>
+            {props.label === false ? null : (
+                <label htmlFor={props.name}>{name}</label>
+            )}
         </div>
     )
 }

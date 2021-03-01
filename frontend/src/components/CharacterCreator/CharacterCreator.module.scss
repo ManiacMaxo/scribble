@@ -1,0 +1,26 @@
+@import '../../scss/const';
+
+.root {
+    display: flex;
+}
+
+.avatar {
+    width: 80%;
+    height: 100%;
+    pointer-events: none;
+    user-select: none;
+
+    & > * {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        background-repeat: no-repeat;
+    }
+}
+
+.previous,
+.next {
+    width: 10%;
+    display: flex;
+    flex-direction: column;
+}

@@ -1,19 +1,21 @@
 import React from 'react'
 import { Redirect } from 'react-router-dom'
-import { Input } from '../components'
+import { CharacterCreator, Input } from '../components'
 import styles from './Home.module.scss'
 
 interface Props {}
 
 const Home: React.FunctionComponent<Props> = () => {
     const joinLobby = () => {
-        fetch(process.env.REACT_APP_ENDPOINT || '').then((res: Response) => {
-            if (res.ok) {
-                return <Redirect to={`/play?lobby=${res.body}`} />
-            } else {
-                return joinLobby() // try again if no lobby found
+        fetch(process.env.REACT_APP_ENDPOINT + '/find' || '').then(
+            (res: Response) => {
+                if (res.ok) {
+                    return <Redirect to={`/play?lobby=${res.body}`} />
+                } else {
+                    return joinLobby() // try again if no lobby found
+                }
             }
-        })
+        )
     }
     const createPrivateLobby = () => {}
 
@@ -23,12 +25,14 @@ const Home: React.FunctionComponent<Props> = () => {
                 name='name'
                 type='text'
                 placeholder='Enter your name'
+                label={false}
                 options={{
                     maxLength: 32,
-                    autocomplete: 'off',
+                    autoComplete: 'off',
                     spellCheck: false
                 }}
             />
+            <CharacterCreator />
             <button className={styles['primary-button']} onClick={joinLobby}>
                 play
             </button>
