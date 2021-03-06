@@ -1,14 +1,16 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
+import CanvasDraw from 'react-canvas-draw'
+import { Chat, DrawTools } from '../components'
 import styles from './Lobby.module.scss'
 
 interface Props {}
 
 const Lobby: React.FunctionComponent<Props> = (props) => {
+    const canvas = useRef(null)
     const [users, setUsers] = useState<Array<string>>([])
     const [isDrawing, setIsDrawing] = useState<boolean>(true)
     const [hint, setHint] = useState<string>('hint')
 
-    const colors: string[] = ['red', 'green', 'blue', 'black']
     // const socket = io(process.env.REACT_APP_ENDPOINT || '')
     const socket = { on: (args: {}, callback: Function) => {} }
 
@@ -47,49 +49,22 @@ const Lobby: React.FunctionComponent<Props> = (props) => {
             </aside>
             <header>
                 {isDrawing ? (
-                    <>
-                        <div className={styles.colors}>
-                            {colors.map((color: string) => (
-                                <div
-                                    className={styles[color]}
-                                    key={color}
-                                ></div>
-                            ))}
-                        </div>
-                        <h3 className={styles.word}>{'word'}</h3>
-                    </>
+                    <DrawTools canvas={canvas} />
                 ) : (
                     <h3 className={styles.hint}>{hint}</h3>
                 )}
             </header>
-            <div className={styles.canvas}></div>
-            <div className={styles.chat}>
-                <ul>
-                    <li>
-                        <p className={styles.message}>
-                            ManiacMaxo: hello there
-                        </p>
-                    </li>
-                    <li>
-                        <p className={styles.message}>
-                            ManiacMaxo: hello there
-                        </p>
-                    </li>
-                    <li>
-                        <p className={styles.message}>
-                            ManiacMaxo: this is a test long message for chat
-                        </p>
-                    </li>
-                </ul>
-                <input
-                    type='text'
-                    placeholder={
-                        isDrawing ? ' You are drawing!' : 'Enter your guess'
-                    }
-                    maxLength={64}
-                    disabled={isDrawing}
-                />
-            </div>
+            <CanvasDraw
+                ref={canvas}
+                className={styles.canvas}
+                hideInterface
+                hideGrid
+                lazyRadius={0}
+                brushColor={'black'}
+                style={{ width: '100%', height: '100%' }}
+                disabled={!isDrawing}
+            />
+            <Chat isDrawing={isDrawing} />
         </div>
     )
 }

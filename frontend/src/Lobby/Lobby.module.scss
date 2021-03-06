@@ -12,6 +12,7 @@
     display: grid;
     grid-template-columns: 1fr 5fr 2fr;
     grid-template-rows: 1fr 7fr;
+    grid-gap: 10px;
 
     border-radius: $border-radius;
     box-shadow: $neomorphic-shadow;
@@ -42,60 +43,4 @@ header {
 .users {
     grid-column: 1;
     grid-row: 1 / 3;
-}
-
-.chat {
-    grid-column: 3;
-    grid-row: 2;
-
-    ul {
-        overflow: scroll;
-        height: 90%;
-    }
-
-    input {
-        width: 100%;
-    }
-    input:disabled {
-        input:placeholder {
-            content: 'you are drawing';
-        }
-    }
-
-    .message {
-        background-color: #0f77ed;
-        border-radius: 10px;
-        color: #fff;
-        padding: 5px;
-        font-size: 0.8rem;
-        margin-bottom: 0.5rem;
-    }
-}
-
-.colors {
-    display: flex;
-    flex-flow: row wrap;
-
-    & > * {
-        width: 30px;
-        height: 30px;
-        margin: 0 2px;
-        display: inline-block;
-    }
-}
-
-.red {
-    background-color: red;
-}
-
-.green {
-    background-color: green;
-}
-
-.blue {
-    background-color: blue;
-}
-
-.black {
-    background-color: black;
 }
