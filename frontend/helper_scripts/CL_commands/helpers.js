@@ -3,7 +3,6 @@ const chalk = require('chalk')
 const path = require('path')
 const fs = require('fs')
 const handlebars = require('handlebars')
-const replace = require('replace-in-file')
 
 const modules = {}
 
@@ -53,28 +52,6 @@ modules.isUsedOnDir = (startPath, filter, onlyDirectories = false) => {
     return isFound
 }
 
-modules.getFilesOnDir = (startPath) => {
-    if (!fs.existsSync(startPath)) {
-        return []
-    }
-
-    const files = fs.readdirSync(startPath)
-    const isFound = []
-
-    for (let i = 0; i < files.length; i += 1) {
-        const filename = path.join(startPath, files[i])
-        const stat = fs.lstatSync(filename)
-        if (stat.isDirectory()) {
-            isFound.concat(modules.getFilesOnDir(filename)) // recurse
-        } else {
-            const pagename = files[i].replace('.tsxs', '')
-            if (pagename !== '_document') isFound.push(pagename)
-        }
-    }
-
-    return isFound
-}
-
 modules.getTempfromHandlebar = (tempPath, data, callback) => {
     fs.readFile(tempPath, 'utf-8', (err, source) => {
         if (err) throw err
@@ -83,26 +60,6 @@ modules.getTempfromHandlebar = (tempPath, data, callback) => {
 
         callback(exportCode)
     })
-}
-
-modules.addTexttoFile = (filePath, from, text, cb, before = true) => {
-    const matchOperatorsRe = /[|\\{}()[\]^$+*?.]/g
-    const re = new RegExp(from.replace(matchOperatorsRe, '\\$&'))
-
-    replace(
-        {
-            encoding: 'utf8',
-            files: filePath,
-            from: re,
-            to: before ? `${text}${from}` : `${from}\n${text}`
-        },
-        (error) => {
-            if (error) {
-                throw error
-            }
-            cb()
-        }
-    )
 }
 
 modules.createPageFromTemplate = (filename, callback) => {
@@ -132,7 +89,7 @@ modules.createPageFromTemplate = (filename, callback) => {
 
     fs.writeFile(
         `${dir}/${filename}.module.scss`,
-        `@import '../scss/const';\n`,
+        `@import '../style/const';\n`,
         { flag: 'wx' },
         (_err) => {
             if (_err) throw _err
@@ -173,7 +130,7 @@ modules.createComponentFromTemplate = (options, callback = () => {}) => {
     if (options.haveStyle) {
         fs.writeFile(
             `${dir}/${options.filename}.module.scss`,
-            `@import '../../scss/const';\n`,
+            `@import '../../style/const';\n`,
             { flag: 'wx' },
             (_err) => {
                 if (_err) throw _err

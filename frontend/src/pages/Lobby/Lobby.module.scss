@@ -1,13 +1,8 @@
-@import '../scss/const';
+@import '../../style/const';
 
 .root {
     width: max(400px, 90vw);
     height: 600px;
-
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
 
     display: grid;
     grid-template-columns: 1fr 5fr 2fr;

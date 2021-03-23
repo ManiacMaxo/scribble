@@ -1,13 +1,13 @@
-@import '../../scss/const';
+@import '../../style/const';
 
 .root {
     grid-column: 3;
     grid-row: 2;
 }
 
-ul {
-    overflow: scroll;
-    height: 90%;
+.chat {
+    overflow-y: scroll;
+    height: 88%;
 }
 
 input {

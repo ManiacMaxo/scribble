@@ -1,0 +1,29 @@
+@import '../../style/const';
+
+.root {
+    width: min(500px, 90vw);
+    background: #f1f3f6;
+    padding: 2rem 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    border-radius: $border-radius;
+    box-shadow: $neomorphic-shadow;
+
+    & > * {
+        margin-bottom: 0.75rem;
+    }
+}
+
+span {
+    color: $shadow-color;
+    font-size: 10px;
+    text-align: center;
+    margin-top: 0.5rem;
+    user-select: none;
+
+    &:hover {
+        a {
+            text-decoration: underline;
+        }
+    }
+}
