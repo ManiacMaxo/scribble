@@ -1,6 +1,7 @@
-import React, { FormEvent, useEffect, useRef, useState } from 'react'
-import { Comment, Input, Ref } from 'semantic-ui-react'
+import React, { FormEvent, useContext, useEffect, useState } from 'react'
+import { Comment, Input } from 'semantic-ui-react'
 import { Socket } from 'socket.io-client'
+import { IUserContext, UserContext } from '../../context/UserContext'
 import styles from './Chat.module.scss'
 
 interface Props {
@@ -8,25 +9,29 @@ interface Props {
     socket: Socket
 }
 
-const name = localStorage.getItem('name')
+interface Message {
+    id: string
+    username: string
+    content: string
+    timestamp: string
+}
 
 const Chat: React.FC<Props> = (props) => {
-    const [messages, setMessages] = useState<any[]>([])
-    const chatRef = useRef<HTMLElement | null>(null)
+    const { username, avatarURL } = useContext<IUserContext>(UserContext)
+    const [messages, setMessages] = useState<Message[]>([])
 
     useEffect(() => {
-        props.socket.on('message', (message: any) => {
-            console.log(message)
-            setMessages((m) => [...m, message])
-            // chatRef.current?.append(
-            //     document.createElement(
-            //         <div key={message.id}>
-            //             <p className={styles.message}>
-            //                 {message.name}: {message.content}
-            //             </p>
-            //         </div>
-            //     )
-            // )
+        props.socket.on('message', (message: Message) => {
+            const timestamp: string = new Date(message.timestamp)
+                .toTimeString()
+                .slice(0, 5)
+            setMessages((m) => [
+                ...m,
+                {
+                    ...message,
+                    timestamp
+                }
+            ])
         })
     }, [props.socket])
 
@@ -35,7 +40,7 @@ const Chat: React.FC<Props> = (props) => {
         if (!event.target[0].value) return
 
         const data = {
-            name,
+            username,
             content: event.target[0].value
         }
         event.target[0].value = ''
@@ -44,17 +49,22 @@ const Chat: React.FC<Props> = (props) => {
 
     return (
         <div className={styles.root}>
-            <Ref innerRef={chatRef}>
-                <Comment.Group className={styles.chat}>
-                    {messages.map((message) => (
-                        <Comment key={message.id}>
-                            <p className={styles.message}>
-                                {message.name}: {message.content}
-                            </p>
-                        </Comment>
-                    ))}
-                </Comment.Group>
-            </Ref>
+            <Comment.Group className={styles.chat}>
+                {messages.map((message) => (
+                    <Comment key={message.id}>
+                        <Comment.Avatar src={avatarURL} />
+                        <Comment.Content>
+                            <Comment.Author as='span'>
+                                {message.username}
+                            </Comment.Author>
+                            <Comment.Metadata as='span'>
+                                {message.timestamp}
+                            </Comment.Metadata>
+                            <Comment.Text>{message.content}</Comment.Text>
+                        </Comment.Content>
+                    </Comment>
+                ))}
+            </Comment.Group>
             <form onSubmit={handleSubmit}>
                 <Input
                     fluid

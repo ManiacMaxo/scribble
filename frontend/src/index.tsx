@@ -1,15 +1,18 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter } from 'react-router-dom'
-import App from './App'
-import reportWebVitals from './reportWebVitals'
 import 'semantic-ui-css/semantic.min.css'
+import App from './App'
+import UserContextProvider from './context/UserContextProvider'
+import reportWebVitals from './reportWebVitals'
 import './style/index.scss'
 
 ReactDOM.render(
     <React.StrictMode>
         <BrowserRouter>
-            <App />
+            <UserContextProvider>
+                <App />
+            </UserContextProvider>
         </BrowserRouter>
     </React.StrictMode>,
     document.getElementById('root')

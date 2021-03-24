@@ -4,7 +4,7 @@ import { Route, Switch } from 'react-router-dom'
 const Home = React.lazy(() => import('./pages/Home'))
 const Lobby = React.lazy(() => import('./pages/Lobby'))
 
-const App = () => {
+const App: React.FC = () => {
     return (
         <Suspense fallback='loading...'>
             <main className='main'>

@@ -4,29 +4,10 @@
     grid-column: 3;
     grid-row: 2;
     height: 100%;
+    overflow: hidden;
 }
-
 .chat {
-    overflow-y: hidden;
+    overflow-y: scroll;
     height: 88%;
-    max-height: 88%;
-}
-
-input {
-    width: 100%;
-
-    &:disabled {
-        input:placeholder {
-            content: 'you are drawing';
-        }
-    }
-}
-
-.message {
-    background-color: #0f77ed;
-    border-radius: 10px;
-    color: #fff;
-    padding: 5px;
-    font-size: 0.8rem;
-    margin-bottom: 0.5rem;
+    padding-bottom: 0.2rem;
 }

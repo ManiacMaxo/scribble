@@ -24,7 +24,11 @@ io.on('connection', (socket) => {
     console.log('user connected')
     socket.on('message', (message) => {
         console.log(message)
-        io.emit('message', { ...message, id: v4() })
+        io.emit('message', {
+            ...message,
+            id: v4(),
+            timestamp: new Date(Date.now()),
+        })
     })
 
     socket.on('drawing', (data) => socket.broadcast.emit('drawing', data))
