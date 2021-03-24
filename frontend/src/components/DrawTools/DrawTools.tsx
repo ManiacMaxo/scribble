@@ -1,6 +1,9 @@
+import Slider from 'rc-slider'
+import 'rc-slider/assets/index.css'
 import React, { useContext } from 'react'
-import { Button, SemanticCOLORS } from 'semantic-ui-react'
+import { Button } from 'semantic-ui-react'
 import { ILobbyContext, LobbyContext } from '../../contexts/LobbyContext'
+import { skribblio } from './colours'
 import styles from './DrawTools.module.scss'
 
 interface Props {
@@ -8,62 +11,67 @@ interface Props {
 }
 
 const DrawTools: React.FC<Props> = (props) => {
-    const colours: SemanticCOLORS[] = [
-        'red',
-        'orange',
-        'yellow',
-        'green',
-        'teal',
-        'blue',
-        'violet',
-        'purple',
-        'pink',
-        'brown',
-        'grey',
-        'black'
-    ]
-    const { setColour } = useContext<ILobbyContext>(LobbyContext)
+    const { colours, len } = skribblio
+
+    const { setColour, setRadius } = useContext<ILobbyContext>(LobbyContext)
+    const handleChangeRadius = (value: number) => {
+        setRadius(value)
+    }
 
     return (
         <>
-            <Button.Group className={styles.colors} widths='6'>
-                {colours.map((clr: SemanticCOLORS) => (
+            <Button.Group
+                className={styles.colors}
+                widths={len}
+                style={{ maxWidth: `${(50 * colours.length) / 2}px` }}
+            >
+                {colours.map((clr: string) => (
                     <Button
                         key={clr}
-                        color={clr}
+                        style={{ background: clr }}
                         onClick={() => {
                             setColour(clr)
                         }}
                     />
                 ))}
             </Button.Group>
-            <Button.Group basic>
-                <Button
-                    title='draw'
-                    icon='pencil'
-                    onClick={() => {
-                        setColour('black')
-                    }}
+
+            <div>
+                <Button.Group basic>
+                    <Button
+                        title='draw'
+                        icon='pencil'
+                        onClick={() => {
+                            setColour('black')
+                        }}
+                    />
+                    <Button
+                        title='eraser'
+                        icon='eraser'
+                        onClick={() => {
+                            setColour('white')
+                        }}
+                    />
+                    <Button title='fill' icon='tint' onClick={() => {}} />
+                    <Button
+                        title='undo'
+                        icon='undo'
+                        onClick={() => props.canvas.current.undo()}
+                    />
+                    <Button
+                        title='clear'
+                        icon='trash'
+                        onClick={() => props.canvas.current.clear()}
+                    />
+                </Button.Group>
+                <Slider
+                    defaultValue={12}
+                    onAfterChange={handleChangeRadius}
+                    min={5}
+                    max={50}
                 />
-                <Button
-                    title='eraser'
-                    icon='eraser'
-                    onClick={() => {
-                        setColour('white')
-                    }}
-                />
-                <Button title='fill' icon='tint' onClick={() => {}} />
-                <Button
-                    title='undo'
-                    icon='undo'
-                    onClick={() => props.canvas.current.undo()}
-                />
-                <Button
-                    title='clear'
-                    icon='trash'
-                    onClick={() => props.canvas.current.clear()}
-                />
-            </Button.Group>
+            </div>
+
             <h3>{'word'}</h3>
         </>
     )

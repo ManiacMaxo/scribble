@@ -1,11 +1,9 @@
-import Carousel, {
-    arrowsPlugin,
-    slidesToShowPlugin
-} from '@brainhubeu/react-carousel'
-import '@brainhubeu/react-carousel/lib/style.css'
 import React, { useContext } from 'react'
-import { Button, Image } from 'semantic-ui-react'
+import { Carousel } from 'react-responsive-carousel'
+import 'react-responsive-carousel/lib/styles/carousel.min.css'
+import { Image } from 'semantic-ui-react'
 import { IUserContext, UserContext } from '../../contexts/UserContext'
+import styles from './Avatar.module.scss'
 
 interface Props {}
 
@@ -15,38 +13,29 @@ const Avatar: React.FC<Props> = () => {
 
     return (
         <Carousel
-            value={parseInt(avatarURL.match(/\d/g)?.join('') ?? '0')}
+            selectedItem={parseInt(avatarURL.match(/\d/g)?.join('') ?? '0')}
             onChange={(id) => setAvatarURL(`/assets/avatars/${id}.png`)}
-            plugins={[
-                'infinite',
-                'centered',
-                {
-                    resolve: slidesToShowPlugin,
-                    options: {
-                        numberOfSlides: 2
-                    }
-                },
-                {
-                    resolve: arrowsPlugin,
-                    options: {
-                        arrowLeft: (
-                            <Button icon='arrow alternate circle left' />
-                        ),
-                        arrowRight: (
-                            <Button icon='arrow alternate circle right' />
-                        ),
-                        addArrowClickHandler: true
-                    }
-                }
-            ]}
-            slides={avatars.map((id) => (
+            centerMode
+            centerSlidePercentage={45}
+            swipeable
+            emulateTouch
+            infiniteLoop
+            showIndicators={false}
+            showThumbs={false}
+            showStatus={false}
+            showArrows={false}
+            autoPlay={false}
+            useKeyboardArrows
+        >
+            {avatars.map((id) => (
                 <Image
                     size='small'
                     src={`/assets/avatars/${id}.png`}
                     key={id}
+                    className={styles.avatar}
                 />
             ))}
-        />
+        </Carousel>
     )
 }
 

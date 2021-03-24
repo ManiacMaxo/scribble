@@ -2,7 +2,7 @@
 
 .root {
     width: max(400px, 90vw);
-    height: 600px;
+    height: 700px;
 
     display: grid;
     grid-template-columns: 1fr 5fr 2fr;
@@ -21,6 +21,11 @@ header {
     grid-row: 1;
     justify-content: space-around;
     align-items: center;
+
+    & > * {
+        margin: 0 0.3rem !important;
+        text-align: center;
+    }
 
     .hint {
         letter-spacing: 0.3rem;

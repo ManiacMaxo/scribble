@@ -7,6 +7,7 @@ interface Props {}
 const LobbyContextProvider: React.FC<Props> = (props) => {
     const [socket, setSocket] = useState<Socket | undefined>(undefined)
     const [colour, setColour] = useState<string>('black')
+    const [radius, setRadius] = useState<number>(12)
     const [word, setWord] = useState<string>('')
 
     return (
@@ -14,9 +15,11 @@ const LobbyContextProvider: React.FC<Props> = (props) => {
             value={{
                 socket,
                 colour,
+                radius,
                 word,
                 setSocket,
                 setColour,
+                setRadius,
                 setWord
             }}
         >

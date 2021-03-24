@@ -16,9 +16,13 @@ interface User {
 const socket = io(process.env.REACT_APP_API_URL || '')
 
 const Lobby: React.FC<Props> = (props) => {
-    const { setSocket, word, setWord, colour } = useContext<ILobbyContext>(
-        LobbyContext
-    )
+    const {
+        setSocket,
+        word,
+        setWord,
+        colour,
+        radius
+    } = useContext<ILobbyContext>(LobbyContext)
 
     const canvasRef = useRef(null)
     const [users, setUsers] = useState<User[]>([])
@@ -111,6 +115,7 @@ const Lobby: React.FC<Props> = (props) => {
                 hideInterface
                 hideGrid
                 lazyRadius={0}
+                brushRadius={radius}
                 brushColor={colour}
                 style={{ width: '100%', height: '100%' }}
                 disabled={!canDraw}
