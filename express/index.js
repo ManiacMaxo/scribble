@@ -24,6 +24,10 @@ io.on('connection', (socket) => {
     console.log('user connected')
     socket.on('message', (message) => {
         console.log(message)
+
+        if (message === 'answer') {
+            return socket.emit('correct')
+        }
         io.emit('message', {
             ...message,
             id: v4(),

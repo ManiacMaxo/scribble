@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import { CgColorBucket } from 'react-icons/cg'
-import { FaEraser, FaTrash } from 'react-icons/fa'
-import { ImPencil, ImUndo2 } from 'react-icons/im'
+import React, { useContext } from 'react'
+import { Button, SemanticCOLORS } from 'semantic-ui-react'
+import { ILobbyContext, LobbyContext } from '../../contexts/LobbyContext'
 import styles from './DrawTools.module.scss'
 
 interface Props {
@@ -9,41 +8,63 @@ interface Props {
 }
 
 const DrawTools: React.FC<Props> = (props) => {
-    const colours: string[] = ['black', 'white', 'red', 'green', 'blue']
-    const [colour, setColour] = useState<string>(colours[0])
-
-    useEffect(() => {
-        // props.canvas.current.props.brushColor = colour
-        console.log(props.canvas.current.props)
-    }, [colour, props.canvas])
+    const colours: SemanticCOLORS[] = [
+        'red',
+        'orange',
+        'yellow',
+        'green',
+        'teal',
+        'blue',
+        'violet',
+        'purple',
+        'pink',
+        'brown',
+        'grey',
+        'black'
+    ]
+    const { setColour } = useContext<ILobbyContext>(LobbyContext)
 
     return (
         <>
-            <div className={styles.colours}>
-                {colours.map((clr: string) => (
-                    <div
-                        className={styles[clr]}
+            <Button.Group className={styles.colors} widths='6'>
+                {colours.map((clr: SemanticCOLORS) => (
+                    <Button
                         key={clr}
+                        color={clr}
                         onClick={() => {
                             setColour(clr)
                         }}
-                    ></div>
+                    />
                 ))}
-            </div>
-            <div className={styles.controls}>
-                <ImPencil title='draw' />
-                <FaEraser title='erase' />
-                <CgColorBucket title='fill' />
-                <ImUndo2
-                    onClick={() => props.canvas.current.undo()}
+            </Button.Group>
+            <Button.Group basic>
+                <Button
+                    title='draw'
+                    icon='pencil'
+                    onClick={() => {
+                        setColour('black')
+                    }}
+                />
+                <Button
+                    title='eraser'
+                    icon='eraser'
+                    onClick={() => {
+                        setColour('white')
+                    }}
+                />
+                <Button title='fill' icon='tint' onClick={() => {}} />
+                <Button
                     title='undo'
+                    icon='undo'
+                    onClick={() => props.canvas.current.undo()}
                 />
-                <FaTrash
-                    onClick={() => props.canvas.current.clear()}
+                <Button
                     title='clear'
+                    icon='trash'
+                    onClick={() => props.canvas.current.clear()}
                 />
-            </div>
-            <h3 className={styles.word}>{'word'}</h3>
+            </Button.Group>
+            <h3>{'word'}</h3>
         </>
     )
 }

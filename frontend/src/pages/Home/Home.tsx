@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { Button, Divider, Header, Icon, Input } from 'semantic-ui-react'
 import { Avatar } from '../../components'
-import { IUserContext, UserContext } from '../../context/UserContext'
+import { IUserContext, UserContext } from '../../contexts/UserContext'
 import styles from './Home.module.scss'
 
 interface Props {}

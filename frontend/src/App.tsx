@@ -1,5 +1,6 @@
 import React, { Suspense } from 'react'
 import { Route, Switch } from 'react-router-dom'
+import LobbyContextProvider from './contexts/LobbyContext'
 
 const Home = React.lazy(() => import('./pages/Home'))
 const Lobby = React.lazy(() => import('./pages/Lobby'))
@@ -13,7 +14,9 @@ const App: React.FC = () => {
                         <Home />
                     </Route>
                     <Route exact path='/play'>
-                        <Lobby />
+                        <LobbyContextProvider>
+                            <Lobby />
+                        </LobbyContextProvider>
                     </Route>
                     <Route path='/'>
                         <div>404</div>

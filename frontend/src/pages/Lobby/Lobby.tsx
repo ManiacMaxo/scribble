@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import CanvasDraw from 'react-canvas-draw'
 import { Label } from 'semantic-ui-react'
 import { io } from 'socket.io-client'
-import { Chat, DrawTools } from '../../components'
+import { Chat, DrawTools, WordsModal } from '../../components'
+import { ILobbyContext, LobbyContext } from '../../contexts/LobbyContext'
 import styles from './Lobby.module.scss'
 
 interface Props {}
@@ -15,13 +16,22 @@ interface User {
 const socket = io(process.env.REACT_APP_API_URL || '')
 
 const Lobby: React.FC<Props> = (props) => {
-    const canvas = useRef(null)
+    const { setSocket, word, setWord, colour } = useContext<ILobbyContext>(
+        LobbyContext
+    )
+
+    const canvasRef = useRef(null)
     const [users, setUsers] = useState<User[]>([])
-    const [isDrawing, setIsDrawing] = useState<boolean>(false)
-    const [hint, setHint] = useState<string>('h__t')
-    const [canChat, setCanChat] = useState<boolean>(!isDrawing)
+    const [canDraw, setCanDraw] = useState<boolean>(true)
+    const [canChat, setCanChat] = useState<boolean>(!canDraw)
+    const [isFinished, setIsFinished] = useState<boolean>(false)
+    const [seconds, setSeconds] = useState<number>(180)
+    const [wordsList, setWordsList] = useState<string[]>([])
+    const [openModal, setOpenModal] = useState<boolean>(false)
 
     useEffect(() => {
+        setSocket(socket)
+        let interval: NodeJS.Timeout
         // socket.on('userJoin', (data: User[]) => {
         //     console.log('user joined ' + data)
         //     setUsers(data)
@@ -41,18 +51,31 @@ const Lobby: React.FC<Props> = (props) => {
             localStorage.setItem('id', data)
         })
 
-        socket.on('newRound', (data: string) => {
-            if (data === localStorage.getItem('id')) {
-                setIsDrawing(true)
-                setCanChat(false)
-                return
-            }
+        socket.on('newRound', (data: string[]) => {
+            setCanDraw(true)
+            setCanChat(false)
+            setOpenModal(true)
+            setWordsList(data)
+        })
+
+        socket.on('roundStart', (data: number) => {
+            setOpenModal(false)
+            setSeconds(data)
+
+            interval = setInterval(() => {
+                setSeconds((seconds) => seconds - 1)
+            }, 1000)
+        })
+
+        socket.on('roundEnd', () => {
+            clearInterval(interval)
+            setIsFinished(true)
             setCanChat(true)
-            setIsDrawing(false)
+            setCanDraw(false)
         })
 
         socket.on('hint', (hint: string) => {
-            setHint(hint)
+            setWord(hint)
         })
 
         socket.on('correct', () => {
@@ -62,6 +85,14 @@ const Lobby: React.FC<Props> = (props) => {
 
     return (
         <div className={styles.root}>
+            <header>
+                <h3>{`${seconds} seconds`}</h3>
+                {canDraw ? (
+                    <DrawTools canvas={canvasRef} />
+                ) : (
+                    <h3 className={styles.hint}>{word}</h3>
+                )}
+            </header>
             <aside className={styles.users}>
                 <ul>
                     {users.map((user) => (
@@ -74,24 +105,18 @@ const Lobby: React.FC<Props> = (props) => {
                     ))}
                 </ul>
             </aside>
-            <header>
-                {isDrawing ? (
-                    <DrawTools canvas={canvas} />
-                ) : (
-                    <h3 className={styles.hint}>{hint}</h3>
-                )}
-            </header>
             <CanvasDraw
-                ref={canvas}
+                ref={canvasRef}
                 className={styles.canvas}
                 hideInterface
                 hideGrid
                 lazyRadius={0}
-                brushColor={'black'}
+                brushColor={colour}
                 style={{ width: '100%', height: '100%' }}
-                disabled={!isDrawing}
+                disabled={!canDraw}
             />
-            <Chat canChat={canChat} socket={socket} />
+            <Chat canChat={canChat} />
+            <WordsModal words={wordsList} open={openModal} />
         </div>
     )
 }

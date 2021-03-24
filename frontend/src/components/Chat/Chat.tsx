@@ -1,12 +1,11 @@
 import React, { FormEvent, useContext, useEffect, useState } from 'react'
 import { Comment, Input } from 'semantic-ui-react'
-import { Socket } from 'socket.io-client'
-import { IUserContext, UserContext } from '../../context/UserContext'
+import { ILobbyContext, LobbyContext } from '../../contexts/LobbyContext'
+import { IUserContext, UserContext } from '../../contexts/UserContext'
 import styles from './Chat.module.scss'
 
 interface Props {
     canChat: boolean
-    socket: Socket
 }
 
 interface Message {
@@ -17,11 +16,12 @@ interface Message {
 }
 
 const Chat: React.FC<Props> = (props) => {
+    const { socket } = useContext<ILobbyContext>(LobbyContext)
     const { username, avatarURL } = useContext<IUserContext>(UserContext)
     const [messages, setMessages] = useState<Message[]>([])
 
     useEffect(() => {
-        props.socket.on('message', (message: Message) => {
+        socket?.on('message', (message: Message) => {
             const timestamp: string = new Date(message.timestamp)
                 .toTimeString()
                 .slice(0, 5)
@@ -33,7 +33,7 @@ const Chat: React.FC<Props> = (props) => {
                 }
             ])
         })
-    }, [props.socket])
+    }, [socket])
 
     const handleSubmit = (event: FormEvent) => {
         event.preventDefault()
@@ -44,7 +44,7 @@ const Chat: React.FC<Props> = (props) => {
             content: event.target[0].value
         }
         event.target[0].value = ''
-        props.socket.emit('message', data)
+        socket?.emit('message', data)
     }
 
     return (

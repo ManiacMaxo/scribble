@@ -5,7 +5,7 @@ import Carousel, {
 import '@brainhubeu/react-carousel/lib/style.css'
 import React, { useContext } from 'react'
 import { Button, Image } from 'semantic-ui-react'
-import { IUserContext, UserContext } from '../../context/UserContext'
+import { IUserContext, UserContext } from '../../contexts/UserContext'
 
 interface Props {}
 

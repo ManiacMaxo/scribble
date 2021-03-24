@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react'
 import { UserContext } from './UserContext'
 
-interface Props {
-    children: React.ReactNode
-}
+interface Props {}
 
 const UserContextProvider: React.FC<Props> = (props) => {
     const [username, setUsername] = useState<string>(

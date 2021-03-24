@@ -1,44 +1,11 @@
-@import '../../style/const';
-
-.colours {
-    $button-width: 30px;
-    $button-height: $button-width;
-
+.colors {
     display: flex;
-    flex-flow: row wrap;
-    max-width: 5 * ($button-width + 4px);
+    flex-wrap: wrap;
+    max-width: 35%;
+    border-radius: 0.3rem;
+    overflow: hidden;
 
-    & > * {
-        width: $button-width;
-        height: $button-height;
-        margin: 2px;
-        display: inline-block;
+    button {
+        border-radius: 0 !important;
     }
-
-    .red {
-        background-color: red;
-    }
-
-    .green {
-        background-color: green;
-    }
-
-    .blue {
-        background-color: blue;
-    }
-
-    .black {
-        background-color: black;
-    }
-
-    .white {
-        background-color: white;
-    }
-}
-
-.controls {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 30%;
 }
