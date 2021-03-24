@@ -1,32 +1,38 @@
 import React, { useEffect, useRef, useState } from 'react'
 import CanvasDraw from 'react-canvas-draw'
+import { Label } from 'semantic-ui-react'
 import { io } from 'socket.io-client'
 import { Chat, DrawTools } from '../../components'
 import styles from './Lobby.module.scss'
 
 interface Props {}
 
+interface User {
+    name: string
+    points: number
+}
+
+const socket = io(process.env.REACT_APP_API_URL || '')
+
 const Lobby: React.FC<Props> = (props) => {
     const canvas = useRef(null)
-    const [users, setUsers] = useState<Array<string>>([])
+    const [users, setUsers] = useState<User[]>([])
     const [isDrawing, setIsDrawing] = useState<boolean>(false)
     const [hint, setHint] = useState<string>('h__t')
     const [canChat, setCanChat] = useState<boolean>(!isDrawing)
 
-    const socket = io(process.env.REACT_APP_WS || '')
-
     useEffect(() => {
-        socket.on('userJoin', (data: Array<string>) => {
-            console.log('user joined ' + data)
-            setUsers(data)
-        })
+        // socket.on('userJoin', (data: User[]) => {
+        //     console.log('user joined ' + data)
+        //     setUsers(data)
+        // })
 
-        socket.on('userLeave', (data: Array<string>) => {
-            console.log('user left ' + data)
-            setUsers(data)
-        })
+        // socket.on('userLeave', (data: User[]) => {
+        //     console.log('user left ' + data)
+        //     setUsers(data)
+        // })
 
-        socket.onAny((event, ...args) => {
+        socket.onAny((event) => {
             console.log(`got ${event}`)
         })
 
@@ -35,25 +41,35 @@ const Lobby: React.FC<Props> = (props) => {
             localStorage.setItem('id', data)
         })
 
-        socket.on('draw', (data: string) => {
+        socket.on('newRound', (data: string) => {
             if (data === localStorage.getItem('id')) {
                 setIsDrawing(true)
                 setCanChat(false)
+                return
             }
+            setCanChat(true)
+            setIsDrawing(false)
         })
 
         socket.on('hint', (hint: string) => {
             setHint(hint)
         })
-    }, [socket])
+
+        socket.on('correct', () => {
+            setCanChat(false)
+        })
+    }, [])
 
     return (
         <div className={styles.root}>
             <aside className={styles.users}>
                 <ul>
                     {users.map((user) => (
-                        <li key={user}>
-                            <p>{user}</p>
+                        <li key={user.name}>
+                            <Label as='span'>
+                                {user.name}
+                                <Label.Detail>{user.points}</Label.Detail>
+                            </Label>
                         </li>
                     ))}
                 </ul>

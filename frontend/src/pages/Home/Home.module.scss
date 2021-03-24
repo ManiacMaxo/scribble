@@ -15,10 +15,11 @@
 }
 
 span {
+    margin: 0.5rem auto 0;
+    width: fit-content;
     color: $shadow-color;
     font-size: 10px;
     text-align: center;
-    margin-top: 0.5rem;
     user-select: none;
 
     &:hover {

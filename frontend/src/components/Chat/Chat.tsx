@@ -1,5 +1,5 @@
-import React, { FormEvent, useRef } from 'react'
-import { Comment, Input } from 'semantic-ui-react'
+import React, { FormEvent, useEffect, useRef, useState } from 'react'
+import { Comment, Input, Ref } from 'semantic-ui-react'
 import { Socket } from 'socket.io-client'
 import styles from './Chat.module.scss'
 
@@ -9,23 +9,30 @@ interface Props {
 }
 
 const Chat: React.FC<Props> = (props) => {
-    const chat = useRef(null)
+    const chatRef = useRef(null)
+    const [name, setName] = useState<string | null>()
 
-    props.socket.once('message', (message: any) => {
-        console.log(message)
-        // chat.children.push(
-        //     <Comment key={message.id}>
-        //         <p className={styles.message}>
-        //             {message.user}: {message.content}
-        //         </p>
-        //     </Comment>
-        // )
-    })
+    useEffect(() => {
+        setName(localStorage.getItem('name'))
+
+        props.socket.on('message', (message: any) => {
+            console.log(message)
+            // chat.children.push(
+            //     <Comment key={message.id}>
+            //         <p className={styles.message}>
+            //             {message.name}: {message.content}
+            //         </p>
+            //     </Comment>
+            // )
+        })
+    }, [props.socket])
 
     const handleSubmit = (event: FormEvent) => {
         event.preventDefault()
+        if (!event.target[0].value) return
+
         const data = {
-            user: localStorage.getItem('name') || 'john',
+            name,
             content: event.target[0].value
         }
         event.target[0].value = ''
@@ -34,7 +41,9 @@ const Chat: React.FC<Props> = (props) => {
 
     return (
         <div className={styles.root}>
-            <Comment.Group className={styles.chat} ref={chat}></Comment.Group>
+            <Ref innerRef={chatRef}>
+                <Comment.Group className={styles.chat}></Comment.Group>
+            </Ref>
             <form onSubmit={handleSubmit}>
                 <Input
                     fluid

@@ -1,20 +1,30 @@
-import React from 'react'
-import { Redirect } from 'react-router-dom'
-import { Button, Header, Icon, Input } from 'semantic-ui-react'
+import React, { useRef, useState } from 'react'
+import { Button, Header, Icon, Input, Ref } from 'semantic-ui-react'
 import styles from './Home.module.scss'
 
 interface Props {}
 
 const Home: React.FC<Props> = () => {
+    const inputRef = useRef(null)
+    const [name, setName] = useState(localStorage.getItem('name'))
+
+    const changeName = (event: any) => {
+        setName(event.target.value)
+    }
+
     const joinLobby: any = async () => {
+        if (!name) {
+            return console.log('name not provided')
+        }
+        localStorage.setItem('name', name)
         const res: Response = await fetch(
             process.env.REACT_APP_API_URL + '/find' || ''
         )
         if (res.ok) {
-            return <Redirect to={`/play?lobby=${res.body}`} />
-        } else {
-            return joinLobby() // try again if no lobby found
+            const code = await res.json()
+            return (window.location.href = `/play?lobby=${code}`)
         }
+        return console.log('lobby not found')
     }
     const createPrivateLobby = () => {}
 
@@ -24,7 +34,14 @@ const Home: React.FC<Props> = () => {
                 <Icon name='pencil square' />
                 <Header.Content>Scribble</Header.Content>
             </Header>
-            <Input fluid placeholder='Enter your name' />
+            <Ref innerRef={inputRef}>
+                <Input
+                    fluid
+                    placeholder='Enter your name'
+                    value={name}
+                    onChange={changeName}
+                />
+            </Ref>
             <Button.Group widths='2'>
                 <Button primary onClick={joinLobby}>
                     play
