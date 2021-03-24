@@ -8,21 +8,24 @@ interface Props {
     socket: Socket
 }
 
+const name = localStorage.getItem('name')
+
 const Chat: React.FC<Props> = (props) => {
-    const chatRef = useRef(null)
-    const [name, setName] = useState<string | null>()
+    const [messages, setMessages] = useState<any[]>([])
+    const chatRef = useRef<HTMLElement | null>(null)
 
     useEffect(() => {
-        setName(localStorage.getItem('name'))
-
         props.socket.on('message', (message: any) => {
             console.log(message)
-            // chat.children.push(
-            //     <Comment key={message.id}>
-            //         <p className={styles.message}>
-            //             {message.name}: {message.content}
-            //         </p>
-            //     </Comment>
+            setMessages((m) => [...m, message])
+            // chatRef.current?.append(
+            //     document.createElement(
+            //         <div key={message.id}>
+            //             <p className={styles.message}>
+            //                 {message.name}: {message.content}
+            //             </p>
+            //         </div>
+            //     )
             // )
         })
     }, [props.socket])
@@ -42,7 +45,15 @@ const Chat: React.FC<Props> = (props) => {
     return (
         <div className={styles.root}>
             <Ref innerRef={chatRef}>
-                <Comment.Group className={styles.chat}></Comment.Group>
+                <Comment.Group className={styles.chat}>
+                    {messages.map((message) => (
+                        <Comment key={message.id}>
+                            <p className={styles.message}>
+                                {message.name}: {message.content}
+                            </p>
+                        </Comment>
+                    ))}
+                </Comment.Group>
             </Ref>
             <form onSubmit={handleSubmit}>
                 <Input

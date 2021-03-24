@@ -3,11 +3,13 @@
 .root {
     grid-column: 3;
     grid-row: 2;
+    height: 100%;
 }
 
 .chat {
-    overflow-y: scroll;
+    overflow-y: hidden;
     height: 88%;
+    max-height: 88%;
 }
 
 input {
