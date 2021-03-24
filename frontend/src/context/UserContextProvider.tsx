@@ -11,7 +11,8 @@ const UserContextProvider: React.FC<Props> = (props) => {
     )
     const [avatarURL, setAvatarURL] = useState<string>(
         () =>
-            localStorage.getItem('avatarURL') ?? '/assets/avatars/avatar01.png'
+            localStorage.getItem('avatarURL') ??
+            `/assets/avatars/${Math.random() * 50}.png`
     )
 
     useEffect(() => {

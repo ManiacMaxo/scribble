@@ -1,27 +1,52 @@
-import React from 'react'
-import styles from './Avatar.module.scss'
+import Carousel, {
+    arrowsPlugin,
+    slidesToShowPlugin
+} from '@brainhubeu/react-carousel'
+import '@brainhubeu/react-carousel/lib/style.css'
+import React, { useContext } from 'react'
+import { Button, Image } from 'semantic-ui-react'
+import { IUserContext, UserContext } from '../../context/UserContext'
 
 interface Props {}
 
 const Avatar: React.FC<Props> = () => {
-    const avatars = [
-        'https://react.semantic-ui.com/images/avatar/small/matt.jpg',
-        'https://react.semantic-ui.com/images/avatar/small/elliot.jpg'
-    ]
+    const { avatarURL, setAvatarURL } = useContext<IUserContext>(UserContext)
+    const avatars: number[] = Array.from(Array(50).keys())
 
     return (
-        <div className={styles.root}>
-            {/* <Button compact>
-                <Icon name='arrow circle left'></Icon>
-            </Button>
-            <Image
-                src='https://react.semantic-ui.com/images/avatar/large/matt.jpg'
-                size='small'
-            />
-            <Button compact>
-                <Icon name='arrow circle right'></Icon>
-            </Button> */}
-        </div>
+        <Carousel
+            value={parseInt(avatarURL.match(/\d/g)?.join('') ?? '0')}
+            onChange={(id) => setAvatarURL(`/assets/avatars/${id}.png`)}
+            plugins={[
+                'infinite',
+                'centered',
+                {
+                    resolve: slidesToShowPlugin,
+                    options: {
+                        numberOfSlides: 2
+                    }
+                },
+                {
+                    resolve: arrowsPlugin,
+                    options: {
+                        arrowLeft: (
+                            <Button icon='arrow alternate circle left' />
+                        ),
+                        arrowRight: (
+                            <Button icon='arrow alternate circle right' />
+                        ),
+                        addArrowClickHandler: true
+                    }
+                }
+            ]}
+            slides={avatars.map((id) => (
+                <Image
+                    size='small'
+                    src={`/assets/avatars/${id}.png`}
+                    key={id}
+                />
+            ))}
+        />
     )
 }
 
