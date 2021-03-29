@@ -1,7 +1,7 @@
 import React, { FormEvent, useContext, useEffect, useState } from 'react'
 import { Comment, Input } from 'semantic-ui-react'
-import { ILobbyContext, LobbyContext } from '../../contexts/LobbyContext'
-import { IUserContext, UserContext } from '../../contexts/UserContext'
+import { ILobbyContext, LobbyContext } from '../../contexts/Lobby'
+import { IUserContext, UserContext } from '../../contexts/User'
 import styles from './Chat.module.scss'
 
 interface Props {

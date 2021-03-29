@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { Carousel } from 'react-responsive-carousel'
 import 'react-responsive-carousel/lib/styles/carousel.min.css'
 import { Image } from 'semantic-ui-react'
-import { IUserContext, UserContext } from '../../contexts/UserContext'
+import { IUserContext, UserContext } from '../../contexts/User'
 import styles from './Avatar.module.scss'
 
 interface Props {}

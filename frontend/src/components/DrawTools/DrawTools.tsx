@@ -2,7 +2,7 @@ import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css'
 import React, { useContext } from 'react'
 import { Button } from 'semantic-ui-react'
-import { ILobbyContext, LobbyContext } from '../../contexts/LobbyContext'
+import { ILobbyContext, LobbyContext } from '../../contexts/Lobby'
 import { skribblio } from './colours'
 import styles from './DrawTools.module.scss'
 

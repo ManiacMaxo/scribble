@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { Button, Modal } from 'semantic-ui-react'
-import { ILobbyContext, LobbyContext } from '../../contexts/LobbyContext'
+import { ILobbyContext, LobbyContext } from '../../contexts/Lobby'
 
 interface Props {
     words: string[]

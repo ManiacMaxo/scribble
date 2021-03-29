@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react'
 import { Route, Switch } from 'react-router-dom'
-import LobbyContextProvider from './contexts/LobbyContext'
+import LobbyContextProvider from './contexts/Lobby'
 
 const Home = React.lazy(() => import('./pages/Home'))
 const Lobby = React.lazy(() => import('./pages/Lobby'))

@@ -3,7 +3,7 @@ import CanvasDraw from 'react-canvas-draw'
 import { Label } from 'semantic-ui-react'
 import { io } from 'socket.io-client'
 import { Chat, DrawTools, WordsModal } from '../../components'
-import { ILobbyContext, LobbyContext } from '../../contexts/LobbyContext'
+import { ILobbyContext, LobbyContext } from '../../contexts/Lobby'
 import styles from './Lobby.module.scss'
 
 interface Props {}
