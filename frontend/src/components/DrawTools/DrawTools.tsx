@@ -13,7 +13,9 @@ interface Props {
 const DrawTools: React.FC<Props> = (props) => {
     const { colours, len } = skribblio
 
-    const { setColour, setRadius } = useContext<ILobbyContext>(LobbyContext)
+    const { colour, setColour, setRadius } = useContext<ILobbyContext>(
+        LobbyContext
+    )
     const handleChangeRadius = (value: number) => {
         setRadius(value)
     }
@@ -27,7 +29,10 @@ const DrawTools: React.FC<Props> = (props) => {
             >
                 {colours.map((clr: string) => (
                     <Button
+                        toggle
+                        active={colour === clr}
                         key={clr}
+                        color={undefined}
                         style={{ background: clr }}
                         onClick={() => {
                             setColour(clr)

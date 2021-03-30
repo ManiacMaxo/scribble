@@ -4,6 +4,7 @@ import LobbyContextProvider from './contexts/Lobby'
 
 const Home = React.lazy(() => import('./pages/Home'))
 const Lobby = React.lazy(() => import('./pages/Lobby'))
+const CreateLobby = React.lazy(() => import('./pages/CreateLobby'))
 
 const App: React.FC = () => {
     return (
@@ -17,6 +18,9 @@ const App: React.FC = () => {
                         <LobbyContextProvider>
                             <Lobby />
                         </LobbyContextProvider>
+                    </Route>
+                    <Route exact path='/create'>
+                        <CreateLobby />
                     </Route>
                     <Route path='/'>
                         <div>404</div>

@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import { Link } from 'react-router-dom'
 import { Button, Divider, Header, Icon, Input } from 'semantic-ui-react'
 import { Avatar } from '../../components'
 import { IUserContext, UserContext } from '../../contexts/User'
@@ -26,10 +27,9 @@ const Home: React.FC<Props> = () => {
         }
         return console.log('lobby not found')
     }
-    const createPrivateLobby = () => {}
 
     return (
-        <div className={styles.root}>
+        <div className='default-card'>
             <Header as='h1' icon textAlign='center'>
                 <Icon name='pencil square' />
                 <Header.Content>Scribble</Header.Content>
@@ -47,12 +47,12 @@ const Home: React.FC<Props> = () => {
                 <Button primary onClick={joinLobby}>
                     join random room
                 </Button>
-                <Button secondary onClick={createPrivateLobby}>
+                <Button as={Link} secondary to='/create'>
                     create private room
                 </Button>
             </Button.Group>
 
-            <span>
+            <span className={styles.footer}>
                 Made with love by{' '}
                 <a href='https://github.com/ManiacMaxo/'>ManiacMaxo</a>
             </span>
