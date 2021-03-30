@@ -1,0 +1,19 @@
+.root {
+    display: flex;
+    position: relative;
+    justify-content: space-between;
+    align-items: center;
+
+    & > img {
+        margin: 0 auto;
+    }
+
+    i {
+        margin: 0 !important;
+    }
+}
+
+.avatar {
+    margin: 0 auto;
+    user-select: none;
+}
