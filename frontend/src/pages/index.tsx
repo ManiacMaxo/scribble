@@ -1,11 +1,10 @@
 import React, { useContext } from 'react'
-import Link from 'next/link'
 import { Button, Divider, Header, Icon, Input } from 'semantic-ui-react'
 import { Avatar } from '../components'
 import { IUserContext, UserContext } from '../contexts/User'
 import styles from '../styles/index.module.scss'
 
-const index = (): JSX.Element => {
+const Index = (): JSX.Element => {
     const { username, setUsername } = useContext<IUserContext>(UserContext)
 
     const changeName = (event: any) => {
@@ -37,14 +36,18 @@ const index = (): JSX.Element => {
                 placeholder='Enter your name'
                 value={username}
                 onChange={changeName}
+                spellCheck='false'
             />
             <Divider horizontal>play</Divider>
             <Button.Group widths='2'>
                 <Button primary onClick={joinLobby}>
-                    join random room
+                    join lobby
                 </Button>
-                <Button secondary>
-                    <Link href='/create'>create private room</Link>
+                <Button
+                    secondary
+                    onClick={() => (window.location.href = '/create')}
+                >
+                    create lobby
                 </Button>
             </Button.Group>
 
@@ -56,4 +59,4 @@ const index = (): JSX.Element => {
     )
 }
 
-export default index
+export default Index

@@ -8,9 +8,7 @@
     text-align: center;
     user-select: none;
 
-    &:hover {
-        a {
-            text-decoration: underline;
-        }
+    a:hover {
+        text-decoration: underline;
     }
 }

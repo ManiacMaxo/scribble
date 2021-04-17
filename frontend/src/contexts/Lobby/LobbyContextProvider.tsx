@@ -10,6 +10,15 @@ const LobbyContextProvider: React.FC<Props> = (props) => {
     const [radius, setRadius] = useState<number>(12)
     const [word, setWord] = useState<string>('')
 
+    socket?.onAny((event) => {
+        console.log(`got ${event}`)
+    })
+
+    socket?.once('id', (data: string) => {
+        // console.log('id ' + data)
+        localStorage.setItem('id', data)
+    })
+
     return (
         <LobbyContext.Provider
             value={{

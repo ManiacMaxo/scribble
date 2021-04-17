@@ -1,7 +1,7 @@
 import React, { FormEvent, useState } from 'react'
 import { Button, Checkbox, Form, Select, Step } from 'semantic-ui-react'
 
-const create = (): JSX.Element => {
+const Create = (): JSX.Element => {
     const [isCreating, setIsCreating] = useState<boolean>(true)
     const [time, setTime] = useState<number>(90)
     const [rounds, setRounds] = useState<number>(5)
@@ -31,7 +31,6 @@ const create = (): JSX.Element => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
-                // 'Content-Type': 'application/x-www-form-urlencoded',
             },
 
             body: JSON.stringify({
@@ -110,4 +109,4 @@ const create = (): JSX.Element => {
     )
 }
 
-export default create
+export default Create

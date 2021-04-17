@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "start": "next start",
-    "start:dev": "next",
+    "dev": "next dev",
     "build": "next build",
     "type-check": "tsc",
     "format": "prettier -w ."

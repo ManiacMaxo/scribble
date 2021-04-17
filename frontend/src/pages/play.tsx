@@ -1,14 +1,14 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
+import CanvasDraw from 'react-canvas-draw'
 import { Label } from 'semantic-ui-react'
 import { io } from 'socket.io-client'
-import CanvasDraw from 'react-canvas-draw'
-
+import { Chat, DrawTools, WordsModal } from '../components'
 import LobbyContextProvider, {
     ILobbyContext,
     LobbyContext
 } from '../contexts/Lobby'
 import styles from '../styles/play.module.scss'
-import { Chat, DrawTools, WordsModal } from '../components'
+import { User } from '../types'
 
 const playContext = (): JSX.Element => {
     return (
@@ -16,12 +16,6 @@ const playContext = (): JSX.Element => {
             <Play />
         </LobbyContextProvider>
     )
-}
-
-interface User {
-    name: string
-    points: number
-    avatarURL: string
 }
 
 const socket = io(process.env.WS || '')
@@ -37,7 +31,7 @@ const Play = (): JSX.Element => {
 
     const canvasRef = useRef(null)
     const [users, setUsers] = useState<User[]>([])
-    const [canDraw, setCanDraw] = useState<boolean>(true)
+    const [canDraw, setCanDraw] = useState<boolean>(false)
     const [canChat, setCanChat] = useState<boolean>(!canDraw)
     const [isFinished, setIsFinished] = useState<boolean>(false)
     const [seconds, setSeconds] = useState<number>(180)
@@ -57,15 +51,6 @@ const Play = (): JSX.Element => {
         //     setUsers(data)
         // })
 
-        socket.onAny((event) => {
-            console.log(`got ${event}`)
-        })
-
-        socket.once('id', (data: string) => {
-            // console.log('id ' + data)
-            localStorage.setItem('id', data)
-        })
-
         socket.on('newRound', (data: string[]) => {
             setCanDraw(true)
             setCanChat(false)
@@ -73,9 +58,9 @@ const Play = (): JSX.Element => {
             setWordsList(data)
         })
 
-        socket.on('roundStart', (data: number) => {
+        socket.on('roundStart', (roundSeconds: number) => {
             setOpenModal(false)
-            setSeconds(data)
+            setSeconds(roundSeconds)
 
             interval = setInterval(() => {
                 setSeconds((prev: number) => prev - 1)
