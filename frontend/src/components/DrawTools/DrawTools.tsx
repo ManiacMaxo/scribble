@@ -16,30 +16,24 @@ const DrawTools: React.FC<Props> = (props) => {
     const { colour, setColour, setRadius } = useContext<ILobbyContext>(
         LobbyContext
     )
-    const handleChangeRadius = (value: number) => {
-        setRadius(value)
-    }
 
     return (
         <>
-            <Button.Group
+            <div
                 className={styles.colors}
-                widths={len}
-                style={{ maxWidth: `${(50 * colours.length) / 2}px` }}
+                style={{ gridTemplateColumns: `repeat(${len}, 30px)` }}
             >
                 {colours.map((clr: string) => (
-                    <Button
-                        toggle
-                        active={colour === clr}
+                    <button
                         key={clr}
-                        color={undefined}
+                        className={colour === clr ? styles.active : undefined}
                         style={{ background: clr }}
                         onClick={() => {
                             setColour(clr)
                         }}
                     />
                 ))}
-            </Button.Group>
+            </div>
 
             <div>
                 <Button.Group basic>
@@ -71,7 +65,7 @@ const DrawTools: React.FC<Props> = (props) => {
                 </Button.Group>
                 <Slider
                     defaultValue={12}
-                    onAfterChange={handleChangeRadius}
+                    onAfterChange={setRadius}
                     min={2}
                     max={50}
                 />

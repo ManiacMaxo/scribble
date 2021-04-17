@@ -1,7 +1,8 @@
-import Layout from './Layout'
 export { Avatar } from './Avatar'
 export { Chat } from './Chat'
 export { DrawTools } from './DrawTools'
+export { Layout } from './Layout'
 export { LobbyPlayers } from './LobbyPlayers'
+export { PostGame } from './PostGame'
+export { UserList } from './UserList'
 export { WordsModal } from './WordsModal'
-export { Layout }

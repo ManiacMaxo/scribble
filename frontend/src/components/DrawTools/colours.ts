@@ -1,11 +1,9 @@
-import { SemanticWIDTHS } from 'semantic-ui-react/dist/commonjs/generic'
-
 interface ColorScheme {
     // hex color codes
     colours: string[]
 
     // len of elements in row
-    len: SemanticWIDTHS
+    len: number
 }
 
 // ubuntu terminal colors
@@ -28,7 +26,7 @@ export const ubuntuTerm: ColorScheme = {
         '#00ffff',
         '#ffffff'
     ],
-    len: '8'
+    len: 8
 }
 
 // mac terminal colors
@@ -51,7 +49,7 @@ export const macTerm: ColorScheme = {
         '#14f0f0',
         '#e9ebeb'
     ],
-    len: '8'
+    len: 8
 }
 
 export const skribblio: ColorScheme = {
@@ -79,5 +77,5 @@ export const skribblio: ColorScheme = {
         '#A75574',
         '#63300D'
     ],
-    len: '11'
+    len: 11
 }

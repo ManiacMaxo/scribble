@@ -4,9 +4,7 @@ import { ILobbyContext, LobbyContext } from '../../contexts/Lobby'
 import { IUserContext, UserContext } from '../../contexts/User'
 import styles from './Chat.module.scss'
 
-interface Props {
-    canChat: boolean
-}
+interface Props {}
 
 interface Message {
     id: string
@@ -16,32 +14,37 @@ interface Message {
 }
 
 const Chat: React.FC<Props> = (props) => {
-    const { socket } = useContext<ILobbyContext>(LobbyContext)
+    const { socket, canChat, setCanChat } = useContext<ILobbyContext>(
+        LobbyContext
+    )
     const { username, avatarURL } = useContext<IUserContext>(UserContext)
     const [messages, setMessages] = useState<Message[]>([])
 
-    useEffect(() => {
-        socket?.on('message', (message: Message) => {
-            const timestamp: string = new Date(message.timestamp)
-                .toTimeString()
-                .slice(0, 5)
-            setMessages((m) => [
-                ...m,
-                {
-                    ...message,
-                    timestamp
-                }
-            ])
-        })
-    }, [socket])
+    socket?.on('message', (message: Message) => {
+        const timestamp: string = new Date(message.timestamp)
+            .toTimeString()
+            .slice(0, 5)
+        setMessages((m) => [
+            ...m,
+            {
+                ...message,
+                timestamp
+            }
+        ])
+    })
+
+    socket?.on('correct', () => {
+        setCanChat(false)
+    })
 
     const handleSubmit = (event: FormEvent) => {
         event.preventDefault()
+        console.debug(event.target)
         if (!event.target[0].value) return
 
         const data = {
             username,
-            content: event.target[0].value
+            content: event.target.value
         }
         event.target[0].value = ''
         socket?.emit('message', data)
@@ -75,12 +78,10 @@ const Chat: React.FC<Props> = (props) => {
                         type: 'submit'
                     }}
                     placeholder={
-                        props.canChat
-                            ? 'Enter your guess'
-                            : `You can't chat now`
+                        canChat ? 'Enter your guess' : `You can't chat now`
                     }
                     maxLength={64}
-                    disabled={!props.canChat}
+                    disabled={!canChat}
                 />
             </form>
         </div>

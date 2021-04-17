@@ -1,24 +1,20 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import CanvasDraw from 'react-canvas-draw'
-import { Label } from 'semantic-ui-react'
 import { io } from 'socket.io-client'
-import { Chat, DrawTools, WordsModal } from '../components'
+import { Chat, DrawTools, PostGame, UserList, WordsModal } from '../components'
 import LobbyContextProvider, {
     ILobbyContext,
     LobbyContext
 } from '../contexts/Lobby'
 import styles from '../styles/play.module.scss'
-import { User } from '../types'
 
-const playContext = (): JSX.Element => {
-    return (
-        <LobbyContextProvider>
-            <Play />
-        </LobbyContextProvider>
-    )
-}
+const playContext = (): JSX.Element => (
+    <LobbyContextProvider>
+        <Play />
+    </LobbyContextProvider>
+)
 
-const socket = io(process.env.WS || '')
+const socket = io(process.env.WS || '', { reconnectionAttempts: 1 })
 
 const Play = (): JSX.Element => {
     const {
@@ -26,37 +22,23 @@ const Play = (): JSX.Element => {
         word,
         setWord,
         colour,
-        radius
+        radius,
+        isFinished,
+        setCanDraw,
+        setCanChat,
+        setIsFinished,
+        canDraw
     } = useContext<ILobbyContext>(LobbyContext)
 
     const canvasRef = useRef(null)
-    const [users, setUsers] = useState<User[]>([])
-    const [canDraw, setCanDraw] = useState<boolean>(false)
-    const [canChat, setCanChat] = useState<boolean>(!canDraw)
-    const [isFinished, setIsFinished] = useState<boolean>(false)
     const [seconds, setSeconds] = useState<number>(180)
-    const [wordsList, setWordsList] = useState<string[]>([])
     const [openModal, setOpenModal] = useState<boolean>(false)
 
     useEffect(() => {
         setSocket(socket)
         let interval: NodeJS.Timeout
-        // socket.on('userJoin', (data: User[]) => {
-        //     console.log('user joined ' + data)
-        //     setUsers(data)
-        // })
 
-        // socket.on('userLeave', (data: User[]) => {
-        //     console.log('user left ' + data)
-        //     setUsers(data)
-        // })
-
-        socket.on('newRound', (data: string[]) => {
-            setCanDraw(true)
-            setCanChat(false)
-            setOpenModal(true)
-            setWordsList(data)
-        })
+        socket.on('newRound', () => setOpenModal(true))
 
         socket.on('roundStart', (roundSeconds: number) => {
             setOpenModal(false)
@@ -77,13 +59,11 @@ const Play = (): JSX.Element => {
         socket.on('hint', (hint: string) => {
             setWord(hint)
         })
-
-        socket.on('correct', () => {
-            setCanChat(false)
-        })
     }, [])
 
-    return (
+    return isFinished ? (
+        <PostGame />
+    ) : (
         <div className={styles.root}>
             <header className={styles.header}>
                 <h3>{`${seconds} seconds`}</h3>
@@ -94,16 +74,7 @@ const Play = (): JSX.Element => {
                 )}
             </header>
             <aside className={styles.users}>
-                <ul>
-                    {users.map((user) => (
-                        <li key={user.name}>
-                            <Label as='span'>
-                                {user.name}
-                                <Label.Detail>{user.points}</Label.Detail>
-                            </Label>
-                        </li>
-                    ))}
-                </ul>
+                <UserList />
             </aside>
             <CanvasDraw
                 ref={canvasRef}
@@ -116,8 +87,8 @@ const Play = (): JSX.Element => {
                 style={{ width: '100%', height: '100%' }}
                 disabled={!canDraw}
             />
-            <Chat canChat={canChat} />
-            <WordsModal words={wordsList} open={openModal} />
+            <Chat />
+            <WordsModal open={openModal} />
         </div>
     )
 }

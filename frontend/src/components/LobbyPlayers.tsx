@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Card, Icon, Image, Label } from 'semantic-ui-react'
+import { Button, Card, Image } from 'semantic-ui-react'
 
 interface Props {
     players: any[]
@@ -37,4 +37,4 @@ const LobbyPlayers: React.FC<Props> = (props) => {
     )
 }
 
-export default LobbyPlayers
+export { LobbyPlayers }
