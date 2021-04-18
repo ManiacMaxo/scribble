@@ -54,7 +54,7 @@ const Chat: React.FC<Props> = () => {
             <Comment.Group className={styles.chat}>
                 {messages.map((message) => (
                     <Comment key={message.id}>
-                        <Comment.Avatar src={avatarURL} />
+                        <Comment.Avatar src={avatarURL || ''} />
                         <Comment.Content>
                             <Comment.Author as='span'>
                                 {message.username}

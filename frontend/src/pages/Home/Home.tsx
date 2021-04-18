@@ -1,33 +1,33 @@
-import { useRouter } from 'next/router'
 import React, { useContext, useState } from 'react'
+import { useHistory } from 'react-router'
 import { Button, Divider, Header, Icon, Input, Label } from 'semantic-ui-react'
-import { Avatar } from '../components'
-import { IUserContext, UserContext } from '../contexts/User'
-import styles from '../styles/index.module.scss'
+import { Avatar } from '../../components'
+import { IUserContext, UserContext } from '../../contexts/User'
+import styles from './Home.module.scss'
 
-const Index = (): JSX.Element => {
+const Home: React.FC = (): JSX.Element => {
     const { username, setUsername } = useContext<IUserContext>(UserContext)
     const [error, setError] = useState<string | null>(null)
-    const router = useRouter()
+    const history = useHistory()
 
     const joinLobby: any = async () => {
         if (!username) {
-            const wordAPI = await fetch('/api/word')
+            const wordAPI = await fetch(process.env.REACT_APP_API_URL + '/word')
             setUsername(await wordAPI.text())
         }
 
         try {
             const res: Response = await fetch(
-                process.env.NEXT_PUBLIC_API_URL + '/api/find'
+                process.env.REACT_APP_API_URL + '/find'
             )
             if (res.ok) {
-                const { lobby } = await res.json()
-                return router.push(`/play/${lobby}`)
+                const lobby = await res.text()
+                return history.push(`/play/${lobby}`)
             }
         } catch (e) {
+            console.error(e)
             return setError('The server is having problems right now')
         }
-        return setError('No lobbies found, you should create one')
     }
 
     return (
@@ -50,7 +50,7 @@ const Index = (): JSX.Element => {
                 <Button primary onClick={joinLobby}>
                     join lobby
                 </Button>
-                <Button secondary onClick={() => router.push('/create')}>
+                <Button secondary onClick={() => history.push('/create')}>
                     create lobby
                 </Button>
             </Button.Group>
@@ -69,4 +69,4 @@ const Index = (): JSX.Element => {
     )
 }
 
-export default Index
+export default Home

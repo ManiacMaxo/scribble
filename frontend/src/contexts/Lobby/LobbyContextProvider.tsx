@@ -10,38 +10,7 @@ const LobbyContextProvider: React.FC<Props> = (props) => {
     const [canChat, setCanChat] = useState<boolean>(!canDraw)
     const [isFinished, setIsFinished] = useState<boolean>(false)
 
-    const [users, setUsers] = useState<User[]>([
-        {
-            id: 'alsdjfpqe',
-            name: 'test',
-            points: 100,
-            avatarURL: '/assets/avatars/2.png'
-        },
-        {
-            id: 'asd;iqewpoir',
-            name: 'test2',
-            points: 500,
-            avatarURL: '/assets/avatars/16.png'
-        },
-        {
-            id: 'vxckhqwe',
-            name: 'test3',
-            points: 10,
-            avatarURL: '/assets/avatars/47.png'
-        },
-        {
-            id: 'qweroizcv',
-            name: 'test4',
-            points: 15,
-            avatarURL: '/assets/avatars/43.png'
-        },
-        {
-            id: 'cvxqe',
-            name: 'test5',
-            points: 85,
-            avatarURL: '/assets/avatars/33.png'
-        }
-    ])
+    const [users, setUsers] = useState<User[]>([])
 
     const [socket, setSocket] = useState<Socket | undefined>(undefined)
     const [colour, setColour] = useState<string>('black')

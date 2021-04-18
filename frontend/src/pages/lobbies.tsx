@@ -1,19 +1,11 @@
-import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
+import { useHistory } from 'react-router'
 import { Button, List } from 'semantic-ui-react'
+import { Lobby } from '../types'
 
-interface Lobby {
-    id: string
-    name: string
-    players: number
-    maxPlayers: number
-    round: number
-    maxRounds: number
-}
-
-const Lobbies = (): JSX.Element => {
+const Lobbies: React.FC = (): JSX.Element => {
     const [lobbies, setLobbies] = useState<Lobby[]>([])
-    const router = useRouter()
+    const history = useHistory()
 
     useEffect(() => {
         getLobbies()
@@ -22,31 +14,12 @@ const Lobbies = (): JSX.Element => {
     const getLobbies = async (max: number = 10) => {
         try {
             const res = await fetch(
-                process.env.NEXT_PUBLIC_API_URL + `/lobbies?m=${max}`
+                process.env.REACT_APP_API_URL + `/lobbies?m=${max}`
             )
             if (res.ok) {
                 setLobbies(await res.json())
             }
-        } catch (e) {
-            setLobbies([
-                {
-                    id: '123',
-                    name: 'test lobby',
-                    players: 10,
-                    maxPlayers: 12,
-                    round: 2,
-                    maxRounds: 12
-                },
-                {
-                    id: 'adsqwe',
-                    name: 'test lobby 2',
-                    players: 7,
-                    maxPlayers: 10,
-                    round: 2,
-                    maxRounds: 6
-                }
-            ])
-        }
+        } catch (e) {}
     }
 
     return (
@@ -62,7 +35,7 @@ const Lobbies = (): JSX.Element => {
                         <List.Content>
                             <List.Header>{lobby.name}</List.Header>
                             <List.Description>
-                                players: {lobby.players}/{lobby.maxPlayers}
+                                players: {lobby.players}/{lobby.maxPlayers}{' '}
                                 round: {lobby.round}/{lobby.maxRounds}
                                 {lobby.players === lobby.maxPlayers ? (
                                     <strong>FULL</strong>
@@ -71,7 +44,7 @@ const Lobbies = (): JSX.Element => {
                                         floated='right'
                                         compact
                                         onClick={() =>
-                                            router.push(`/play/${lobby.id}`)
+                                            history.push(`/play/${lobby.id}`)
                                         }
                                     >
                                         Join

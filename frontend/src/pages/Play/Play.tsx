@@ -1,23 +1,20 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import CanvasDraw from 'react-canvas-draw'
+import { useLocation } from 'react-router'
 import { io } from 'socket.io-client'
-import { Chat, DrawTools, PostGame, UserList, WordsModal } from '../components'
-import LobbyContextProvider, {
-    ILobbyContext,
-    LobbyContext
-} from '../contexts/Lobby'
-import styles from '../styles/play.module.scss'
+import {
+    Chat,
+    DrawTools,
+    PostGame,
+    UserList,
+    WordsModal
+} from '../../components'
+import { ILobbyContext, LobbyContext } from '../../contexts/Lobby'
+import styles from './Play.module.scss'
 
-const playContext = (): JSX.Element => (
-    <LobbyContextProvider>
-        <Play />
-    </LobbyContextProvider>
-)
-
-const socket = io(process.env.WS || '', { reconnectionAttempts: 1 })
-
-const Play = (): JSX.Element => {
+const Play: React.FC = (): JSX.Element => {
     const {
+        socket,
         setSocket,
         word,
         setWord,
@@ -33,14 +30,22 @@ const Play = (): JSX.Element => {
     const canvasRef = useRef(null)
     const [seconds, setSeconds] = useState<number>(180)
     const [openModal, setOpenModal] = useState<boolean>(false)
+    const { pathname } = useLocation()
 
     useEffect(() => {
-        setSocket(socket)
+        if (!socket) {
+            setSocket(
+                io(process.env.REACT_APP_WS + pathname, {
+                    reconnectionAttempts: 1
+                })
+            )
+        }
+
         let interval: NodeJS.Timeout
 
-        socket.on('newRound', () => setOpenModal(true))
+        socket?.on('newRound', () => setOpenModal(true))
 
-        socket.on('roundStart', (roundSeconds: number) => {
+        socket?.on('roundStart', (roundSeconds: number) => {
             setOpenModal(false)
             setSeconds(roundSeconds)
 
@@ -49,17 +54,18 @@ const Play = (): JSX.Element => {
             }, 1000)
         })
 
-        socket.on('roundEnd', () => {
+        socket?.on('roundEnd', () => {
             clearInterval(interval)
             setIsFinished(true)
             setCanChat(true)
             setCanDraw(false)
         })
 
-        socket.on('hint', (hint: string) => {
+        socket?.on('hint', (hint: string) => {
             setWord(hint)
         })
-    }, [])
+        // eslint-disable-next-line
+    }, [pathname, socket])
 
     return isFinished ? (
         <PostGame />
@@ -93,4 +99,4 @@ const Play = (): JSX.Element => {
     )
 }
 
-export default playContext
+export default Play
