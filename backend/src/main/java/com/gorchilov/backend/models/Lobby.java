@@ -1,41 +1,42 @@
 package com.gorchilov.backend.models;
 
-import com.gorchilov.backend.utils.Dictionary;
+import com.gorchilov.backend.utils.WordDictionary;
 
+import java.util.Collections;
 import java.util.Random;
 import java.util.Set;
 
 public class Lobby {
     private final String id;
     private final int maxRounds;
-    private final int timePerRound;
+    private final int maxRoundTime;
     private final int maxPlayers;
-    private final Dictionary dictionary;
-    private Set<Player> players;
+    private final WordDictionary wordDictionary;
     private int passedRounds;
+    private Set<Player> players = Collections.emptySet();
 
     public Lobby() {
         this.passedRounds = 0;
         this.id = this.generateId();
-        this.maxRounds = 4;
-        this.timePerRound = 150;
+        this.maxRounds = 6;
+        this.maxRoundTime = 150;
         this.maxPlayers = 9;
-        this.dictionary = Dictionary.GENERAL;
+        this.wordDictionary = WordDictionary.GENERAL;
     }
 
-    public Lobby(int maxRounds, int timePerRound, int maxPlayers, Dictionary dictionary) {
+    public Lobby(int maxRounds, int maxRoundTime, int maxPlayers, WordDictionary wordDictionary) {
         this.passedRounds = 0;
         this.id = this.generateId();
-        this.maxRounds = maxRounds;
-        this.timePerRound = timePerRound;
-        this.maxPlayers = maxPlayers;
-        this.dictionary = dictionary;
+        this.maxRounds = Math.min(maxRounds, 10);
+        this.maxRoundTime = Math.min(maxRoundTime, 200);
+        this.maxPlayers = Math.min(maxPlayers, 15);
+        this.wordDictionary = wordDictionary;
     }
 
     private String generateId() {
         // generate random alphanumeric string with length 5
         return new Random().ints(48, 123)
-                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+                .filter(i -> (i <= 57 || i >= 97))
                 .limit(5)
                 .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                 .toString();
@@ -43,6 +44,26 @@ public class Lobby {
 
     public String getId() {
         return id;
+    }
+
+    public int getMaxRounds() {
+        return maxRounds;
+    }
+
+    public int getMaxRoundTime() {
+        return maxRoundTime;
+    }
+
+    public int getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    public int getPassedRounds() {
+        return passedRounds;
+    }
+
+    public WordDictionary getWordDictionary() {
+        return wordDictionary;
     }
 
     public Set<Player> getPlayers() {
@@ -65,6 +86,7 @@ public class Lobby {
     }
 
     private void endGame() {
-
+        this.passedRounds = 0;
+        players.forEach(Player::resetPoints);
     }
 }

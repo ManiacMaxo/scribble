@@ -1,5 +1,5 @@
 package com.gorchilov.backend.utils;
 
-public enum Dictionary {
+public enum WordDictionary {
     GENERAL, MOVIES, BOOKS
 }

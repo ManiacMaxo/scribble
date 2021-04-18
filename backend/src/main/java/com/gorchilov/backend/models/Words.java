@@ -1,6 +1,6 @@
 package com.gorchilov.backend.models;
 
-import com.gorchilov.backend.utils.Dictionary;
+import com.gorchilov.backend.utils.WordDictionary;
 import lombok.Data;
 
 import javax.persistence.Entity;
@@ -14,5 +14,5 @@ public class Words {
     @GeneratedValue()
     private Integer id;
 
-    private Dictionary dictionary;
+    private WordDictionary wordDictionary;
 }

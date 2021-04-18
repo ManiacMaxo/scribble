@@ -13,5 +13,5 @@ public class Game {
     @GeneratedValue()
     private Integer id;
 
-    private String words;
+    private String wordDictionary;
 }
