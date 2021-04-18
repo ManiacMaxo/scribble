@@ -1,17 +1,18 @@
 package com.gorchilov.backend.models;
 
 import com.gorchilov.backend.utils.Dictionary;
+
 import java.util.Random;
 import java.util.Set;
 
 public class Lobby {
     private final String id;
-    private Set<Player> players;
-    private int passedRounds;
     private final int maxRounds;
     private final int timePerRound;
     private final int maxPlayers;
     private final Dictionary dictionary;
+    private Set<Player> players;
+    private int passedRounds;
 
     public Lobby() {
         this.passedRounds = 0;

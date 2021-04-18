@@ -8,9 +8,13 @@ import java.util.ArrayList;
 import java.util.Random;
 
 @Service
-public class IndexService {
+public class LobbyService {
     private ArrayList<Lobby> lobbies;
     private ArrayList<Lobby> privateLobbies;
+
+    public ArrayList<Lobby> getLobbies(int max) {
+        return lobbies;
+    }
 
     public String findLobby() {
         if (this.lobbies.size() == 0) { // create new lobby if none exist
@@ -25,6 +29,13 @@ public class IndexService {
         this.lobbies.add(newLobby);
         return newLobby;
     }
+
+    private Lobby createLobby(int maxRounds, int timePerRound, int maxPlayers, Dictionary dictionary) {
+        Lobby newLobby = new Lobby(maxRounds, timePerRound, maxPlayers, dictionary);
+        this.lobbies.add(newLobby);
+        return newLobby;
+    }
+
 
     public Lobby createPrivateLobby(int maxRounds, int timePerRound, int maxPlayers, Dictionary dictionary) {
         Lobby newLobby = new Lobby(maxRounds, timePerRound, maxPlayers, dictionary);
