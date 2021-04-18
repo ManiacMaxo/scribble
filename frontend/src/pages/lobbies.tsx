@@ -6,7 +6,9 @@ interface Lobby {
     id: string
     name: string
     players: number
+    maxPlayers: number
     round: number
+    maxRounds: number
 }
 
 const Lobbies = (): JSX.Element => {
@@ -16,8 +18,6 @@ const Lobbies = (): JSX.Element => {
     useEffect(() => {
         getLobbies()
     }, [])
-
-    const maxPlayers = 12
 
     const getLobbies = async (max: number = 10) => {
         try {
@@ -29,8 +29,22 @@ const Lobbies = (): JSX.Element => {
             }
         } catch (e) {
             setLobbies([
-                { id: '123', name: 'test lobby', players: 10, round: 2 },
-                { id: 'adsqwe', name: 'test lobby 2', players: 7, round: 2 }
+                {
+                    id: '123',
+                    name: 'test lobby',
+                    players: 10,
+                    maxPlayers: 12,
+                    round: 2,
+                    maxRounds: 12
+                },
+                {
+                    id: 'adsqwe',
+                    name: 'test lobby 2',
+                    players: 7,
+                    maxPlayers: 10,
+                    round: 2,
+                    maxRounds: 6
+                }
             ])
         }
     }
@@ -48,8 +62,9 @@ const Lobbies = (): JSX.Element => {
                         <List.Content>
                             <List.Header>{lobby.name}</List.Header>
                             <List.Description>
-                                players: {lobby.players}/{maxPlayers}
-                                {lobby.players === maxPlayers ? (
+                                players: {lobby.players}/{lobby.maxPlayers}
+                                round: {lobby.round}/{lobby.maxRounds}
+                                {lobby.players === lobby.maxPlayers ? (
                                     <strong>FULL</strong>
                                 ) : (
                                     <Button
