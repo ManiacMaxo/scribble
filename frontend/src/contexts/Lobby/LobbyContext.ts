@@ -31,13 +31,13 @@ export const LobbyContext = React.createContext<ILobbyContext>({
     canChat: true,
     isFinished: false,
     users: [],
-    setSocket: (socket: Socket) => {},
-    setColour: (colour: string) => {},
-    setRadius: (radius: number) => {},
-    setWord: (word: string) => {},
-    setCanDraw: (canDraw: boolean) => {},
-    setCanChat: (canChat: boolean) => {},
-    setIsFinished: (isFinished: boolean) => {},
-    addUser: (user: User) => {},
-    removeUser: (user: User) => {}
+    setSocket: (_socket: Socket) => {},
+    setColour: (_colour: string) => {},
+    setRadius: (_radius: number) => {},
+    setWord: (_word: string) => {},
+    setCanDraw: (_canDraw: boolean) => {},
+    setCanChat: (_canChat: boolean) => {},
+    setIsFinished: (_isFinished: boolean) => {},
+    addUser: (_user: User) => {},
+    removeUser: (_user: User) => {}
 })

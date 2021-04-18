@@ -13,7 +13,7 @@ interface Props {
 const DrawTools: React.FC<Props> = (props) => {
     const { colours, len } = skribblio
 
-    const { colour, setColour, setRadius } = useContext<ILobbyContext>(
+    const { colour, setColour, setRadius, word } = useContext<ILobbyContext>(
         LobbyContext
     )
 
@@ -64,6 +64,7 @@ const DrawTools: React.FC<Props> = (props) => {
                     />
                 </Button.Group>
                 <Slider
+                    className={styles.slider}
                     defaultValue={12}
                     onAfterChange={setRadius}
                     min={2}
@@ -71,7 +72,7 @@ const DrawTools: React.FC<Props> = (props) => {
                 />
             </div>
 
-            <h3>{'word'}</h3>
+            <span>{word}</span>
         </>
     )
 }

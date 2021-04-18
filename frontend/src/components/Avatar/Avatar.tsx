@@ -14,7 +14,7 @@ const Avatar: React.FC<Props> = () => {
     const [selected, setSelected] = useState<number>()
 
     useEffect(() => {
-        setSelected(parseInt(avatarURL.match(/\d/g)?.join('') ?? '0'))
+        setSelected(parseInt(avatarURL?.match(/\d/g)?.join('') ?? '0'))
     }, [avatarURL])
 
     return (

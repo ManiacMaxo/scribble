@@ -4,24 +4,24 @@ import { UserContext } from './UserContext'
 interface Props {}
 
 const UserContextProvider: React.FC<Props> = (props) => {
-    const [username, setUsername] = useState<string>('')
-    const [avatarURL, setAvatarURL] = useState<string>(
-        `/assets/avatars/${Math.random() * 50}.png`
-    )
+    const [username, setUsername] = useState<string | null>(null)
+    const [avatarURL, setAvatarURL] = useState<string | null>(null)
 
     useEffect(() => {
         setUsername(localStorage.getItem('username') ?? '')
+        const rand = Math.round(Math.random() * 50)
         setAvatarURL(
-            localStorage.getItem('avatarURL') ??
-                `/assets/avatars/${Math.random() * 50}.png`
+            localStorage.getItem('avatarURL') ?? `/assets/avatars/${rand}.png`
         )
     }, [])
 
     useEffect(() => {
+        if (username === null) return
         localStorage.setItem('username', username)
     }, [username])
 
     useEffect(() => {
+        if (avatarURL === null) return
         localStorage.setItem('avatarURL', avatarURL)
     }, [avatarURL])
 

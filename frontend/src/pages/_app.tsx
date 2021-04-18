@@ -5,7 +5,7 @@ import 'semantic-ui-css/semantic.min.css'
 import '../styles/global.scss'
 import { Layout } from '../components'
 
-const MyApp = ({ Component, pageProps }: AppProps) => {
+const App = ({ Component, pageProps }: AppProps) => {
     return (
         <UserContextProvider>
             <Layout>
@@ -15,4 +15,4 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     )
 }
 
-export default MyApp
+export default App

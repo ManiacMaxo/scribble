@@ -1,4 +1,4 @@
-import React, { FormEvent, useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Comment, Input } from 'semantic-ui-react'
 import { ILobbyContext, LobbyContext } from '../../contexts/Lobby'
 import { IUserContext, UserContext } from '../../contexts/User'
@@ -13,7 +13,7 @@ interface Message {
     timestamp: string
 }
 
-const Chat: React.FC<Props> = (props) => {
+const Chat: React.FC<Props> = () => {
     const { socket, canChat, setCanChat } = useContext<ILobbyContext>(
         LobbyContext
     )
@@ -37,10 +37,9 @@ const Chat: React.FC<Props> = (props) => {
         setCanChat(false)
     })
 
-    const handleSubmit = (event: FormEvent) => {
+    const handleSubmit = (event: any) => {
         event.preventDefault()
-        console.debug(event.target)
-        if (!event.target[0].value) return
+        if (!event.target[0].value || !canChat) return
 
         const data = {
             username,
@@ -75,7 +74,8 @@ const Chat: React.FC<Props> = (props) => {
                         compact: true,
                         color: 'blue',
                         icon: 'send',
-                        type: 'submit'
+                        type: 'submit',
+                        disabled: !canChat
                     }}
                     placeholder={
                         canChat ? 'Enter your guess' : `You can't chat now`

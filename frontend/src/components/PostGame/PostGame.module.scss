@@ -1,20 +1,8 @@
 .podium {
-    display: flex;
+    display: flex !important;
     justify-content: space-between;
 
-    & > div {
-        font-size: 1.5rem !important;
-        width: 30%;
-        &::before {
-            font-weight: bold;
-            font-size: 1.7rem;
-        }
-    }
-}
-
-.rest {
-    margin-left: 1rem !important;
-    & > * {
-        font-size: 1.35rem !important;
+    & > div::before {
+        font-weight: bold;
     }
 }

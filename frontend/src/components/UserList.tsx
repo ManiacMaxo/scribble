@@ -23,13 +23,11 @@ const UserList: React.FC<Props> = () => {
     return (
         <List relaxed divided>
             {users.map((user) => (
-                <List.Item key={user.name} image>
+                <List.Item key={user.name}>
                     <Image avatar src={user.avatarURL} />
                     <List.Content>
                         <List.Header>{user.name}</List.Header>
-                        <List.Description>
-                            points: {user.points}
-                        </List.Description>
+                        <List.Description>{user.points} pts</List.Description>
                     </List.Content>
                 </List.Item>
             ))}

@@ -1,20 +1,25 @@
+import { useRouter } from 'next/router'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import CanvasDraw from 'react-canvas-draw'
 import { io } from 'socket.io-client'
-import { Chat, DrawTools, PostGame, UserList, WordsModal } from '../components'
+import {
+    Chat,
+    DrawTools,
+    PostGame,
+    UserList,
+    WordsModal
+} from '../../components'
 import LobbyContextProvider, {
     ILobbyContext,
     LobbyContext
-} from '../contexts/Lobby'
-import styles from '../styles/play.module.scss'
+} from '../../contexts/Lobby'
+import styles from '../../styles/play.module.scss'
 
 const playContext = (): JSX.Element => (
     <LobbyContextProvider>
         <Play />
     </LobbyContextProvider>
 )
-
-const socket = io(process.env.WS || '', { reconnectionAttempts: 1 })
 
 const Play = (): JSX.Element => {
     const {
@@ -33,8 +38,15 @@ const Play = (): JSX.Element => {
     const canvasRef = useRef(null)
     const [seconds, setSeconds] = useState<number>(180)
     const [openModal, setOpenModal] = useState<boolean>(false)
+    const router = useRouter()
 
     useEffect(() => {
+        if (!router.isReady) return
+
+        const socket = io(process.env.NEXT_PUBLIC_WS + router.asPath, {
+            reconnectionAttempts: 1
+        })
+
         setSocket(socket)
         let interval: NodeJS.Timeout
 
@@ -59,7 +71,7 @@ const Play = (): JSX.Element => {
         socket.on('hint', (hint: string) => {
             setWord(hint)
         })
-    }, [])
+    }, [router])
 
     return isFinished ? (
         <PostGame />

@@ -1,26 +1,33 @@
-import React, { useContext } from 'react'
-import { Button, Divider, Header, Icon, Input } from 'semantic-ui-react'
+import { useRouter } from 'next/router'
+import React, { useContext, useState } from 'react'
+import { Button, Divider, Header, Icon, Input, Label } from 'semantic-ui-react'
 import { Avatar } from '../components'
 import { IUserContext, UserContext } from '../contexts/User'
 import styles from '../styles/index.module.scss'
 
 const Index = (): JSX.Element => {
     const { username, setUsername } = useContext<IUserContext>(UserContext)
-
-    const changeName = (event: any) => {
-        setUsername(event.target.value)
-    }
+    const [error, setError] = useState<string | null>(null)
+    const router = useRouter()
 
     const joinLobby: any = async () => {
         if (!username) {
-            return console.log('username not provided')
+            const wordAPI = await fetch('/api/word')
+            setUsername(await wordAPI.text())
         }
-        const res: Response = await fetch('/api/find')
-        if (res.ok) {
-            const { lobby } = await res.json()
-            return (window.location.href = `/play?lobby=${lobby}`)
+
+        try {
+            const res: Response = await fetch(
+                process.env.NEXT_PUBLIC_API_URL + '/api/find'
+            )
+            if (res.ok) {
+                const { lobby } = await res.json()
+                return router.push(`/play/${lobby}`)
+            }
+        } catch (e) {
+            return setError('The server is having problems right now')
         }
-        return console.log('lobby not found')
+        return setError('No lobbies found, you should create one')
     }
 
     return (
@@ -34,8 +41,8 @@ const Index = (): JSX.Element => {
             <Input
                 fluid
                 placeholder='Enter your name'
-                value={username}
-                onChange={changeName}
+                value={username ?? ''}
+                onChange={(event) => setUsername(event.target.value)}
                 spellCheck='false'
             />
             <Divider horizontal>play</Divider>
@@ -43,13 +50,16 @@ const Index = (): JSX.Element => {
                 <Button primary onClick={joinLobby}>
                     join lobby
                 </Button>
-                <Button
-                    secondary
-                    onClick={() => (window.location.href = '/create')}
-                >
+                <Button secondary onClick={() => router.push('/create')}>
                     create lobby
                 </Button>
             </Button.Group>
+
+            {error && (
+                <Label color='red' horizontal className={styles.error}>
+                    {error}
+                </Label>
+            )}
 
             <span className={styles.footer}>
                 Made with love by{' '}

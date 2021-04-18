@@ -15,7 +15,7 @@ const PostGame: React.FC<Props> = () => {
             <Header as='h1' textAlign='center'>
                 Final Rankings
             </Header>
-            <List horizontal ordered className={styles.podium}>
+            <List horizontal ordered size='massive' className={styles.podium}>
                 {orderedUsers.slice(0, 3).map((user) => (
                     <List.Item key={user.id}>
                         <Image src={user.avatarURL} avatar />
@@ -26,9 +26,9 @@ const PostGame: React.FC<Props> = () => {
                     </List.Item>
                 ))}
             </List>
-            <List className={styles.rest}>
+            <List size='large'>
                 {orderedUsers.slice(3).map((user) => (
-                    <List.Item>
+                    <List.Item key={user.id}>
                         <Image src={user.avatarURL} avatar />
                         <List.Content>
                             <List.Header>{user.name}</List.Header>

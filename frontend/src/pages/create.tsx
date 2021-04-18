@@ -68,7 +68,7 @@ const Create = (): JSX.Element => {
                                 placeholder='Select max round time'
                                 options={timesOptions}
                                 value={time}
-                                onChange={(e, data) =>
+                                onChange={(_event, data) =>
                                     setTime(
                                         typeof data.value === 'number'
                                             ? data.value
@@ -82,7 +82,7 @@ const Create = (): JSX.Element => {
                                 placeholder='Select number of rounds'
                                 options={roundsOptions}
                                 value={rounds}
-                                onChange={(e, data) =>
+                                onChange={(_event, data) =>
                                     setRounds(
                                         typeof data.value === 'number'
                                             ? data.value

@@ -3,6 +3,7 @@
 .footer {
     margin: 0.5rem auto 0;
     width: fit-content;
+
     color: $shadow-color;
     font-size: 10px;
     text-align: center;
@@ -11,4 +12,10 @@
     a:hover {
         text-decoration: underline;
     }
+}
+
+.error {
+    width: fit-content;
+
+    margin: 1rem auto 0 !important;
 }

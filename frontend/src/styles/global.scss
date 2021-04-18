@@ -34,11 +34,13 @@ a {
 }
 
 .default-card {
-    width: min(600px, 90vw);
     background: #f1f3f6;
+    width: min(600px, 90vw);
     padding: 2rem 2rem 1rem;
+
     display: flex;
     flex-direction: column;
+
     border-radius: $border-radius;
     box-shadow: $neomorphic-shadow;
 
