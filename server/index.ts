@@ -3,8 +3,7 @@
 import express from 'express'
 import { createServer } from 'http'
 import next from 'next'
-import nextBuild from 'next/dist/build'
-import { join, resolve } from 'path'
+import { resolve } from 'path'
 import { Server } from 'socket.io'
 import apiRouter from './api'
 import { ServerLobby } from './ServerLobby'
@@ -22,32 +21,23 @@ app.use(express.json())
 const server = createServer(app)
 export const lobbies: Map<string, ServerLobby> = new Map()
 
-if (!process.env.NEXT_BUILD) {
-    const nextApp = next({ dev })
-    const nextHandler = nextApp.getRequestHandler()
+const nextApp = next({ dev })
+const nextHandler = nextApp.getRequestHandler()
 
-    app.use('/api', apiRouter)
-    app.get('*', (req, res) => nextHandler(req, res))
+app.use('/api', apiRouter)
+app.get('*', (req, res) => nextHandler(req, res))
 
-    const io = new Server(server, {
-        pingInterval: 10000,
-        pingTimeout: 5000,
-        cookie: !dev
-    })
+const io = new Server(server, {
+    pingInterval: 10000,
+    pingTimeout: 5000,
+    cookie: !dev
+})
+socketEvents(io, lobbies)
 
-    socketEvents(io, lobbies)
-    ;(async () => {
-        await nextApp.prepare()
-        console.log('NextJS started')
+nextApp.prepare().then(() => {
+    console.log('NextJS started')
 
-        server.listen(port, async () => {
-            console.log(`Server listening on ${port}...`)
-        })
-    })()
-} else {
     server.listen(port, async () => {
-        console.log('NextJS is now building...')
-        await nextBuild(join(__dirname, '../src/'))
-        process.exit()
+        console.log(`Server listening on ${port}...`)
     })
-}
+})

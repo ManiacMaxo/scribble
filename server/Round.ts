@@ -1,19 +1,20 @@
-import { Namespace } from 'socket.io'
-import { User } from './types'
+import { Namespace, Socket } from 'socket.io'
+import { RoundUser, User } from './types'
 
 export class Round {
     word: string | null
     hint: string | null
     timer: number
     maxTime: number
-    drawing?: User
+    drawing?: RoundUser
     correct: number
-    passed: User[]
-    notPassed: User[]
+    passed: RoundUser[]
+    notPassed: RoundUser[]
     nsp: Namespace
 
     constructor(
         users: Map<string, User>,
+        sockets: Map<string, Socket>,
         maxTime: number,
         namespace: Namespace
     ) {
@@ -22,7 +23,10 @@ export class Round {
 
         this.correct = 0
         this.passed = []
-        this.notPassed = Array.from(users.values())
+        this.notPassed = Array.from(users.values()).map((u) => ({
+            ...u,
+            socket: sockets.get(u.id) as Socket
+        }))
 
         this.word = null
         this.hint = null
@@ -30,9 +34,9 @@ export class Round {
         this.nsp = namespace
     }
 
-    addUser(user: User) {
+    addUser(user: User, socket: Socket) {
         console.log('Round.addUser: %s', user.name)
-        this.notPassed.push(user)
+        this.notPassed.push({ ...user, socket })
     }
 
     removeUser(user: User) {

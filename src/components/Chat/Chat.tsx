@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Comment, Input } from 'semantic-ui-react'
 import { ILobbyContext, LobbyContext } from '../../contexts/Lobby'
 import { IUserContext, UserContext } from '../../contexts/User'
@@ -13,19 +13,20 @@ const Chat: React.FC<Props> = () => {
     )
     const { name, avatarURL } = useContext<IUserContext>(UserContext)
     const [messages, setMessages] = useState<Message[]>([])
+    const bottomRef = useRef<any>(null)
+
+    const maxChatHistory = 30
 
     useEffect(() => {
         if (!socket) return
         socket.on('message', (message: Message) => {
-            const timestamp: string = new Date(message.timestamp)
-                .toTimeString()
-                .slice(0, 5)
-
-            setMessages((m) => [
-                ...m,
+            setMessages((prev) => [
+                ...prev.slice(-maxChatHistory + 1),
                 {
                     ...message,
-                    timestamp
+                    timestamp: new Date(message.timestamp)
+                        .toTimeString()
+                        .slice(0, 5)
                 }
             ])
         })
@@ -35,12 +36,17 @@ const Chat: React.FC<Props> = () => {
         })
     }, [socket])
 
+    useEffect(() => {
+        bottomRef.current?.scrollIntoView()
+    }, [messages, bottomRef])
+
     const handleSubmit = (event: any) => {
         event.preventDefault()
         if (!event.target[0].value || !canChat) return
 
         const data = {
             username: name,
+
             avatarURL,
             content: event.target[0].value
         }
@@ -65,6 +71,7 @@ const Chat: React.FC<Props> = () => {
                         </Comment.Content>
                     </Comment>
                 ))}
+                <div ref={bottomRef} />
             </Comment.Group>
             <form onSubmit={handleSubmit}>
                 <Input

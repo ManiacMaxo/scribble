@@ -55,6 +55,17 @@ const LobbyContextProvider: React.FC<Props> = (props) => {
         socket.once('error', () => socket.disconnect())
 
         socket.on('disconnect', () => setUsers([]))
+
+        socket.on('userCorrect', (data: User) => {
+            setUsers((prev) => {
+                let adjusted: User[] = []
+                prev.forEach((u) => {
+                    if (u.id == data.id) u.points = data.points
+                    adjusted.push(u)
+                })
+                return adjusted
+            })
+        })
     }, [socket])
 
     return (

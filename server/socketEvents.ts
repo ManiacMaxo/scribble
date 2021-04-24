@@ -30,6 +30,10 @@ const socketEvents = (io: Server, lobbies: Map<string, ServerLobby>) => {
             lobby.onMessage(message, user, socket)
         )
         socket.on('draw', (data) => namespace.emit('draw', data))
+
+        socket.on('start', () => {
+            lobby.run()
+        })
     })
 }
 

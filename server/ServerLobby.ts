@@ -8,6 +8,7 @@ export class ServerLobby {
     name: string
     users: Map<string, User>
     maxUsers: number
+    sockets: Map<string, Socket>
     round: number
     currentRound?: Round
     maxRounds: number
@@ -26,6 +27,7 @@ export class ServerLobby {
         this.name = `Lobby ${this.id}`
         this.users = new Map()
         this.maxUsers = maxUsers
+        this.sockets = new Map()
         this.round = 0
         this.maxRounds = maxRounds
         this.maxTime = maxTime
@@ -46,21 +48,29 @@ export class ServerLobby {
         socket.emit('users', Array.from(this.users.values()))
         this.nsp?.emit('userJoin', user)
 
-        this.currentRound?.addUser(user)
+        this.currentRound?.addUser(user, socket)
+        this.sockets.set(user.id, socket)
         this.users.set(user.id, user)
     }
 
     removeUser(user: User) {
         this.users.delete(user.id)
+        this.sockets.delete(user.id)
         this.currentRound?.removeUser(user)
         this.nsp?.emit('userLeave', user)
     }
 
     async run() {
         console.log('Lobby.run')
-        if (!this.nsp) return
+        if (!this.nsp || this.users.size < 3) return
+
         for (; this.round < this.maxRounds; this.round++) {
-            this.currentRound = new Round(this.users, this.maxTime, this.nsp)
+            this.currentRound = new Round(
+                this.users,
+                this.sockets,
+                this.maxTime,
+                this.nsp
+            )
             await this.currentRound.run()
         }
         this.reset()
