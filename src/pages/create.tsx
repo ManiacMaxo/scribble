@@ -12,11 +12,7 @@ const Create: React.FC = (): JSX.Element => {
 
     useEffect(() => {
         if (!url) return
-        setSocket(
-            io(process.env.REACT_APP_WS + `/play/${url}`, {
-                reconnectionAttempts: 1
-            })
-        )
+        setSocket(io(`/${url}`, { reconnectionAttempts: 1 }))
         // eslint-disable-next-line
     }, [url])
 

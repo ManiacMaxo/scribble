@@ -6,14 +6,14 @@ import { IUserContext, UserContext } from '../contexts/User'
 import styles from '../styles/home.module.scss'
 
 const Home: React.FC = (): JSX.Element => {
-    const { username, setUsername } = useContext<IUserContext>(UserContext)
+    const { name, setName } = useContext<IUserContext>(UserContext)
     const [error, setError] = useState<string | null>(null)
     const router = useRouter()
 
     const joinLobby: any = async () => {
-        if (!username) {
+        if (!name) {
             const wordAPI = await fetch('/api/word')
-            setUsername(await wordAPI.text())
+            setName(await wordAPI.text())
         }
 
         try {
@@ -39,8 +39,8 @@ const Home: React.FC = (): JSX.Element => {
             <Input
                 fluid
                 placeholder='Enter your name'
-                value={username ?? ''}
-                onChange={(event) => setUsername(event.target.value)}
+                value={name ?? ''}
+                onChange={(event) => setName(event.target.value)}
                 spellCheck='false'
             />
             <Divider horizontal>play</Divider>

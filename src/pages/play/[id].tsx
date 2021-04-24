@@ -10,7 +10,7 @@ import {
     WordsModal
 } from '../../components'
 import { ILobbyContext, LobbyContext } from '../../contexts/Lobby'
-import styles from '../styles/play.module.scss'
+import styles from '../../styles/play.module.scss'
 
 const Play: React.FC = (): JSX.Element => {
     const {
@@ -30,11 +30,13 @@ const Play: React.FC = (): JSX.Element => {
     const canvasRef = useRef(null)
     const [seconds, setSeconds] = useState<number>(180)
     const [openModal, setOpenModal] = useState<boolean>(false)
-    const { id } = useRouter().query
+    const router = useRouter()
+    const { id } = router.query
 
     useEffect(() => {
+        if (!id) return
         if (!socket) {
-            setSocket(io(`/ws/${id}`, { reconnectionAttempts: 1 }))
+            setSocket(io(`/${id}`, { reconnectionAttempts: 1 }))
             return
         }
 
@@ -61,6 +63,9 @@ const Play: React.FC = (): JSX.Element => {
         socket.on('hint', (hint: string) => {
             setWord(hint)
         })
+
+        socket.once('error', () => router.push('/'))
+
         // eslint-disable-next-line
     }, [id, socket])
 

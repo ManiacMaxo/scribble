@@ -1,15 +1,15 @@
 import React from 'react'
 
 export interface IUserContext {
-    username: string | null
+    name: string | null
     avatarURL: string | null
-    setUsername: (name: string) => void
+    setName: (name: string) => void
     setAvatarURL: (url: string) => void
 }
 
 export const UserContext = React.createContext<IUserContext>({
-    username: '',
+    name: '',
     avatarURL: '',
-    setUsername: (_name: string) => {},
+    setName: (_name: string) => {},
     setAvatarURL: (_url: string) => {}
 })
