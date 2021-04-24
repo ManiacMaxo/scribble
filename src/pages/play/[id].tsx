@@ -27,9 +27,10 @@ const Play: React.FC = (): JSX.Element => {
         canDraw
     } = useContext<ILobbyContext>(LobbyContext)
 
-    const canvasRef = useRef(null)
+    const canvasRef = useRef<any>(null)
     const [seconds, setSeconds] = useState<number>(180)
     const [openModal, setOpenModal] = useState<boolean>(false)
+    const [data, setData] = useState<string>('')
     const router = useRouter()
     const { id } = router.query
 
@@ -38,7 +39,7 @@ const Play: React.FC = (): JSX.Element => {
         if (!socket) return setSocket(io(`/${id}`))
 
         socket.once('error', () => router.push('/'))
-        socket.on('newTurn', () => setOpenModal(true))
+        socket.on('drawing', () => setOpenModal(true))
         socket.on('timer', (time: number) => setSeconds(time))
         socket.on('hint', (hint: string) => setWord(hint))
 
@@ -50,8 +51,18 @@ const Play: React.FC = (): JSX.Element => {
             setCanDraw(false)
         })
 
+        socket.on('draw', (data) => {
+            if (canDraw) return
+            canvasRef.current.loadSaveData(data, true)
+        })
+
         // eslint-disable-next-line
     }, [id, socket])
+
+    useEffect(() => {
+        console.log(data)
+        socket?.emit('draw', data)
+    }, [data])
 
     return isFinished ? (
         <PostGame />
@@ -79,6 +90,7 @@ const Play: React.FC = (): JSX.Element => {
                 canvasWidth='100%'
                 canvasHeight='100%'
                 disabled={!canDraw}
+                onChange={(canvas) => setData(canvas.getSaveData())}
             />
             <Chat />
             <WordsModal open={openModal} />

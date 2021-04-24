@@ -1,19 +1,19 @@
 {
   "name": "scribble",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "Victor Gorchilov",
   "private": true,
   "license": "MIT",
   "scripts": {
-    "build": "NODE_ENV=production yarn build:server && NEXT_BUILD=true node dist/index.js",
+    "build": "yarn build:server && yarn build:next",
     "build:next": "next build",
     "build:server": "tsc --project tsconfig.server.json",
     "create:component": "node ./helper_scripts/commands/create_component.js",
     "create:page": "node ./helper_scripts/commands/create_page.js",
-    "serve": "NODE_ENV=production node dist/index.js",
     "dev": "nodemon dev.js",
     "format": "prettier --write .",
     "lint": "eslint . --ext ts --ext tsx --ext js",
+    "start": "NODE_ENV=production node build/index.js",
     "type-check": "tsc --pretty --noEmit"
   },
   "husky": {
@@ -45,7 +45,7 @@
     "react-copy-to-clipboard": "^5.0.3",
     "react-dom": "^17.0.2",
     "react-icons": "^4.2.0",
-    "react-responsive-carousel": "^3.2.18",
+    "react-responsive-carousel": "3.2.11",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^2.0.3",
     "socket.io": "^4.0.1",
