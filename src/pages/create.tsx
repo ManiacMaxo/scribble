@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Button, Input, Step } from 'semantic-ui-react'
+import { CopyToClipboard } from 'react-copy-to-clipboard'
+import { Button, Icon, Input, Step } from 'semantic-ui-react'
 import { io } from 'socket.io-client'
 import { LobbyCreator, LobbyUsers } from '../components'
 import { LobbyContext } from '../contexts/Lobby'
@@ -7,13 +8,14 @@ import { LobbyContext } from '../contexts/Lobby'
 const Create: React.FC = (): JSX.Element => {
     const [isCreating, setIsCreating] = useState<boolean>(true)
     const [url, setUrl] = useState<string>('')
+    const [gameLink, setGameLink] = useState<string>('')
 
     const { setSocket } = useContext(LobbyContext)
 
     useEffect(() => {
         if (!url) return
-        setSocket(io(`/${url}`, { reconnectionAttempts: 1 }))
-        // eslint-disable-next-line
+        setSocket(io(`/${url}`))
+        setGameLink(`${getDomain()}/play/${url}`)
     }, [url])
 
     const getDomain = () => {
@@ -51,14 +53,20 @@ const Create: React.FC = (): JSX.Element => {
                     <>
                         <LobbyUsers users={[]} isOwner />
                         <Input
-                            value={`${getDomain()}/play/${url}`}
+                            value={gameLink}
                             fluid
-                            action={{
-                                color: 'blue',
-                                labelPosition: 'right',
-                                icon: 'copy',
-                                content: 'Copy'
-                            }}
+                            action={
+                                <CopyToClipboard text={gameLink}>
+                                    <Button
+                                        color='blue'
+                                        icon
+                                        labelPosition='right'
+                                    >
+                                        Copy
+                                        <Icon name='copy' />
+                                    </Button>
+                                </CopyToClipboard>
+                            }
                         />
                         <Button fluid onClick={handleStart}>
                             Start

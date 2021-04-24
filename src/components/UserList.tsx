@@ -1,24 +1,11 @@
 import React, { useContext } from 'react'
 import { Image, List } from 'semantic-ui-react'
 import { ILobbyContext, LobbyContext } from '../contexts/Lobby'
-import { User } from '../types'
 
 interface Props {}
 
 const UserList: React.FC<Props> = () => {
-    const { users, socket, addUser, removeUser } = useContext<ILobbyContext>(
-        LobbyContext
-    )
-
-    socket?.on('userJoin', (data: User) => {
-        console.log('user joined ' + data)
-        addUser(data)
-    })
-
-    socket?.on('userLeave', (data: User) => {
-        console.log('user left ' + data)
-        removeUser(data)
-    })
+    const { users } = useContext<ILobbyContext>(LobbyContext)
 
     return (
         <List relaxed divided>

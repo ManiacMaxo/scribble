@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { Button, List } from 'semantic-ui-react'
@@ -13,10 +14,9 @@ const Lobbies: React.FC = (): JSX.Element => {
 
     const getLobbies = async (max: number = 10) => {
         try {
-            const res = await fetch(`/api/lobbies?m=${max}`)
-            if (res.ok) {
-                setLobbies(await res.json())
-            }
+            const res = await axios(`/api/lobbies?m=${max}`)
+            if (res.status !== 200) return
+            setLobbies(res.data)
         } catch (e) {}
     }
 
@@ -35,19 +35,22 @@ const Lobbies: React.FC = (): JSX.Element => {
                             <List.Description>
                                 players: {lobby.players}/{lobby.maxPlayers}{' '}
                                 round: {lobby.round}/{lobby.maxRounds}
-                                {lobby.players === lobby.maxPlayers ? (
-                                    <strong>FULL</strong>
-                                ) : (
-                                    <Button
-                                        floated='right'
-                                        compact
-                                        onClick={() =>
-                                            router.push(`/play/${lobby.id}`)
-                                        }
-                                    >
-                                        Join
-                                    </Button>
-                                )}
+                                <Button
+                                    floated='right'
+                                    compact
+                                    onClick={() =>
+                                        router.push(`/play/${lobby.id}`)
+                                    }
+                                    disabled={
+                                        lobby.players === lobby.maxPlayers
+                                    }
+                                >
+                                    {lobby.players === lobby.maxPlayers ? (
+                                        <strong>FULL</strong>
+                                    ) : (
+                                        'Join'
+                                    )}
+                                </Button>
                             </List.Description>
                         </List.Content>
                     </List.Item>

@@ -35,36 +35,20 @@ const Play: React.FC = (): JSX.Element => {
 
     useEffect(() => {
         if (!id) return
-        if (!socket) {
-            setSocket(io(`/${id}`, { reconnectionAttempts: 1 }))
-            return
-        }
+        if (!socket) return setSocket(io(`/${id}`))
 
-        let interval: NodeJS.Timeout
+        socket.once('error', () => router.push('/'))
+        socket.on('newTurn', () => setOpenModal(true))
+        socket.on('timer', (time: number) => setSeconds(time))
+        socket.on('hint', (hint: string) => setWord(hint))
 
-        socket.on('newRound', () => setOpenModal(true))
+        socket.on('turnStart', () => setOpenModal(false))
 
-        socket.on('roundStart', (roundSeconds: number) => {
-            setOpenModal(false)
-            setSeconds(roundSeconds)
-
-            interval = setInterval(() => {
-                setSeconds((prev: number) => prev - 1)
-            }, 1000)
-        })
-
-        socket.on('roundEnd', () => {
-            clearInterval(interval)
+        socket.on('turnEnd', () => {
             setIsFinished(true)
             setCanChat(true)
             setCanDraw(false)
         })
-
-        socket.on('hint', (hint: string) => {
-            setWord(hint)
-        })
-
-        socket.once('error', () => router.push('/'))
 
         // eslint-disable-next-line
     }, [id, socket])
@@ -92,7 +76,8 @@ const Play: React.FC = (): JSX.Element => {
                 lazyRadius={0}
                 brushRadius={radius}
                 brushColor={colour}
-                style={{ width: '100%', height: '100%' }}
+                canvasWidth='100%'
+                canvasHeight='100%'
                 disabled={!canDraw}
             />
             <Chat />
