@@ -97,8 +97,10 @@ export class ServerLobby {
 
     onMessage(message: any, user: User, socket: Socket) {
         console.log('Lobby.onMessage from %s', user.name)
-        if (!this.currentRound) return
-        if (message.content.trim() === this.currentRound.word) {
+        if (
+            this.currentRound &&
+            message.content.trim() === this.currentRound.word
+        ) {
             socket.emit('correct')
             this.currentRound.correct++
             user.points += this.calcScore()
@@ -107,9 +109,8 @@ export class ServerLobby {
         }
 
         this.nsp?.emit('message', {
+            ...message,
             id: v4(),
-            username: message.name,
-            content: message.content,
             timestamp: new Date().toString()
         })
     }

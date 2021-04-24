@@ -12,7 +12,7 @@ const Lobbies: React.FC = (): JSX.Element => {
         getLobbies()
     }, [])
 
-    const getLobbies = async (max: number = 10) => {
+    const getLobbies = async (max: number = 20) => {
         try {
             const res = await axios(`/api/lobbies?m=${max}`)
             if (res.status !== 200) return

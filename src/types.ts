@@ -17,6 +17,7 @@ export interface Lobby {
 export interface Message {
     id: string
     username: string
+    avatarURL: string
     content: string
     timestamp: string
 }

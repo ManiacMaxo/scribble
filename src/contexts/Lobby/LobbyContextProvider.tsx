@@ -7,21 +7,21 @@ import { LobbyContext } from './LobbyContext'
 interface Props {}
 
 const LobbyContextProvider: React.FC<Props> = (props) => {
-    const [canDraw, setCanDraw] = useState<boolean>(true)
+    const [canDraw, setCanDraw] = useState<boolean>(false)
     const [canChat, setCanChat] = useState<boolean>(!canDraw)
+
+    const [colour, setColour] = useState<string>('black')
+    const [radius, setRadius] = useState<number>(12)
+    const [word, setWord] = useState<string>('')
+
     const [isFinished, setIsFinished] = useState<boolean>(false)
 
     const [users, setUsers] = useState<User[]>([])
-
     const [socket, setSocket] = useState<Socket | undefined>(undefined)
-    const [colour, setColour] = useState<string>('black')
-    const [radius, setRadius] = useState<number>(12)
-    const [word, setWord] = useState<string>('philantropy')
 
     const { name, avatarURL } = useContext(UserContext)
 
     const addUser = (user: User) => {
-        console.log('adding user %s', user.name)
         setUsers((prev) => [...prev, user])
     }
 
@@ -30,35 +30,32 @@ const LobbyContextProvider: React.FC<Props> = (props) => {
     }
 
     useEffect(() => {
-        socket?.onAny((event) => {
+        if (!socket) return
+        socket.onAny((event) => {
             console.log(`got ${event}`)
         })
-    
-        socket?.once('connect', () => {
+
+        socket.once('connect', () => {
             socket.emit('user', { name, avatarURL })
         })
-    
-        socket?.once('users', (data: User[]) => {
+
+        socket.once('users', (data: User[]) => {
             setUsers(data)
         })
-    
-        socket?.on('userJoin', (data: User) => {
-            console.log('user joined ' + data)
+
+        socket.on('userJoin', (data: User) => {
             if (users.find((u) => u.id === data.id)) return
             addUser(data)
         })
-    
-        socket?.on('userLeave', (data: User) => {
-            console.log('user left ' + data)
+
+        socket.on('userLeave', (data: User) => {
             removeUser(data)
         })
-    
-        socket?.once('error', () => socket.disconnect())
-    
-        socket?.on('disconnect', () => setUsers([]))
 
+        socket.once('error', () => socket.disconnect())
+
+        socket.on('disconnect', () => setUsers([]))
     }, [socket])
-
 
     return (
         <LobbyContext.Provider

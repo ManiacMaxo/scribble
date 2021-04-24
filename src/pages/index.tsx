@@ -1,10 +1,10 @@
+import axios from 'axios'
 import { useRouter } from 'next/router'
 import React, { useContext, useState } from 'react'
 import { Button, Divider, Header, Icon, Input, Label } from 'semantic-ui-react'
 import { Avatar } from '../components'
 import { IUserContext, UserContext } from '../contexts/User'
 import styles from '../styles/home.module.scss'
-import axios from 'axios'
 
 const Home: React.FC = (): JSX.Element => {
     const { name, setName } = useContext<IUserContext>(UserContext)
