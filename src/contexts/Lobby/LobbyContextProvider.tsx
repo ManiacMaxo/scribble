@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Socket } from 'socket.io-client'
 import { User } from '../../types'
 import { UserContext } from '../User'
@@ -7,7 +7,7 @@ import { LobbyContext } from './LobbyContext'
 interface Props {}
 
 const LobbyContextProvider: React.FC<Props> = (props) => {
-    const [canDraw, setCanDraw] = useState<boolean>(false)
+    const [canDraw, setCanDraw] = useState<boolean>(true)
     const [canChat, setCanChat] = useState<boolean>(!canDraw)
     const [isFinished, setIsFinished] = useState<boolean>(false)
 
@@ -21,32 +21,44 @@ const LobbyContextProvider: React.FC<Props> = (props) => {
     const { name, avatarURL } = useContext(UserContext)
 
     const addUser = (user: User) => {
-        if (users.some((u) => u.id === user.id)) return
+        console.log('adding user %s', user.name)
         setUsers((prev) => [...prev, user])
     }
 
     const removeUser = (user: User) => {
-        setUsers((prev) => prev.filter((u) => u !== user))
+        setUsers((prev) => prev.filter((u) => u.id !== user.id))
     }
 
-    socket?.onAny((event) => {
-        console.log(`got ${event}`)
-    })
+    useEffect(() => {
+        socket?.onAny((event) => {
+            console.log(`got ${event}`)
+        })
+    
+        socket?.once('connect', () => {
+            socket.emit('user', { name, avatarURL })
+        })
+    
+        socket?.once('users', (data: User[]) => {
+            setUsers(data)
+        })
+    
+        socket?.on('userJoin', (data: User) => {
+            console.log('user joined ' + data)
+            if (users.find((u) => u.id === data.id)) return
+            addUser(data)
+        })
+    
+        socket?.on('userLeave', (data: User) => {
+            console.log('user left ' + data)
+            removeUser(data)
+        })
+    
+        socket?.once('error', () => socket.disconnect())
+    
+        socket?.on('disconnect', () => setUsers([]))
 
-    socket?.once('connect', () => {
-        socket.emit('user', { name, avatarURL })
-    })
+    }, [socket])
 
-    socket?.once('users', (data: User[]) => {
-        setUsers(data)
-    })
-
-    socket?.once('id', (data: string) => {
-        // console.log('id ' + data)
-        localStorage.setItem('id', data)
-    })
-
-    socket?.once('error', () => socket.disconnect())
 
     return (
         <LobbyContext.Provider
@@ -66,8 +78,7 @@ const LobbyContextProvider: React.FC<Props> = (props) => {
                 setCanDraw,
                 setCanChat,
                 setIsFinished,
-                addUser,
-                removeUser
+                setUsers
             }}
         >
             {props.children}

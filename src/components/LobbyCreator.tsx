@@ -1,5 +1,6 @@
 import React, { FormEvent, useState } from 'react'
 import { Button, Checkbox, Form, Select } from 'semantic-ui-react'
+import axios from 'axios'
 
 interface Props {
     setUrl: any
@@ -31,20 +32,13 @@ const LobbyCreator: React.FC<Props> = (props) => {
     const handleCreate = async (e: FormEvent) => {
         e.preventDefault()
 
-        const res = await fetch('/api/create', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-
-            body: JSON.stringify({
-                time,
-                rounds,
-                players: parseInt(players),
-                isPrivate
-            })
+        const res = await axios.post('/api/create', {
+            time,
+            rounds,
+            players: parseInt(players),
+            isPrivate
         })
-        props.setUrl(await res.text())
+        props.setUrl(res.data)
         props.setIsCreating(false)
     }
 

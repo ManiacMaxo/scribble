@@ -18,8 +18,7 @@ export interface ILobbyContext {
     setCanDraw: (canDraw: boolean) => void
     setCanChat: (canChat: boolean) => void
     setIsFinished: (isFinished: boolean) => void
-    addUser: (user: User) => void
-    removeUser: (user: User) => void
+    setUsers: (users: User[]) => void
 }
 
 export const LobbyContext = React.createContext<ILobbyContext>({
@@ -38,6 +37,5 @@ export const LobbyContext = React.createContext<ILobbyContext>({
     setCanDraw: (_canDraw: boolean) => {},
     setCanChat: (_canChat: boolean) => {},
     setIsFinished: (_isFinished: boolean) => {},
-    addUser: (_user: User) => {},
-    removeUser: (_user: User) => {}
+    setUsers: (_users: User[]) => {}
 })

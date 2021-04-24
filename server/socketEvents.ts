@@ -1,8 +1,9 @@
 import { Server, Socket } from 'socket.io'
 import { v4 } from 'uuid'
-import { Message, ServerLobby, User } from '../src/types'
+import { User } from './types'
+import { ServerLobby } from './ServerLobby'
 
-const socketEvents = (io: Server, lobbies: ServerLobby[]) => {
+const socketEvents = (io: Server, lobbies: Map<string, ServerLobby>) => {
     const namespaces = io.of(/^\/\w+$/)
 
     namespaces.on('connection', (socket: Socket) => {
@@ -12,34 +13,23 @@ const socketEvents = (io: Server, lobbies: ServerLobby[]) => {
 
         console.log('connection at', namespaceName)
 
-        const lobby = lobbies.find((l) => l.id === namespaceName)
+        const lobby = lobbies.get(namespaceName)
         if (!lobby) return socket.emit('error')
+        lobby.init(namespace)
 
-        socket.onAny((event, data) => {
-            console.log(event, data)
-        })
+        socket.onAny((event, data) => console.log(event, data))
 
         socket.once('user', ({ name, avatarURL }) => {
             user = { name, avatarURL, id: v4(), points: 0 }
-
-            socket.emit('users', lobby.players)
-            namespace.emit('userJoin', user)
+            lobby.addUser(user, socket)
         })
 
-        socket.once('disconnect', () => {
-            namespace.emit('userLeave', user)
-        })
+        socket.once('disconnect', () => lobby.removeUser(user))
 
-        socket.on('message', (data) => {
-            const message: Message = {
-                id: v4(),
-                username: data.name,
-                content: data.content,
-                timestamp: new Date().toString()
-            }
-
-            namespace.emit('message', message)
-        })
+        socket.on('message', (message) =>
+            lobby.onMessage(message, user, socket)
+        )
+        socket.on('draw', (data) => namespace.emit('draw', data))
     })
 }
 
