@@ -15,10 +15,12 @@ const Chat: React.FC<Props> = () => {
     const [messages, setMessages] = useState<Message[]>([])
 
     useEffect(() => {
-        socket?.on('message', (message: Message) => {
+        if (!socket) return
+        socket.on('message', (message: Message) => {
             const timestamp: string = new Date(message.timestamp)
                 .toTimeString()
                 .slice(0, 5)
+
             setMessages((m) => [
                 ...m,
                 {
@@ -28,7 +30,7 @@ const Chat: React.FC<Props> = () => {
             ])
         })
 
-        socket?.on('correct', () => {
+        socket.on('correct', () => {
             setCanChat(false)
         })
     }, [socket])
@@ -38,7 +40,8 @@ const Chat: React.FC<Props> = () => {
         if (!event.target[0].value || !canChat) return
 
         const data = {
-            name,
+            username: name,
+            avatarURL,
             content: event.target[0].value
         }
         event.target[0].value = ''
@@ -50,7 +53,7 @@ const Chat: React.FC<Props> = () => {
             <Comment.Group className={styles.chat}>
                 {messages.map((message) => (
                     <Comment key={message.id}>
-                        <Comment.Avatar src={avatarURL || ''} />
+                        <Comment.Avatar src={message.avatarURL} />
                         <Comment.Content>
                             <Comment.Author as='span'>
                                 {message.username}

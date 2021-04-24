@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Button, Modal } from 'semantic-ui-react'
 import { ILobbyContext, LobbyContext } from '../contexts/Lobby'
 
@@ -12,11 +12,14 @@ const WordsModal: React.FC<Props> = (props) => {
     )
     const [words, setWords] = useState<string[]>([])
 
-    socket?.on('newRound', (data: string[]) => {
-        setCanDraw(true)
-        setCanChat(false)
-        setWords(data)
-    })
+    useEffect(() => {
+        if (!socket) return
+        socket.on('newRound', (data: string[]) => {
+            setCanDraw(true)
+            setCanChat(false)
+            setWords(data)
+        })
+    }, [socket])
 
     const submitWord = (event: any) => {
         socket?.emit('word', event.target.value)
