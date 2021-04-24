@@ -4,11 +4,11 @@ import { UserContext } from './UserContext'
 interface Props {}
 
 const UserContextProvider: React.FC<Props> = (props) => {
-    const [username, setUsername] = useState<string | null>(null)
+    const [name, setName] = useState<string | null>(null)
     const [avatarURL, setAvatarURL] = useState<string | null>(null)
 
     useEffect(() => {
-        setUsername(localStorage.getItem('username') ?? '')
+        setName(localStorage.getItem('name') ?? '')
         const rand = Math.round(Math.random() * 50)
         setAvatarURL(
             localStorage.getItem('avatarURL') ?? `/assets/avatars/${rand}.png`
@@ -16,9 +16,9 @@ const UserContextProvider: React.FC<Props> = (props) => {
     }, [])
 
     useEffect(() => {
-        if (username === null) return
-        localStorage.setItem('username', username)
-    }, [username])
+        if (name === null) return
+        localStorage.setItem('name', name)
+    }, [name])
 
     useEffect(() => {
         if (avatarURL === null) return
@@ -28,9 +28,9 @@ const UserContextProvider: React.FC<Props> = (props) => {
     return (
         <UserContext.Provider
             value={{
-                username,
+                name,
                 avatarURL,
-                setUsername,
+                setName,
                 setAvatarURL
             }}
         >

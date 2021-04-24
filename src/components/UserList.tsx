@@ -23,7 +23,7 @@ const UserList: React.FC<Props> = () => {
     return (
         <List relaxed divided>
             {users.map((user) => (
-                <List.Item key={user.name}>
+                <List.Item key={user.id}>
                     <Image avatar src={user.avatarURL} />
                     <List.Content>
                         <List.Header>{user.name}</List.Header>
