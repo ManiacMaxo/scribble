@@ -2,12 +2,11 @@ import React, { useContext } from 'react'
 import { Button, Card, Image } from 'semantic-ui-react'
 import { ILobbyContext, LobbyContext } from '../contexts/Lobby'
 
-interface Props {
-    isOwner?: boolean
-}
+interface Props {}
 
-const LobbyUsers: React.FC<Props> = (props) => {
-    const { users } = useContext<ILobbyContext>(LobbyContext)
+const LobbyUsers: React.FC<Props> = () => {
+    const { users, socket } = useContext<ILobbyContext>(LobbyContext)
+    const id = localStorage.getItem('id')
     return (
         <div>
             <Card.Group centered>
@@ -20,18 +19,18 @@ const LobbyUsers: React.FC<Props> = (props) => {
                                 src={user.avatarURL}
                             />
                             <Card.Header>{user.name}</Card.Header>
-                        </Card.Content>
-                        {props.isOwner && (
-                            <Card.Content extra>
+                            {id !== user.id ? (
                                 <Button
                                     basic
                                     color='red'
-                                    onClick={() => alert('Not implemented yet')}
+                                    onClick={() =>
+                                        socket?.emit('kick', user.id)
+                                    }
                                 >
                                     Remove
                                 </Button>
-                            </Card.Content>
-                        )}
+                            ) : null}
+                        </Card.Content>
                     </Card>
                 ))}
             </Card.Group>

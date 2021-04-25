@@ -10,8 +10,8 @@ interface Props {
 const WordsModal: React.FC<Props> = (props) => {
     const { socket } = useContext<ILobbyContext>(LobbyContext)
 
-    const submitWord = (event: any) => {
-        socket?.emit('drawingResponse', event.target.value)
+    const submitWord = (data: string) => {
+        socket?.emit('drawingResponse', data)
     }
 
     return (
@@ -19,7 +19,7 @@ const WordsModal: React.FC<Props> = (props) => {
             <Modal.Header>Pick a word</Modal.Header>
             <Modal.Content>
                 {props.words.map((word) => (
-                    <Button onClick={submitWord}>{word}</Button>
+                    <Button onClick={() => submitWord(word)}>{word}</Button>
                 ))}
             </Modal.Content>
         </Modal>

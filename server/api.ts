@@ -27,7 +27,7 @@ router.get('/lobbies', (_req, res) => {
 router.post('/create', (req, res) => {
     const { time, rounds, players, isPrivate } = req.body
 
-    const lobby = new ServerLobby(players, rounds, time, isPrivate)
+    const lobby = new ServerLobby(players, rounds, time, isPrivate, true)
     lobbies.set(lobby.id, lobby)
 
     return res.send(lobby.id)

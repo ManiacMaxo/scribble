@@ -24,7 +24,9 @@ const socketEvents = (io: Server, lobbies: Map<string, ServerLobby>) => {
 
         socket.once('user', ({ name, avatarURL }) => {
             user = { name, avatarURL, id: v4(), points: 0 }
+            socket.emit('id', user.id)
             lobby.addUser(user, socket)
+            if (!lobby.custom) lobby.run()
         })
 
         socket.once('disconnect', () => {

@@ -55,7 +55,7 @@ const Create: React.FC = (): JSX.Element => {
                     />
                 ) : (
                     <>
-                        <LobbyUsers isOwner />
+                        <LobbyUsers />
                         <Input
                             value={gameLink}
                             fluid
