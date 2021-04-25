@@ -30,8 +30,13 @@ const LobbyContextProvider: React.FC<Props> = (props) => {
     }
 
     useEffect(() => {
+        setCanChat(!canDraw)
+    }, [canDraw])
+
+    useEffect(() => {
         if (!socket) return
         socket.onAny((event) => {
+            if (event === 'timer') return
             console.log(`got ${event}`)
         })
 
@@ -40,6 +45,7 @@ const LobbyContextProvider: React.FC<Props> = (props) => {
         })
 
         socket.once('users', (data: User[]) => {
+            // initial load of users on join
             setUsers(data)
         })
 
@@ -57,6 +63,7 @@ const LobbyContextProvider: React.FC<Props> = (props) => {
         socket.on('disconnect', () => setUsers([]))
 
         socket.on('userCorrect', (data: User) => {
+            // adjust points
             setUsers((prev) => {
                 let adjusted: User[] = []
                 prev.forEach((u) => {

@@ -8,8 +8,8 @@ export interface User {
 export interface Lobby {
     id: string
     name: string
-    players: number
-    maxPlayers: number
+    users: number
+    maxUsers: number
     round: number
     maxRounds: number
 }

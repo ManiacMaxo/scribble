@@ -17,6 +17,10 @@ const Home: React.FC = (): JSX.Element => {
             setName(res.data)
         }
 
+        if (router.query.lobby) {
+            router.push(`/play/${router.query.lobby}`)
+        }
+
         try {
             const res = await axios('/api/find')
             if (res.status !== 200) return

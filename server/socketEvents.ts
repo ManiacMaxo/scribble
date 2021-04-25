@@ -1,7 +1,7 @@
 import { Server, Socket } from 'socket.io'
 import { v4 } from 'uuid'
-import { User } from './types'
 import { ServerLobby } from './ServerLobby'
+import { User } from './types'
 
 const socketEvents = (io: Server, lobbies: Map<string, ServerLobby>) => {
     const namespaces = io.of(/^\/\w+$/)
@@ -17,22 +17,29 @@ const socketEvents = (io: Server, lobbies: Map<string, ServerLobby>) => {
         if (!lobby) return socket.emit('error')
         lobby.init(namespace)
 
-        socket.onAny((event, data) => console.log(event, data))
+        socket.onAny((event, data) => {
+            if (event === 'draw') return
+            console.log(event, data)
+        })
 
         socket.once('user', ({ name, avatarURL }) => {
             user = { name, avatarURL, id: v4(), points: 0 }
             lobby.addUser(user, socket)
         })
 
-        socket.once('disconnect', () => lobby.removeUser(user))
+        socket.once('disconnect', () => {
+            lobby.removeUser(user)
+            if (lobby.users.size === 0) lobbies.delete(lobby.id)
+        })
 
         socket.on('message', (message) =>
             lobby.onMessage(message, user, socket)
         )
-        socket.on('draw', (data) => namespace.emit('draw', data))
 
-        socket.on('start', () => {
-            lobby.run()
+        socket.on('draw', (data) => socket.broadcast.emit('draw', data))
+
+        socket.on('start', async () => {
+            await lobby.run()
         })
     })
 }
