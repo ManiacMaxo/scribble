@@ -113,8 +113,8 @@ export class Round {
                 resolve(true)
             })
 
+            this.drawing?.socket.broadcast.emit('hint', this.hint)
             interval = setInterval(() => {
-                this.drawing?.socket.broadcast.emit('hint', this.hint)
                 this.nsp.emit('timer', --this.timer)
 
                 if (
@@ -129,6 +129,7 @@ export class Round {
     }
 
     reset() {
+        this.nsp.emit('serverMessage', `The word was ${this.word}`)
         this.word = null
         this.hint = null
         this.correct = 0

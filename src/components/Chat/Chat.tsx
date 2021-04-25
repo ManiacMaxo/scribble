@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Comment, Input } from 'semantic-ui-react'
+import { v4 } from 'uuid'
 import { ILobbyContext, LobbyContext } from '../../contexts/Lobby'
 import { IUserContext, UserContext } from '../../contexts/User'
 import { Message } from '../../types'
@@ -27,6 +28,19 @@ const Chat: React.FC<Props> = () => {
                     timestamp: new Date(message.timestamp)
                         .toTimeString()
                         .slice(0, 5)
+                }
+            ])
+        })
+
+        socket.on('serverMessage', (content: string) => {
+            setMessages((prev) => [
+                ...prev.slice(-maxChatHistory + 1),
+                {
+                    id: v4(),
+                    username: 'Event',
+                    avatarURL: '/assets/server.png',
+                    content,
+                    timestamp: new Date().toTimeString().slice(0, 5)
                 }
             ])
         })

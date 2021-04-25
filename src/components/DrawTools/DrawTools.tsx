@@ -13,9 +13,13 @@ interface Props {
 const DrawTools: React.FC<Props> = (props) => {
     const { colours, len } = skribblio
 
-    const { colour, setColour, setRadius, word } = useContext<ILobbyContext>(
-        LobbyContext
-    )
+    const {
+        colour,
+        setColour,
+        setRadius,
+        word,
+        socket
+    } = useContext<ILobbyContext>(LobbyContext)
 
     return (
         <>
@@ -60,7 +64,17 @@ const DrawTools: React.FC<Props> = (props) => {
                     <Button
                         title='clear'
                         icon='trash'
-                        onClick={() => props.canvas.current.clear()}
+                        onClick={() => {
+                            props.canvas.current.clear()
+                            socket?.emit(
+                                'drawing',
+                                JSON.stringify({
+                                    lines: [],
+                                    height: 0,
+                                    width: 0
+                                })
+                            )
+                        }}
                     />
                 </Button.Group>
                 <Slider

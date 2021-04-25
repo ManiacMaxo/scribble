@@ -109,7 +109,7 @@ export class ServerLobby {
     }
 
     onMessage(message: any, user: User, socket: Socket) {
-        console.log('Lobby.onMessage from %s', user.name)
+        console.log('Lobby.onMessage from %s ', user.name)
         if (
             this.currentRound &&
             message.content.trim() === this.currentRound.word
@@ -117,8 +117,9 @@ export class ServerLobby {
             socket.emit('correct')
             this.currentRound.correct++
             user.points += this.calcScore()
-
-            return this.nsp?.emit('userCorrect', user)
+            this.nsp?.emit('userCorrect', user)
+            this.nsp?.emit('serverMessage', `${user.name} guessed the word`)
+            return
         }
 
         this.nsp?.emit('message', {
@@ -126,5 +127,10 @@ export class ServerLobby {
             id: v4(),
             timestamp: new Date().toString()
         })
+    }
+
+    kick(userId: string) {
+        const socket = this.sockets.get(userId)
+        socket?.emit('kick')
     }
 }

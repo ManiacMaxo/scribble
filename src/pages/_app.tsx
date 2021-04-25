@@ -5,6 +5,8 @@ import { Layout } from '../components'
 import LobbyContextProvider from '../contexts/Lobby'
 import UserContextProvider from '../contexts/User'
 import '../styles/global.scss'
+import 'react-toastify/dist/ReactToastify.css'
+import { ToastContainer } from 'react-toastify'
 
 const AppWrapper = ({ Component, pageProps }: AppProps) => {
     return (
@@ -13,6 +15,7 @@ const AppWrapper = ({ Component, pageProps }: AppProps) => {
                 <Layout>
                     <Component {...pageProps} />
                 </Layout>
+                <ToastContainer />
             </LobbyContextProvider>
         </UserContextProvider>
     )
