@@ -6,9 +6,7 @@ import { User } from '../../types'
 import { UserContext } from '../User'
 import { LobbyContext } from './LobbyContext'
 
-interface Props {}
-
-const LobbyContextProvider: React.FC<Props> = (props) => {
+const LobbyContextProvider: React.FC = (props) => {
     const [canDraw, setCanDraw] = useState<boolean>(false)
     const [canChat, setCanChat] = useState<boolean>(!canDraw)
 
@@ -34,10 +32,6 @@ const LobbyContextProvider: React.FC<Props> = (props) => {
     }
 
     useEffect(() => {
-        setCanChat(!canDraw)
-    }, [canDraw])
-
-    useEffect(() => {
         if (!socket) return
         socket.onAny((event) => {
             if (event === 'timer') return
@@ -46,6 +40,10 @@ const LobbyContextProvider: React.FC<Props> = (props) => {
 
         socket.once('connect', () => {
             socket.emit('user', { name, avatarURL })
+        })
+
+        socket.on('id', (data: string) => {
+            localStorage.setItem('id', data)
         })
 
         socket.once('users', (data: User[]) => {
@@ -82,6 +80,7 @@ const LobbyContextProvider: React.FC<Props> = (props) => {
         })
 
         socket.on('kick', () => {
+            socket.disconnect()
             router.replace('/')
             toast.warning('You have been kicked')
         })

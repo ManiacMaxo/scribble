@@ -16,14 +16,19 @@ export class ServerLobby {
     isPrivate: boolean
     nsp?: Namespace
     running: boolean
+    custom: boolean
 
     constructor(
         maxUsers: number = 9,
         maxRounds: number = 6,
         maxTime: number = 120,
-        isPrivate: boolean = false
+        isPrivate: boolean = false,
+        custom: boolean = false
     ) {
-        this.id = v4().slice(0, 5)
+        this.id = Math.random()
+            .toString(36)
+            .replace(/[^a-z]+/g, '')
+            .substr(0, 5)
         this.name = `Lobby ${this.id}`
         this.users = new Map()
         this.maxUsers = maxUsers
@@ -32,6 +37,8 @@ export class ServerLobby {
         this.maxRounds = maxRounds
         this.maxTime = maxTime
         this.isPrivate = isPrivate
+
+        this.custom = custom
         this.running = false
     }
 
@@ -63,7 +70,8 @@ export class ServerLobby {
 
     async run() {
         console.log('Lobby.run')
-        if (!this.nsp || this.users.size < 3 || this.currentRound) return
+        if (!this.nsp || this.users.size < 3 || this.running) return
+        this.running = true
         this.nsp?.emit('start')
 
         for (; this.round < this.maxRounds; this.round++) {
@@ -87,6 +95,8 @@ export class ServerLobby {
         this.nsp?.emit('end', sortedUsers)
         this.users.forEach((u) => (u.points = 0))
         this.round = 0
+        this.running = false
+        if (this.users.size >= 3) this.run()
     }
 
     toResponse() {

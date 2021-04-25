@@ -54,7 +54,6 @@ export class Round {
     }
 
     getWords() {
-        console.log('Round.getWords')
         return ['one', 'two', 'three']
     }
 
@@ -62,6 +61,8 @@ export class Round {
         console.log('Round.run')
 
         while (42) {
+            await this.sleep(3000)
+
             this.drawing = this.notPassed.shift()
             if (!this.drawing) break
             this.nsp.emit('timer', this.maxTime)
@@ -84,6 +85,7 @@ export class Round {
                     clearTimeout(timeout)
                     console.log('cleared timeout', timeout)
                 })
+
                 timeout = setTimeout(() => {
                     this.word = words[randomInt(2)]
                     resolve(true)
@@ -92,8 +94,11 @@ export class Round {
 
             await this.turn()
             this.reset()
-            await new Promise((resolve) => setTimeout(resolve, 5000))
         }
+    }
+
+    sleep(ms: number) {
+        new Promise((resolve) => setTimeout(resolve, ms))
     }
 
     turn() {
