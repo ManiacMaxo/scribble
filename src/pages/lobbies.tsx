@@ -33,19 +33,17 @@ const Lobbies: React.FC = (): JSX.Element => {
                         <List.Content>
                             <List.Header>{lobby.name}</List.Header>
                             <List.Description>
-                                players: {lobby.players}/{lobby.maxPlayers}{' '}
-                                round: {lobby.round}/{lobby.maxRounds}
+                                players: {lobby.users}/{lobby.maxUsers} round:{' '}
+                                {lobby.round}/{lobby.maxRounds}
                                 <Button
                                     floated='right'
                                     compact
                                     onClick={() =>
                                         router.push(`/play/${lobby.id}`)
                                     }
-                                    disabled={
-                                        lobby.players === lobby.maxPlayers
-                                    }
+                                    disabled={lobby.users === lobby.maxUsers}
                                 >
-                                    {lobby.players === lobby.maxPlayers ? (
+                                    {lobby.users === lobby.maxUsers ? (
                                         <strong>FULL</strong>
                                     ) : (
                                         'Join'

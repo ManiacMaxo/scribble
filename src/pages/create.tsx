@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import React, { useContext, useEffect, useState } from 'react'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { Button, Icon, Input, Step } from 'semantic-ui-react'
@@ -9,8 +10,8 @@ const Create: React.FC = (): JSX.Element => {
     const [isCreating, setIsCreating] = useState<boolean>(true)
     const [url, setUrl] = useState<string>('')
     const [gameLink, setGameLink] = useState<string>('')
-
-    const { setSocket } = useContext(LobbyContext)
+    const router = useRouter()
+    const { socket, setSocket, users } = useContext(LobbyContext)
 
     useEffect(() => {
         if (!url) return
@@ -23,7 +24,10 @@ const Create: React.FC = (): JSX.Element => {
         return protocol + '//' + hostname + (port ? ':' + port : '')
     }
 
-    const handleStart = () => {}
+    const handleStart = () => {
+        socket?.emit('start')
+        socket?.on('start', () => router.push(`/play/${url}`))
+    }
 
     return (
         <>
@@ -51,7 +55,7 @@ const Create: React.FC = (): JSX.Element => {
                     />
                 ) : (
                     <>
-                        <LobbyUsers users={[]} isOwner />
+                        <LobbyUsers isOwner />
                         <Input
                             value={gameLink}
                             fluid
@@ -68,7 +72,12 @@ const Create: React.FC = (): JSX.Element => {
                                 </CopyToClipboard>
                             }
                         />
-                        <Button fluid onClick={handleStart}>
+                        <Button
+                            fluid
+                            primary
+                            onClick={handleStart}
+                            disabled={users.length < 3}
+                        >
                             Start
                         </Button>
                     </>

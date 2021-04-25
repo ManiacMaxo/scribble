@@ -1,3 +1,5 @@
+import EventEmitter from 'events'
+import { randomInt } from 'node:crypto'
 import { Namespace, Socket } from 'socket.io'
 import { RoundUser, User } from './types'
 
@@ -6,11 +8,13 @@ export class Round {
     hint: string | null
     timer: number
     maxTime: number
-    drawing?: RoundUser
     correct: number
+    drawing?: RoundUser
     passed: RoundUser[]
     notPassed: RoundUser[]
     nsp: Namespace
+
+    emitter: EventEmitter
 
     constructor(
         users: Map<string, User>,
@@ -32,6 +36,8 @@ export class Round {
         this.hint = null
 
         this.nsp = namespace
+
+        this.emitter = new EventEmitter()
     }
 
     addUser(user: User, socket: Socket) {
@@ -41,6 +47,7 @@ export class Round {
 
     removeUser(user: User) {
         console.log('Round.removeUser: %s', user.name)
+        if (user.id === this.drawing?.id) this.emitter.emit('turnEnd')
         const isNotUser = (u: User) => u.id !== user.id
         this.notPassed = this.notPassed.filter(isNotUser)
         this.passed = this.passed.filter(isNotUser)
@@ -53,35 +60,77 @@ export class Round {
 
     async run() {
         console.log('Round.run')
-        this.notPassed.reverse()
-        while (this.notPassed.length > 0) {
-            this.drawing = this.notPassed.pop()
-            if (!this.drawing) break
-            this.passed.push(this.drawing)
 
-            this.drawing.socket.emit('words', this.getWords())
-            this.drawing.socket.on('words', await this.turn)
+        while (42) {
+            this.drawing = this.notPassed.shift()
+            if (!this.drawing) break
+            this.nsp.emit('timer', this.maxTime)
+
+            this.passed.push(this.drawing)
+            const words = this.getWords()
+
+            console.log('emitting to %s words', this.drawing.name, words)
+
+            this.drawing.socket.emit('drawing', words)
+
+            // 20 seconds to think
+            await new Promise((resolve) => {
+                let timeout: NodeJS.Timeout
+
+                this.drawing?.socket.on('drawingResponse', (word: string) => {
+                    if (words.includes(word)) this.word = word
+                    else this.word = words[randomInt(2)]
+                    resolve(true)
+                    clearTimeout(timeout)
+                    console.log('cleared timeout', timeout)
+                })
+                timeout = setTimeout(() => {
+                    this.word = words[randomInt(2)]
+                    resolve(true)
+                }, 20000)
+            })
+
+            await this.turn()
+            this.reset()
+            await new Promise((resolve) => setTimeout(resolve, 5000))
         }
     }
 
-    async turn(word: string) {
-        console.log('Round.turn')
-        this.word = word
-        this.hint = this.word.replace(/\W/g, '_')
-        this.nsp.emit('turnStart')
-        this.nsp.emit('hint', this.hint)
+    turn() {
+        return new Promise(async (resolve) => {
+            console.log('Round.turn', this.drawing?.name)
+            const word = this.word ?? ''
+            this.hint = word.replace(/\w/g, '_')
+            this.timer = this.maxTime
+            let interval: NodeJS.Timeout
 
-        while (this.timer > 0) {
-            // sleep 1 second
-            await new Promise((resolve) => setTimeout(resolve, 1000))
+            this.drawing?.socket.emit('turnStart', this.word)
 
-            this.nsp.emit('timer', --this.timer)
-        }
+            this.emitter.on('turnEnd', () => {
+                clearInterval(interval)
+                if (this.drawing) this.drawing.points += this.correct * 75
+                this.nsp.emit('turnEnd')
+                resolve(true)
+            })
 
-        this.nsp.emit('turnEnd')
-        if (this.drawing) this.drawing.points += this.correct * 30
+            interval = setInterval(() => {
+                this.drawing?.socket.broadcast.emit('hint', this.hint)
+                this.nsp.emit('timer', --this.timer)
 
+                if (
+                    this.timer <= 0 ||
+                    this.correct ===
+                        this.passed.length + this.notPassed.length - 1
+                ) {
+                    this.emitter.emit('turnEnd')
+                }
+            }, 1000)
+        })
+    }
+
+    reset() {
         this.word = null
         this.hint = null
+        this.correct = 0
     }
 }

@@ -1,23 +1,26 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Button, Card, Image } from 'semantic-ui-react'
+import { ILobbyContext, LobbyContext } from '../contexts/Lobby'
 
 interface Props {
-    users: any[]
     isOwner?: boolean
 }
 
 const LobbyUsers: React.FC<Props> = (props) => {
+    const { users } = useContext<ILobbyContext>(LobbyContext)
     return (
         <div>
-            <Card.Group>
-                {props.users.map((user) => (
-                    <Card key={user.id}>
-                        <Image
-                            floated='right'
-                            size='small'
-                            src={user.avatarURL}
-                        />
-                        <Card.Header>{user.name}</Card.Header>
+            <Card.Group centered>
+                {users.map((user) => (
+                    <Card key={user.id} style={{ width: '200px' }}>
+                        <Card.Content>
+                            <Image
+                                floated='right'
+                                size='mini'
+                                src={user.avatarURL}
+                            />
+                            <Card.Header>{user.name}</Card.Header>
+                        </Card.Content>
                         {props.isOwner && (
                             <Card.Content extra>
                                 <Button

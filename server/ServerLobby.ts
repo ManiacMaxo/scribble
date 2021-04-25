@@ -42,7 +42,7 @@ export class ServerLobby {
     }
 
     addUser(user: User, socket: Socket) {
-        if (this.users.has(user.id)) return
+        if (!user || this.users.has(user.id)) return
         console.log('Lobby.addUser: %s', user.name)
 
         socket.emit('users', Array.from(this.users.values()))
@@ -54,6 +54,7 @@ export class ServerLobby {
     }
 
     removeUser(user: User) {
+        if (!user || !this.users.has(user.id)) return
         this.users.delete(user.id)
         this.sockets.delete(user.id)
         this.currentRound?.removeUser(user)
@@ -62,9 +63,11 @@ export class ServerLobby {
 
     async run() {
         console.log('Lobby.run')
-        if (!this.nsp || this.users.size < 3) return
+        if (!this.nsp || this.users.size < 3 || this.currentRound) return
+        this.nsp?.emit('start')
 
         for (; this.round < this.maxRounds; this.round++) {
+            console.log('round number', this.round)
             this.currentRound = new Round(
                 this.users,
                 this.sockets,
@@ -102,7 +105,7 @@ export class ServerLobby {
         console.log('Lobby.calcScore')
         if (!this.currentRound) return 0
         const timePercent = (this.currentRound.timer * 100) / this.maxTime
-        return Math.min(timePercent * 5, 50)
+        return Math.round(Math.max(timePercent * 3, 50))
     }
 
     onMessage(message: any, user: User, socket: Socket) {
