@@ -38,9 +38,9 @@ const socketEvents = (io: Server, lobbies: Map<string, ServerLobby>) => {
 
         socket.on('draw', (data) => socket.broadcast.emit('draw', data))
 
-        socket.on('start', async () => {
-            await lobby.run()
-        })
+        socket.on('start', async () => await lobby.run())
+
+        socket.on('kick', (userId: string) => lobby.kick(userId))
     })
 }
 

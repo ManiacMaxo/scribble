@@ -1,4 +1,6 @@
+import { useRouter } from 'next/router'
 import React, { useContext, useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 import { Socket } from 'socket.io-client'
 import { User } from '../../types'
 import { UserContext } from '../User'
@@ -18,6 +20,8 @@ const LobbyContextProvider: React.FC<Props> = (props) => {
 
     const [users, setUsers] = useState<User[]>([])
     const [socket, setSocket] = useState<Socket | undefined>(undefined)
+
+    const router = useRouter()
 
     const { name, avatarURL } = useContext(UserContext)
 
@@ -58,7 +62,10 @@ const LobbyContextProvider: React.FC<Props> = (props) => {
             removeUser(data)
         })
 
-        socket.once('error', () => socket.disconnect())
+        socket.once('error', () => {
+            socket.disconnect()
+            toast.error('The lobby does not exist')
+        })
 
         socket.on('disconnect', () => setUsers([]))
 
@@ -73,6 +80,15 @@ const LobbyContextProvider: React.FC<Props> = (props) => {
                 return adjusted
             })
         })
+
+        socket.on('kick', () => {
+            router.replace('/')
+            toast.warning('You have been kicked')
+        })
+
+        return () => {
+            socket.offAny()
+        }
     }, [socket])
 
     return (

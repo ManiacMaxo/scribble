@@ -73,6 +73,17 @@ const Play: React.FC = (): JSX.Element => {
             canvasRef.current.loadSaveData(data, true)
         })
 
+        return () => {
+            socket.off('error')
+            socket.off('drawing')
+            socket.off('timer')
+            socket.off('hint')
+            socket.off('turnStart')
+            socket.off('turnEnd')
+            socket.off('end')
+            socket.off('draw')
+        }
+
         // eslint-disable-next-line
     }, [id, socket])
 
@@ -89,37 +100,39 @@ const Play: React.FC = (): JSX.Element => {
     return isFinished ? (
         <PostGame />
     ) : (
-        <div className={styles.root}>
-            <span className={styles.timer}>{`${seconds} seconds`}</span>
-            <header className={styles.header}>
-                {canDraw ? (
-                    <DrawTools canvas={canvasRef} />
-                ) : (
-                    <span className={styles.hint}>{word}</span>
-                )}
-            </header>
-            <aside className={styles.users}>
-                <UserList />
-            </aside>
-            <CanvasDraw
-                ref={canvasRef}
-                className={styles.canvas}
-                hideInterface
-                hideGrid
-                lazyRadius={0}
-                brushRadius={radius}
-                brushColor={colour}
-                canvasWidth='100%'
-                canvasHeight='100%'
-                disabled={!canDraw}
-                onChange={(canvas) => {
-                    if (!canDraw) return
-                    setData(canvas.getSaveData())
-                }}
-            />
-            <Chat />
+        <>
+            <div className={styles.root}>
+                <span className={styles.timer}>{`${seconds} seconds`}</span>
+                <header className={styles.header}>
+                    {canDraw ? (
+                        <DrawTools canvas={canvasRef} />
+                    ) : (
+                        <span className={styles.hint}>{word}</span>
+                    )}
+                </header>
+                <aside className={styles.users}>
+                    <UserList />
+                </aside>
+                <CanvasDraw
+                    ref={canvasRef}
+                    className={styles.canvas}
+                    hideInterface
+                    hideGrid
+                    lazyRadius={0}
+                    brushRadius={radius}
+                    brushColor={colour}
+                    canvasWidth='100%'
+                    canvasHeight='100%'
+                    disabled={!canDraw}
+                    onChange={(canvas) => {
+                        if (!canDraw) return
+                        setData(canvas.getSaveData())
+                    }}
+                />
+                <Chat />
+            </div>
             <WordsModal open={openModal} words={words} />
-        </div>
+        </>
     )
 }
 
