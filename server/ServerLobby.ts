@@ -1,7 +1,8 @@
 import { Namespace, Socket } from 'socket.io'
 import { v4 } from 'uuid'
+import { prisma } from '.'
+import { ServerRound } from './ServerRound'
 import { User } from './types'
-import { Round } from './Round'
 
 export class ServerLobby {
     id: string
@@ -10,47 +11,47 @@ export class ServerLobby {
     maxUsers: number
     sockets: Map<string, Socket>
     round: number
-    currentRound?: Round
+    currentRound?: ServerRound
     maxRounds: number
     maxTime: number
     isPrivate: boolean
     nsp?: Namespace
-    running: boolean
-    custom: boolean
+    isRunning: boolean
+    isCustom: boolean
 
     constructor(
         maxUsers: number = 9,
         maxRounds: number = 6,
         maxTime: number = 120,
         isPrivate: boolean = false,
-        custom: boolean = false
+        isCustom: boolean = false
     ) {
         this.id = Math.random()
             .toString(36)
             .replace(/[^a-z]+/g, '')
             .substr(0, 5)
         this.name = `Lobby ${this.id}`
+
         this.users = new Map()
         this.maxUsers = maxUsers
         this.sockets = new Map()
+
         this.round = 0
         this.maxRounds = maxRounds
         this.maxTime = maxTime
-        this.isPrivate = isPrivate
 
-        this.custom = custom
-        this.running = false
+        this.isPrivate = isPrivate
+        this.isCustom = isCustom
+        this.isRunning = false
     }
 
     init(nsp: Namespace) {
-        console.log('init namespace: %s', nsp.name)
         if (this.nsp) return
         this.nsp = nsp
     }
 
     addUser(user: User, socket: Socket) {
         if (!user || this.users.has(user.id)) return
-        console.log('Lobby.addUser: %s', user.name)
 
         socket.emit('users', Array.from(this.users.values()))
         this.nsp?.emit('userJoin', user)
@@ -58,6 +59,8 @@ export class ServerLobby {
         this.currentRound?.addUser(user, socket)
         this.sockets.set(user.id, socket)
         this.users.set(user.id, user)
+
+        if (!this.isCustom) this.run()
     }
 
     removeUser(user: User) {
@@ -68,40 +71,12 @@ export class ServerLobby {
         this.nsp?.emit('userLeave', user)
     }
 
-    async run() {
-        console.log('Lobby.run')
-        if (!this.nsp || this.users.size < 3 || this.running) return
-        this.running = true
-        this.nsp?.emit('start')
-
-        for (; this.round < this.maxRounds; this.round++) {
-            console.log('round number', this.round)
-            this.currentRound = new Round(
-                this.users,
-                this.sockets,
-                this.maxTime,
-                this.nsp
-            )
-            await this.currentRound.run()
-        }
-        this.reset()
-    }
-
-    reset() {
-        console.log('Lobby.reset')
-        const sortedUsers = Array.from(this.users.values()).sort(
-            (a, b) => b.points - a.points
-        )
-        this.nsp?.emit('end', sortedUsers)
-        this.users.forEach((u) => (u.points = 0))
-        this.round = 0
-        this.running = false
-        this.nsp?.emit('users', this.users)
-        if (this.users.size >= 3) this.run()
+    kick(userId: string) {
+        const socket = this.sockets.get(userId)
+        socket?.emit('kick')
     }
 
     toResponse() {
-        console.log('Lobby.toResponse')
         return {
             id: this.id,
             name: this.name,
@@ -112,23 +87,9 @@ export class ServerLobby {
         }
     }
 
-    calcScore() {
-        console.log('Lobby.calcScore')
-        if (!this.currentRound) return 0
-        const timePercent = (this.currentRound.timer * 100) / this.maxTime
-        return Math.round(Math.max(timePercent * 3, 50))
-    }
-
-    onMessage(message: any, user: User, socket: Socket) {
-        console.log('Lobby.onMessage from %s ', user.name)
-        if (
-            this.currentRound &&
-            message.content.trim() === this.currentRound.word
-        ) {
-            socket.emit('correct')
-            this.currentRound.correct++
-            user.points += this.calcScore()
-            this.nsp?.emit('userCorrect', user)
+    onMessage(message: any, user: User) {
+        if (this.currentRound?.checkCorrect(message, user)) {
+            this.sockets.get(user.id)?.emit('correct')
             this.nsp?.emit('serverMessage', `${user.name} guessed the word`)
             return
         }
@@ -140,8 +101,43 @@ export class ServerLobby {
         })
     }
 
-    kick(userId: string) {
-        const socket = this.sockets.get(userId)
-        socket?.emit('kick')
+    async run() {
+        if (!this.nsp || this.users.size < 3 || this.isRunning) return
+        this.isRunning = true
+        this.nsp.emit('start')
+
+        const game = await prisma.game.create({
+            data: { lobby: this.id },
+            include: { rounds: true }
+        })
+
+        for (; this.round < this.maxRounds; this.round++) {
+            this.currentRound = new ServerRound(
+                this.users,
+                this.sockets,
+                this.maxTime,
+                this.nsp
+            )
+            await prisma.round.create({
+                data: {
+                    gameId: game.id
+                }
+            })
+
+            await this.currentRound.run()
+        }
+        this.reset()
+    }
+
+    reset() {
+        const sortedUsers = Array.from(this.users.values()).sort(
+            (a, b) => b.points - a.points
+        )
+        this.nsp?.emit('end', sortedUsers)
+        this.users.forEach((u) => (u.points = 0))
+        this.round = 0
+        this.isRunning = false
+        this.nsp?.emit('users', this.users)
+        if (this.users.size >= 3) this.run()
     }
 }

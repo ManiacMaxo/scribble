@@ -2,7 +2,7 @@ import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css'
 import React, { useContext } from 'react'
 import { Button } from 'semantic-ui-react'
-import { ILobbyContext, LobbyContext } from '../../contexts/Lobby'
+import { LobbyContext } from '../../contexts/Lobby'
 import { skribblio } from './colours'
 import styles from './DrawTools.module.scss'
 
@@ -13,13 +13,9 @@ interface Props {
 const DrawTools: React.FC<Props> = (props) => {
     const { colours, len } = skribblio
 
-    const {
-        colour,
-        setColour,
-        setRadius,
-        word,
-        socket
-    } = useContext<ILobbyContext>(LobbyContext)
+    const { colour, setColour, setRadius, word, socket } = useContext(
+        LobbyContext
+    )
 
     return (
         <>

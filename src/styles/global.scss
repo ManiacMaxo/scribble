@@ -53,3 +53,15 @@ a {
     // shim for react responsive carousel
     background: transparent !important;
 }
+
+.sm {
+    max-width: 200px;
+}
+
+.md {
+    max-width: 400px;
+}
+
+.lg {
+    max-width: 700px;
+}

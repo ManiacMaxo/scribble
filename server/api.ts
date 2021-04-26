@@ -1,8 +1,8 @@
 import { Router } from 'express'
 import { lobbies } from '.'
+import words from './data/randomWords.json'
 import { ServerLobby } from './ServerLobby'
 import { getPublicLobbies } from './utils'
-import words from './words.json'
 
 const router = Router()
 

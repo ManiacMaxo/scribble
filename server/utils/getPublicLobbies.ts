@@ -1,4 +1,4 @@
-import { ServerLobby } from './ServerLobby'
+import { ServerLobby } from '../ServerLobby'
 
 export const getPublicLobbies = (lobbies: Map<string, ServerLobby>) => {
     const publicLobbies: ServerLobby[] = []

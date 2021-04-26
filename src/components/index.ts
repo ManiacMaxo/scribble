@@ -1,4 +1,5 @@
 export { Avatar } from './Avatar'
+export { Canvas } from './Canvas'
 export { Chat } from './Chat'
 export { DrawTools } from './DrawTools'
 export { Layout } from './Layout'

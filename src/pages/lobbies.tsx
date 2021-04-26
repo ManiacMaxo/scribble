@@ -5,7 +5,7 @@ import { Button, List } from 'semantic-ui-react'
 import { Lobby } from '../types'
 
 const Lobbies: React.FC = (): JSX.Element => {
-    const [lobbies, setLobbies] = useState<Lobby[]>([])
+    const [lobbies, setLobbies] = useState<Array<Lobby>>([])
     const router = useRouter()
 
     useEffect(() => {

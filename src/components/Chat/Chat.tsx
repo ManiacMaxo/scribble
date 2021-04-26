@@ -1,19 +1,17 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Comment, Input } from 'semantic-ui-react'
 import { v4 } from 'uuid'
-import { ILobbyContext, LobbyContext } from '../../contexts/Lobby'
-import { IUserContext, UserContext } from '../../contexts/User'
+import { LobbyContext } from '../../contexts/Lobby'
+import { UserContext } from '../../contexts/User'
 import { Message } from '../../types'
 import styles from './Chat.module.scss'
 
 interface Props {}
 
 const Chat: React.FC<Props> = () => {
-    const { socket, canChat, setCanChat } = useContext<ILobbyContext>(
-        LobbyContext
-    )
-    const { name, avatarURL } = useContext<IUserContext>(UserContext)
-    const [messages, setMessages] = useState<Message[]>([])
+    const { socket, canChat, setCanChat } = useContext(LobbyContext)
+    const { name, avatarURL } = useContext(UserContext)
+    const [messages, setMessages] = useState<Array<Message>>([])
     const bottomRef = useRef<any>(null)
 
     const maxChatHistory = 30

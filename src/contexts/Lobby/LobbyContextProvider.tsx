@@ -7,16 +7,16 @@ import { UserContext } from '../User'
 import { LobbyContext } from './LobbyContext'
 
 const LobbyContextProvider: React.FC = (props) => {
-    const [canDraw, setCanDraw] = useState<boolean>(false)
+    const [canDraw, setCanDraw] = useState(false)
     const [canChat, setCanChat] = useState<boolean>(!canDraw)
 
-    const [colour, setColour] = useState<string>('black')
-    const [radius, setRadius] = useState<number>(12)
-    const [word, setWord] = useState<string>('')
+    const [colour, setColour] = useState('black')
+    const [radius, setRadius] = useState(12)
+    const [word, setWord] = useState('')
 
-    const [isFinished, setIsFinished] = useState<boolean>(false)
+    const [isFinished, setIsFinished] = useState(false)
 
-    const [users, setUsers] = useState<User[]>([])
+    const [users, setUsers] = useState<Array<User>>([])
     const [socket, setSocket] = useState<Socket | undefined>(undefined)
 
     const router = useRouter()
@@ -60,9 +60,9 @@ const LobbyContextProvider: React.FC = (props) => {
             removeUser(data)
         })
 
-        socket.once('error', () => {
+        socket.once('error', (data: string) => {
             socket.disconnect()
-            toast.error('The lobby does not exist')
+            toast.error(data)
         })
 
         socket.on('disconnect', () => setUsers([]))

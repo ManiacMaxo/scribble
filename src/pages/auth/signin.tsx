@@ -22,7 +22,7 @@ const signin: React.FC<Props> = ({ providers }): JSX.Element => {
     ])
 
     return (
-        <div className='default-card md'>
+        <div className='default-card sm'>
             {Object.values(providers).map((provider) => (
                 <Button
                     icon
