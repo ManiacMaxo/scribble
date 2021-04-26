@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { Button, Modal } from 'semantic-ui-react'
-import { ILobbyContext, LobbyContext } from '../contexts/Lobby'
+import { LobbyContext } from '../contexts/Lobby'
 
 interface Props {
     open: boolean
@@ -8,7 +8,7 @@ interface Props {
 }
 
 const WordsModal: React.FC<Props> = (props) => {
-    const { socket } = useContext<ILobbyContext>(LobbyContext)
+    const { socket } = useContext(LobbyContext)
 
     const submitWord = (data: string) => {
         socket?.emit('drawingResponse', data)

@@ -1,104 +1,30 @@
-import { useRouter } from 'next/router'
-import React, { useContext, useEffect, useRef, useState } from 'react'
-import CanvasDraw from 'react-canvas-draw'
-import { io } from 'socket.io-client'
+import React from 'react'
 import {
+    Canvas,
     Chat,
     DrawTools,
     PostGame,
     UserList,
     WordsModal
 } from '../../components'
-import { ILobbyContext, LobbyContext } from '../../contexts/Lobby'
-import { IUserContext, UserContext } from '../../contexts/User'
+import { useGameSocket } from '../../hooks'
 import styles from '../../styles/play.module.scss'
 
 const Play: React.FC = (): JSX.Element => {
     const {
-        socket,
-        setSocket,
-        word,
-        setWord,
-        colour,
-        radius,
         isFinished,
-        setCanDraw,
-        setIsFinished,
+        endUsers,
+        seconds,
         canDraw,
-        setCanChat
-    } = useContext<ILobbyContext>(LobbyContext)
-
-    const canvasRef = useRef<any>(null)
-    const [seconds, setSeconds] = useState<number>(0)
-    const [openModal, setOpenModal] = useState<boolean>(false)
-    const [data, setData] = useState<string>('')
-    const [words, setWords] = useState<string[]>([])
-
-    const router = useRouter()
-    const { id } = router.query
-    const { name } = useContext<IUserContext>(UserContext)
-
-    useEffect(() => {
-        if (!id) return
-        if (!name) router.push(`/?lobby=${id}`)
-        if (!socket) return setSocket(io(`/${id}`))
-
-        socket.once('error', () => router.push('/'))
-        socket.on('drawing', (data: string[]) => {
-            console.log('drawing', data)
-            setWords(data)
-        })
-        socket.on('timer', (time: number) => setSeconds(time))
-        socket.on('hint', (hint: string) => {
-            if (canDraw) return
-            setWord(hint)
-        })
-
-        socket.on('turnStart', (data: string) => {
-            setCanDraw(true)
-            setCanChat(false)
-            setWord(data)
-            setOpenModal(false)
-        })
-
-        socket.on('turnEnd', () => {
-            setCanDraw(false)
-            setCanChat(true)
-            canvasRef.current.clear()
-        })
-        socket.on('end', () => setIsFinished(true))
-
-        socket.on('draw', (data) => {
-            if (canDraw || !data) return
-            canvasRef.current.loadSaveData(data, true)
-        })
-
-        return () => {
-            socket.off('error')
-            socket.off('drawing')
-            socket.off('timer')
-            socket.off('hint')
-            socket.off('turnStart')
-            socket.off('turnEnd')
-            socket.off('end')
-            socket.off('draw')
-        }
-
-        // eslint-disable-next-line
-    }, [id, socket])
-
-    useEffect(() => {
-        console.log(data)
-        socket?.emit('draw', data)
-    }, [data])
-
-    useEffect(() => {
-        console.log('words', words)
-        if (words.length) setOpenModal(true)
-    }, [words])
+        canvasRef,
+        word,
+        openModal,
+        words,
+        setDrawData
+    } = useGameSocket()
 
     return isFinished ? (
-        <PostGame />
+        <PostGame users={endUsers} />
     ) : (
         <>
             <div className={styles.root}>
@@ -113,21 +39,10 @@ const Play: React.FC = (): JSX.Element => {
                 <aside className={styles.users}>
                     <UserList />
                 </aside>
-                <CanvasDraw
-                    ref={canvasRef}
+                <Canvas
                     className={styles.canvas}
-                    hideInterface
-                    hideGrid
-                    lazyRadius={0}
-                    brushRadius={radius}
-                    brushColor={colour}
-                    canvasWidth='100%'
-                    canvasHeight='100%'
-                    disabled={!canDraw}
-                    onChange={(canvas) => {
-                        if (!canDraw) return
-                        setData(canvas.getSaveData())
-                    }}
+                    canvas={canvasRef}
+                    setDrawData={setDrawData}
                 />
                 <Chat />
             </div>

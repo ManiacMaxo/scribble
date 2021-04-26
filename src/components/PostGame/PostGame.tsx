@@ -1,14 +1,17 @@
 import React, { useContext } from 'react'
 import { Button, Header, Image, List } from 'semantic-ui-react'
-import { ILobbyContext, LobbyContext } from '../../contexts/Lobby'
+import { LobbyContext } from '../../contexts/Lobby'
+import { User } from '../../types'
 import styles from './PostGame.module.scss'
 
-interface Props {}
+interface Props {
+    users: User[]
+}
 
-const PostGame: React.FC<Props> = () => {
-    const { users, setIsFinished } = useContext<ILobbyContext>(LobbyContext)
+const PostGame: React.FC<Props> = (props) => {
+    const { setIsFinished } = useContext(LobbyContext)
 
-    const orderedUsers = users.sort((a, b) => b.points - a.points)
+    const orderedUsers = props.users.sort((a, b) => b.points - a.points)
 
     return (
         <div className='default-card'>

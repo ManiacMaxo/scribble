@@ -3,11 +3,11 @@ import { useRouter } from 'next/router'
 import React, { useContext, useState } from 'react'
 import { Button, Divider, Header, Icon, Input, Label } from 'semantic-ui-react'
 import { Avatar } from '../components'
-import { IUserContext, UserContext } from '../contexts/User'
+import { UserContext } from '../contexts/User'
 import styles from '../styles/home.module.scss'
 
 const Home: React.FC = (): JSX.Element => {
-    const { name, setName } = useContext<IUserContext>(UserContext)
+    const { name, setName } = useContext(UserContext)
     const [error, setError] = useState<string | null>(null)
     const router = useRouter()
 

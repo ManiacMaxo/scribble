@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Game {
+  id        Int      @id @default(autoincrement())
+  lobby     String
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  rounds    Round[]
+
+  @@map("games")
+}
+
+model Round {
+  id     Int   @id @default(autoincrement())
+  turns  Int   @default(0)
+  gameId Int?
+  Game   Game? @relation(fields: [gameId], references: [id])
+
+  @@map("rounds")
+}
+
+model Turn {
+  id      Int    @id @default(autoincrement())
+  correct Int    @default(0)
+  word    String
+
+  @@map("turns")
+}
+
+model Word {
+  id                   Int    @id @default(autoincrement())
+  string               String @unique
+  timesShown           Int    @default(0)
+  timesChosen          Int    @default(0)
+  averageRoundDuration Float  @default(0)
+
+  @@map("words")
+}

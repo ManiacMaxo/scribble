@@ -8,10 +8,10 @@ interface Props {
 }
 
 const LobbyCreator: React.FC<Props> = (props) => {
-    const [time, setTime] = useState<number>(120)
-    const [rounds, setRounds] = useState<number>(6)
-    const [players, setPlayers] = useState<string>('9')
-    const [isPrivate, setIsPrivate] = useState<boolean>(true)
+    const [time, setTime] = useState(120)
+    const [rounds, setRounds] = useState(6)
+    const [players, setPlayers] = useState('9')
+    const [isPrivate, setIsPrivate] = useState(true)
 
     const timesOptions = []
     for (let i = 30; i <= 180; i += 15) {

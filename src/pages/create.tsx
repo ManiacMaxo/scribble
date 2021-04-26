@@ -7,11 +7,12 @@ import { LobbyCreator, LobbyUsers } from '../components'
 import { LobbyContext } from '../contexts/Lobby'
 
 const Create: React.FC = (): JSX.Element => {
-    const [isCreating, setIsCreating] = useState<boolean>(true)
-    const [url, setUrl] = useState<string>('')
-    const [gameLink, setGameLink] = useState<string>('')
-    const router = useRouter()
+    const [isCreating, setIsCreating] = useState(true)
+    const [gameLink, setGameLink] = useState('')
+    const [url, setUrl] = useState('')
+
     const { socket, setSocket, users } = useContext(LobbyContext)
+    const router = useRouter()
 
     useEffect(() => {
         if (!url) return

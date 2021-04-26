@@ -1,11 +1,11 @@
 import React, { useContext } from 'react'
 import { Image, List } from 'semantic-ui-react'
-import { ILobbyContext, LobbyContext } from '../contexts/Lobby'
+import { LobbyContext } from '../contexts/Lobby'
 
 interface Props {}
 
 const UserList: React.FC<Props> = () => {
-    const { users } = useContext<ILobbyContext>(LobbyContext)
+    const { users } = useContext(LobbyContext)
 
     return (
         <List relaxed divided>

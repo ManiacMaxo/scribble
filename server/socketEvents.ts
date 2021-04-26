@@ -14,7 +14,9 @@ const socketEvents = (io: Server, lobbies: Map<string, ServerLobby>) => {
         console.log('connection at', namespaceName)
 
         const lobby = lobbies.get(namespaceName)
-        if (!lobby) return socket.emit('error')
+        if (!lobby) return socket.emit('error', 'Lobby does not exist')
+        if (lobby.maxUsers === lobby.currentRound?.users())
+            return socket.emit('error', 'Lobby is full')
         lobby.init(namespace)
 
         socket.onAny((event, data) => {
@@ -26,7 +28,6 @@ const socketEvents = (io: Server, lobbies: Map<string, ServerLobby>) => {
             user = { name, avatarURL, id: v4(), points: 0 }
             socket.emit('id', user.id)
             lobby.addUser(user, socket)
-            if (!lobby.custom) lobby.run()
         })
 
         socket.once('disconnect', () => {
@@ -34,9 +35,7 @@ const socketEvents = (io: Server, lobbies: Map<string, ServerLobby>) => {
             if (lobby.users.size === 0) lobbies.delete(lobby.id)
         })
 
-        socket.on('message', (message) =>
-            lobby.onMessage(message, user, socket)
-        )
+        socket.on('message', (message) => lobby.onMessage(message, user))
 
         socket.on('draw', (data) => socket.broadcast.emit('draw', data))
 

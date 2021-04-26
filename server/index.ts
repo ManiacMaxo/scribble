@@ -1,5 +1,6 @@
 /* eslint-disable global-require */
 /* eslint-disable no-console */
+import { PrismaClient } from '.prisma/client'
 import express from 'express'
 import { createServer } from 'http'
 import next from 'next'
@@ -20,6 +21,7 @@ app.use(express.json())
 
 const server = createServer(app)
 export const lobbies: Map<string, ServerLobby> = new Map()
+export const prisma = new PrismaClient()
 
 const nextApp = next({ dev })
 const nextHandler = nextApp.getRequestHandler()
@@ -36,8 +38,7 @@ socketEvents(io, lobbies)
 
 nextApp.prepare().then(() => {
     console.log('NextJS started')
-
-    server.listen(port, async () => {
+    server.listen(port, () => {
         console.log(`Server listening on ${port}...`)
     })
 })

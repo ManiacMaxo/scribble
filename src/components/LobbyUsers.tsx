@@ -1,11 +1,11 @@
 import React, { useContext } from 'react'
 import { Button, Card, Image } from 'semantic-ui-react'
-import { ILobbyContext, LobbyContext } from '../contexts/Lobby'
+import { LobbyContext } from '../contexts/Lobby'
 
 interface Props {}
 
 const LobbyUsers: React.FC<Props> = () => {
-    const { users, socket } = useContext<ILobbyContext>(LobbyContext)
+    const { users, socket } = useContext(LobbyContext)
     const id = localStorage.getItem('id')
     return (
         <div>
