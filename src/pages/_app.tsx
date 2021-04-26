@@ -15,7 +15,7 @@ const AppWrapper = ({ Component, pageProps }: AppProps) => {
                 <Layout>
                     <Component {...pageProps} />
                 </Layout>
-                <ToastContainer />
+                <ToastContainer autoClose={4000} position='bottom-right' />
             </LobbyContextProvider>
         </UserContextProvider>
     )

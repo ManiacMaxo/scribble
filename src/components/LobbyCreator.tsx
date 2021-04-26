@@ -49,6 +49,7 @@ const LobbyCreator: React.FC<Props> = (props) => {
                 <Form.Group widths='equal'>
                     <Form.Field>
                         <Select
+                            id='time'
                             placeholder='Select max round time'
                             options={timesOptions}
                             value={time}
@@ -63,6 +64,7 @@ const LobbyCreator: React.FC<Props> = (props) => {
                     </Form.Field>
                     <Form.Field>
                         <Select
+                            id='rounds'
                             placeholder='Select number of rounds'
                             options={roundsOptions}
                             value={rounds}

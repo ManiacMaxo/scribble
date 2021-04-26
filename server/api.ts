@@ -7,13 +7,14 @@ import { getPublicLobbies } from './utils'
 const router = Router()
 
 router.get('/find', (_req, res) => {
-    if (lobbies.size === 0) {
+    const publicLobbies = getPublicLobbies(lobbies)
+
+    if (publicLobbies.length === 0) {
         const lobby = new ServerLobby()
         lobbies.set(lobby.id, lobby)
         return res.send(lobby.id)
     }
 
-    const publicLobbies = getPublicLobbies(lobbies)
     const random = Math.floor(Math.random() * publicLobbies.length)
     return res.send(publicLobbies[random].id)
 })

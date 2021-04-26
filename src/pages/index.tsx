@@ -1,14 +1,14 @@
 import axios from 'axios'
 import { useRouter } from 'next/router'
-import React, { useContext, useState } from 'react'
-import { Button, Divider, Header, Icon, Input, Label } from 'semantic-ui-react'
+import React, { useContext } from 'react'
+import { toast } from 'react-toastify'
+import { Button, Divider, Header, Icon, Input } from 'semantic-ui-react'
 import { Avatar } from '../components'
 import { UserContext } from '../contexts/User'
 import styles from '../styles/home.module.scss'
 
 const Home: React.FC = (): JSX.Element => {
     const { name, setName } = useContext(UserContext)
-    const [error, setError] = useState<string | null>(null)
     const router = useRouter()
 
     const joinLobby: any = async () => {
@@ -28,7 +28,7 @@ const Home: React.FC = (): JSX.Element => {
             return router.push(`/play/${lobby}`)
         } catch (e) {
             console.error(e)
-            return setError('The server is having problems right now')
+            toast.error('The server is having problems right now')
         }
     }
 
@@ -59,12 +59,6 @@ const Home: React.FC = (): JSX.Element => {
                     All lobbies
                 </Button>
             </Button.Group>
-
-            {error && (
-                <Label color='red' horizontal className={styles.error}>
-                    {error}
-                </Label>
-            )}
 
             <span className={styles.footer}>
                 Made with love by{' '}

@@ -1,26 +1,42 @@
-import React, { useCallback, useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import CanvasDraw from 'react-canvas-draw'
 import { LobbyContext } from '../contexts/Lobby'
+import { useGameSocket } from '../hooks'
 
 interface Props {
-    className: string
-    canvas: React.MutableRefObject<any>
-    setDrawData: (value: string) => void
+    className?: string
 }
 
-const Canvas: React.FC<Props> = (props) => {
-    const { canDraw, radius, colour } = useContext(LobbyContext)
+const Canvas = React.forwardRef((props: Props, ref: any) => {
+    const { setDrawData } = useGameSocket()
+    const { canDraw, radius, colour, socket } = useContext(LobbyContext)
 
-    const onCanvasChange = useCallback((canvas: CanvasDraw) => {
+    const onCanvasChange = (canvas: CanvasDraw) => {
         if (!canDraw) return
-        props.setDrawData(canvas.getSaveData())
-    }, [])
+        setDrawData(canvas.getSaveData())
+    }
+
+    useEffect(() => {
+        if (!socket) return
+
+        socket.on('draw', (data: string) => {
+            if (canDraw || !data) return
+            console.log('got draw')
+            ref?.current?.loadSaveData(data)
+        })
+
+        return () => {
+            socket.off('draw')
+        }
+    }, [socket, ref, canDraw])
+
     return (
         <CanvasDraw
-            ref={props.canvas}
+            ref={ref}
             className={props.className}
             hideInterface
             hideGrid
+            immediateLoading
             lazyRadius={0}
             canvasWidth='100%'
             canvasHeight='100%'
@@ -30,6 +46,6 @@ const Canvas: React.FC<Props> = (props) => {
             onChange={onCanvasChange}
         />
     )
-}
+})
 
 export { Canvas }

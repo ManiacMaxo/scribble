@@ -1,5 +1,4 @@
 import { Namespace, Socket } from 'socket.io'
-import { Message } from '../src/types'
 import { ServerTurn } from './ServerTurn'
 import { RoundUser, User } from './types'
 import { getWords, sleep } from './utils'
@@ -9,7 +8,7 @@ export class ServerRound {
     private passed: RoundUser[]
     private notPassed: RoundUser[]
     private nsp: Namespace
-    private currentTurn?: ServerTurn
+    currentTurn?: ServerTurn
 
     constructor(
         users: Map<string, User>,
@@ -20,7 +19,7 @@ export class ServerRound {
         this.maxTime = maxTime
 
         this.passed = []
-        this.notPassed = Array.from(users.values()).map((u) => ({
+        this.notPassed = [...users.values()].map((u) => ({
             ...u,
             socket: sockets.get(u.id) as Socket
         }))
@@ -38,14 +37,9 @@ export class ServerRound {
         const isNotUser = (u: User) => u.id !== user.id
         this.notPassed = this.notPassed.filter(isNotUser)
         this.passed = this.passed.filter(isNotUser)
-    }
 
-    checkCorrect(message: Message, user: User) {
-        const content = message.content.trim()
-        if (content !== this.currentTurn?.word) return false
-
-        this.currentTurn?.onCorrect(user)
-        return true
+        if (this.currentTurn?.currentUser.id === user.id)
+            this.currentTurn.emitter.emit('turnEnd')
     }
 
     users() {
@@ -64,7 +58,7 @@ export class ServerRound {
 
             await sleep(5000)
 
-            const words = getWords()
+            const words = await getWords()
             let word: string = words[Math.round(Math.random() * 2)]
             currentUser.socket.emit('drawing', words)
 
@@ -83,14 +77,14 @@ export class ServerRound {
 
                 timeout = setTimeout(resolve, 20000)
             })
-
-            await new ServerTurn(
+            this.currentTurn = new ServerTurn(
                 word,
                 currentUser,
                 this.maxTime,
                 this.passed.length + this.notPassed.length,
                 this.nsp
-            ).run()
+            )
+            await this.currentTurn.run()
         }
     }
 }

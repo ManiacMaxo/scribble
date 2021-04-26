@@ -1,4 +1,4 @@
-import EventEmitter from 'node:events'
+import EventEmitter from 'events'
 import { Namespace } from 'socket.io'
 import { prisma } from '.'
 import { RoundUser, User } from './types'
@@ -12,6 +12,7 @@ export class ServerTurn {
     numUsers: number
     correct: number
     nsp: Namespace
+    emitter: EventEmitter
 
     constructor(
         word: string,
@@ -28,10 +29,10 @@ export class ServerTurn {
         this.numUsers = numUsers
         this.correct = 0
         this.nsp = namespace
+        this.emitter = new EventEmitter()
     }
 
     run() {
-        const emitter = new EventEmitter()
         let interval: NodeJS.Timeout
 
         prisma.word.update({
@@ -40,15 +41,20 @@ export class ServerTurn {
         })
 
         return new Promise(async (resolve) => {
-            this.currentUser.socket.broadcast.emit('hint', this.hint)
-            this.currentUser.socket.emit('turnStart', this.word)
-
-            emitter.on('turnEnd', async () => {
+            this.emitter.on('turnEnd', async () => {
                 clearInterval(interval)
 
                 this.currentUser.points += this.correct * 75
-                this.nsp.emit('userCorrect', this.currentUser)
+                const { id, name, points, avatarURL }: User = this.currentUser
+                this.nsp.emit('userCorrect', { id, name, points, avatarURL })
                 this.nsp.emit('turnEnd')
+                this.nsp.emit('serverMessage', `The word was ${this.word}`)
+
+                await prisma.turn.create({
+                    data: { correct: this.correct, word: this.word }
+                })
+
+                resolve(true)
 
                 const repoWord = await prisma.word.findFirst({
                     where: { string: this.word }
@@ -68,22 +74,16 @@ export class ServerTurn {
                         }
                     })
                 }
-
-                prisma.turn.create({
-                    data: { correct: this.correct, word: this.word }
-                })
-
-                this.nsp.emit('serverMessage', `The word was ${this.word}`)
-
-                resolve(true)
             })
+            this.currentUser.socket.broadcast.emit('hint', this.hint)
+            this.currentUser.socket.emit('turnStart', this.word)
 
             interval = setInterval(() => {
                 this.nsp.emit('timer', --this.timer)
 
                 if (this.timer <= 0 || this.correct === this.numUsers - 1) {
                     // timer has ended or everyone has guessed correctly
-                    emitter.emit('turnEnd')
+                    this.emitter.emit('turnEnd')
                 }
             }, 1000)
         })

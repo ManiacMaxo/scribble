@@ -35,7 +35,8 @@ a {
 
 .default-card {
     background: #f1f3f6;
-    width: min(600px, 90vw);
+    width: min(100%, 90vw);
+    max-width: 600px;
     padding: 2rem 2rem 1rem;
 
     display: flex;
@@ -55,13 +56,13 @@ a {
 }
 
 .sm {
-    max-width: 200px;
+    max-width: 200px !important;
 }
 
 .md {
-    max-width: 400px;
+    max-width: 400px !important;
 }
 
 .lg {
-    max-width: 700px;
+    max-width: 700px !important;
 }
