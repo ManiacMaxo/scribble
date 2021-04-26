@@ -67,7 +67,7 @@ const DrawTools: React.FC<Props> = (props) => {
                         onClick={() => {
                             props.canvas.current.clear()
                             socket?.emit(
-                                'drawing',
+                                'draw',
                                 JSON.stringify({
                                     lines: [],
                                     height: 0,
