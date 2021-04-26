@@ -23,36 +23,42 @@ const Lobbies: React.FC = (): JSX.Element => {
     return (
         <div className='default-card'>
             <List relaxed divided size='large'>
-                {lobbies.map((lobby) => (
-                    <List.Item key={lobby.id}>
-                        <List.Icon
-                            name='point'
-                            size='large'
-                            verticalAlign='middle'
-                        />
-                        <List.Content>
-                            <List.Header>{lobby.name}</List.Header>
-                            <List.Description>
-                                players: {lobby.users}/{lobby.maxUsers} round:{' '}
-                                {lobby.round}/{lobby.maxRounds}
-                                <Button
-                                    floated='right'
-                                    compact
-                                    onClick={() =>
-                                        router.push(`/play/${lobby.id}`)
-                                    }
-                                    disabled={lobby.users === lobby.maxUsers}
-                                >
-                                    {lobby.users === lobby.maxUsers ? (
-                                        <strong>FULL</strong>
-                                    ) : (
-                                        'Join'
-                                    )}
-                                </Button>
-                            </List.Description>
-                        </List.Content>
-                    </List.Item>
-                ))}
+                {lobbies.length ? (
+                    lobbies.map((lobby) => (
+                        <List.Item key={lobby.id}>
+                            <List.Icon
+                                name='point'
+                                size='large'
+                                verticalAlign='middle'
+                            />
+                            <List.Content>
+                                <List.Header>{lobby.name}</List.Header>
+                                <List.Description>
+                                    players: {lobby.users}/{lobby.maxUsers}{' '}
+                                    round: {lobby.round}/{lobby.maxRounds}
+                                    <Button
+                                        floated='right'
+                                        compact
+                                        onClick={() =>
+                                            router.push(`/play/${lobby.id}`)
+                                        }
+                                        disabled={
+                                            lobby.users === lobby.maxUsers
+                                        }
+                                    >
+                                        {lobby.users === lobby.maxUsers ? (
+                                            <strong>FULL</strong>
+                                        ) : (
+                                            'Join'
+                                        )}
+                                    </Button>
+                                </List.Description>
+                            </List.Content>
+                        </List.Item>
+                    ))
+                ) : (
+                    <h3>There are not active public lobbies</h3>
+                )}
             </List>
         </div>
     )
