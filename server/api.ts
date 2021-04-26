@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { lobbies } from '.'
 import { ServerLobby } from './ServerLobby'
 import { getPublicLobbies } from './utils'
+import words from './words.json'
 
 const router = Router()
 
@@ -31,6 +32,11 @@ router.post('/create', (req, res) => {
     lobbies.set(lobby.id, lobby)
 
     return res.send(lobby.id)
+})
+
+router.get('/word', (_req, res) => {
+    const random = Math.round(Math.random() * words.length)
+    return res.send(words[random])
 })
 
 export default router

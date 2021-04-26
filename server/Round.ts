@@ -1,7 +1,7 @@
 import EventEmitter from 'events'
-import { randomInt } from 'node:crypto'
 import { Namespace, Socket } from 'socket.io'
 import { RoundUser, User } from './types'
+import allWords from './words.json'
 
 export class Round {
     word: string | null
@@ -53,8 +53,13 @@ export class Round {
         this.passed = this.passed.filter(isNotUser)
     }
 
-    getWords() {
-        return ['one', 'two', 'three']
+    getWords(numWords: number = 3) {
+        const response = []
+        const len = allWords.length
+        for (let i = 0; i < numWords; i++) {
+            response.push(allWords[Math.round(Math.random() * len)])
+        }
+        return response
     }
 
     async run() {
@@ -80,14 +85,14 @@ export class Round {
 
                 this.drawing?.socket.on('drawingResponse', (word: string) => {
                     if (words.includes(word)) this.word = word
-                    else this.word = words[randomInt(2)]
+                    else this.word = words[Math.round(Math.random() * 2)]
                     resolve(true)
                     clearTimeout(timeout)
                     console.log('cleared timeout', timeout)
                 })
 
                 timeout = setTimeout(() => {
-                    this.word = words[randomInt(2)]
+                    this.word = words[Math.round(Math.random() * 2)]
                     resolve(true)
                 }, 20000)
             })

@@ -1,11 +1,7 @@
 module.exports = {
-    apps: [
-        {
-            name: 'scribble',
-            script: './build/server/index.js',
-            env: {
-                NODE_ENV: 'production'
-            }
-        }
-    ]
+    name: 'scribble',
+    script: './build/index.js',
+    env: {
+        NODE_ENV: 'production'
+    }
 }
