@@ -82,6 +82,7 @@ const LobbyContextProvider: React.FC = (props) => {
         socket.on('kick', () => {
             socket.disconnect()
             router.replace('/')
+            setSocket(undefined)
             toast.warning('You have been kicked')
         })
 
