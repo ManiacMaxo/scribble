@@ -33,10 +33,10 @@ const LobbyContextProvider: React.FC = (props) => {
 
     useEffect(() => {
         if (!socket) return
-        socket.onAny((event) => {
-            if (event === 'timer') return
-            console.log(`got ${event}`)
-        })
+        // socket.onAny((event) => {
+        //     if (event === 'timer') return
+        //     console.log(`got ${event}`)
+        // })
 
         socket.once('connect', () => {
             socket.emit('user', { name, avatarURL })

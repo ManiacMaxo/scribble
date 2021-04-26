@@ -66,8 +66,6 @@ export class Round {
         console.log('Round.run')
 
         while (42) {
-            await this.sleep(3000)
-
             this.drawing = this.notPassed.shift()
             if (!this.drawing) break
             this.nsp.emit('timer', this.maxTime)
@@ -77,6 +75,7 @@ export class Round {
 
             console.log('emitting to %s words', this.drawing.name, words)
 
+            await this.sleep(5000)
             this.drawing.socket.emit('drawing', words)
 
             // 20 seconds to think

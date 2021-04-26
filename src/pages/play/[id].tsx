@@ -25,7 +25,8 @@ const Play: React.FC = (): JSX.Element => {
         setCanDraw,
         setIsFinished,
         canDraw,
-        setCanChat
+        setCanChat,
+        setUsers
     } = useContext<ILobbyContext>(LobbyContext)
 
     const canvasRef = useRef<any>(null)
