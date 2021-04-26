@@ -25,8 +25,8 @@ const Create: React.FC = (): JSX.Element => {
     }
 
     const handleStart = () => {
+        router.push(`/play/${url}`)
         socket?.emit('start')
-        socket?.on('start', () => router.push(`/play/${url}`))
     }
 
     return (
