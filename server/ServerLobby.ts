@@ -96,6 +96,7 @@ export class ServerLobby {
         this.users.forEach((u) => (u.points = 0))
         this.round = 0
         this.running = false
+        this.nsp?.emit('users', this.users)
         if (this.users.size >= 3) this.run()
     }
 
