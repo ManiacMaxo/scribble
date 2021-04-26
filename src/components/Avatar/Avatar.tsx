@@ -9,7 +9,7 @@ interface Props {}
 
 const Avatar: React.FC<Props> = () => {
     const { avatarURL, setAvatarURL } = useContext(UserContext)
-    const avatars: number[] = Array.from(Array(50).keys())
+    const avatars: number[] = [...Array(50).keys()]
 
     const [selected, setSelected] = useState<number>()
 

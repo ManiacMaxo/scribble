@@ -2,7 +2,7 @@ import { Namespace, Socket } from 'socket.io'
 import { v4 } from 'uuid'
 import { prisma } from '.'
 import { ServerRound } from './ServerRound'
-import { User } from './types'
+import { Message, User } from './types'
 
 export class ServerLobby {
     id: string
@@ -53,7 +53,7 @@ export class ServerLobby {
     addUser(user: User, socket: Socket) {
         if (!user || this.users.has(user.id)) return
 
-        socket.emit('users', Array.from(this.users.values()))
+        socket.emit('users', [...this.users.values()])
         this.nsp?.emit('userJoin', user)
 
         this.currentRound?.addUser(user, socket)
@@ -67,6 +67,7 @@ export class ServerLobby {
         if (!user || !this.users.has(user.id)) return
         this.users.delete(user.id)
         this.sockets.delete(user.id)
+        this.nsp?.emit('serverMessage', `${user.name} left`)
         this.currentRound?.removeUser(user)
         this.nsp?.emit('userLeave', user)
     }
@@ -87,8 +88,16 @@ export class ServerLobby {
         }
     }
 
-    onMessage(message: any, user: User) {
-        if (this.currentRound?.checkCorrect(message, user)) {
+    onMessage(message: Message, user: User) {
+        console.log(this.currentRound?.currentTurn?.word)
+        if (
+            this.currentRound &&
+            this.currentRound.currentTurn &&
+            message.content.trim().toLowerCase() ===
+                this.currentRound.currentTurn.word.toLowerCase()
+        ) {
+            console.log(`${user.name} is correct`)
+            this.currentRound.currentTurn.onCorrect(user)
             this.sockets.get(user.id)?.emit('correct')
             this.nsp?.emit('serverMessage', `${user.name} guessed the word`)
             return
@@ -130,7 +139,7 @@ export class ServerLobby {
     }
 
     reset() {
-        const sortedUsers = Array.from(this.users.values()).sort(
+        const sortedUsers = [...this.users.values()].sort(
             (a, b) => b.points - a.points
         )
         this.nsp?.emit('end', sortedUsers)

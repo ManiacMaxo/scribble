@@ -19,7 +19,7 @@ const WordsModal: React.FC<Props> = (props) => {
             <Modal.Header>Pick a word</Modal.Header>
             <Modal.Content>
                 {props.words.map((word) => (
-                    <Button onClick={() => submitWord(word)}>{word}</Button>
+                    <Button key={word} onClick={() => submitWord(word)}>{word}</Button>
                 ))}
             </Modal.Content>
         </Modal>

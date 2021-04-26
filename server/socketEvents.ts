@@ -20,7 +20,7 @@ const socketEvents = (io: Server, lobbies: Map<string, ServerLobby>) => {
         lobby.init(namespace)
 
         socket.onAny((event, data) => {
-            if (event === 'draw') return
+            if (event === 'draw') return console.log('draw')
             console.log(event, data)
         })
 
@@ -37,7 +37,7 @@ const socketEvents = (io: Server, lobbies: Map<string, ServerLobby>) => {
 
         socket.on('message', (message) => lobby.onMessage(message, user))
 
-        socket.on('draw', (data) => socket.broadcast.emit('draw', data))
+        socket.on('draw', (data) => socket.nsp.emit('draw', data))
 
         socket.on('start', async () => await lobby.run())
 

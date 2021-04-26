@@ -10,3 +10,11 @@ export interface User {
 export interface RoundUser extends User {
     socket: Socket
 }
+
+export interface Message {
+    id: string
+    username: string
+    avatarURL: string
+    content: string
+    timestamp: string
+}

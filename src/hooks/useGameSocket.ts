@@ -7,7 +7,6 @@ import { User } from '../types'
 
 export const useGameSocket = () => {
     const router = useRouter()
-    const { id } = router.query
     const { name } = useContext(UserContext)
 
     const {
@@ -19,30 +18,28 @@ export const useGameSocket = () => {
         setIsFinished,
         canDraw,
         word,
-        radius,
-        colour,
         setCanChat
     } = useContext(LobbyContext)
 
-    const canvasRef = useRef<any>(null)
+    const canvasRef: any = useRef<any>()
     const [seconds, setSeconds] = useState(0)
     const [openModal, setOpenModal] = useState(false)
-    const [drawData, setDrawData] = useState('')
     const [words, setWords] = useState<Array<string>>([])
     const [endUsers, setEndUsers] = useState<Array<User>>([])
+    const [drawData, setDrawData] = useState('')
 
     useEffect(() => {
-        console.log('words', words)
         if (words.length) setOpenModal(true)
     }, [words])
 
     useEffect(() => {
-        console.log(drawData)
+        if (drawData === '') return
         socket?.emit('draw', drawData)
     }, [drawData])
 
     useEffect(() => {
-        if (!id) return
+        if (!router.isReady) return
+        const { id } = router.query
         if (!name) router.push(`/?lobby=${id}`)
         if (!socket) return setSocket(io(`/${id}`))
 
@@ -70,16 +67,12 @@ export const useGameSocket = () => {
         socket.on('turnEnd', () => {
             setCanDraw(false)
             setCanChat(true)
-            canvasRef.current.clear()
+            canvasRef?.current?.clear()
         })
+
         socket.on('end', (users: User[]) => {
             setEndUsers(users)
             setIsFinished(true)
-        })
-
-        socket.on('draw', (data) => {
-            if (canDraw || !data) return
-            canvasRef.current.loadSaveData(data, true)
         })
 
         return () => {
@@ -90,23 +83,20 @@ export const useGameSocket = () => {
             socket.off('turnStart')
             socket.off('turnEnd')
             socket.off('end')
-            socket.off('draw')
         }
 
         // eslint-disable-next-line
-    }, [id, socket])
+    }, [router, socket])
 
     return {
+        setDrawData,
         isFinished,
         endUsers,
         seconds,
         canDraw,
         canvasRef,
         word,
-        radius,
-        colour,
         openModal,
-        words,
-        setDrawData
+        words
     }
 }

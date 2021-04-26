@@ -19,8 +19,7 @@ const Play: React.FC = (): JSX.Element => {
         canvasRef,
         word,
         openModal,
-        words,
-        setDrawData
+        words
     } = useGameSocket()
 
     return isFinished ? (
@@ -39,11 +38,7 @@ const Play: React.FC = (): JSX.Element => {
                 <aside className={styles.users}>
                     <UserList />
                 </aside>
-                <Canvas
-                    className={styles.canvas}
-                    canvas={canvasRef}
-                    setDrawData={setDrawData}
-                />
+                <Canvas className={styles.canvas} ref={canvasRef} />
                 <Chat />
             </div>
             <WordsModal open={openModal} words={words} />
