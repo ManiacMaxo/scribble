@@ -2,16 +2,4 @@
     "[prisma]": {
         "editor.defaultFormatter": "Prisma.prisma"
     },
-    "sqltools.connections": [
-        {
-            "previewLimit": 50,
-            "server": "localhost",
-            "port": 5432,
-            "driver": "PostgreSQL",
-            "name": "scribble local",
-            "username": "postgres",
-            "password": "postgres",
-            "database": "scribble-log"
-        }
-    ],
 }

@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { lobbies } from '.'
-import words from './data/randomWords.json'
+import words from './data/dictionary.json'
 import { ServerLobby } from './ServerLobby'
 import { getPublicLobbies } from './utils'
 

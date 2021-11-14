@@ -1,16 +1,13 @@
-/* eslint-disable global-require */
-/* eslint-disable no-console */
 import { PrismaClient } from '.prisma/client'
 import express from 'express'
 import { createServer } from 'http'
 import next from 'next'
-import { resolve } from 'path'
 import { Server } from 'socket.io'
 import apiRouter from './api'
 import { ServerLobby } from './ServerLobby'
 import socketEvents from './socketEvents'
 
-require('dotenv').config({ path: resolve(__dirname, '../.env') })
+require('dotenv').config()
 
 const dev = process.env.NODE_ENV !== 'production'
 const port = process.env.PORT ?? 3000

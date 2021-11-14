@@ -1,5 +1,5 @@
 import { prisma } from '../'
-import allWords from '../data/gameWords.json'
+import allWords from '../data/dictionary.json'
 
 export const getWords = async (numWords: number = 3) => {
     const response = []
