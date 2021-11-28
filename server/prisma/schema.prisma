@@ -1,0 +1,47 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Game {
+  id        String   @id @default(cuid())
+  lobby     String
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  rounds    Round[]
+}
+
+model Round {
+  id     Int     @id @default(autoincrement())
+  turns  Turn[]
+  Game   Game?   @relation(fields: [gameId], references: [id])
+  gameId String?
+}
+
+model Turn {
+  id       Int    @id @default(autoincrement())
+  correct  Int    @default(0)
+  word     String
+  duration Int    @default(0)
+  Round    Round? @relation(fields: [roundId], references: [id])
+  roundId  Int?
+}
+
+model Dictionary {
+  id    String @id @default(cuid())
+  name  String @unique
+  words Word[]
+}
+
+model Word {
+  id                   Int         @id @default(autoincrement())
+  string               String      @unique
+  timesShown           Int         @default(0)
+  timesChosen          Int         @default(0)
+  averageRoundDuration Float       @default(0)
+  Dictionary           Dictionary? @relation(fields: [dictionaryId], references: [id])
+  dictionaryId         String?
+}
