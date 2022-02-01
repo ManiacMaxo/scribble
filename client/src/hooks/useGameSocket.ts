@@ -28,7 +28,7 @@ export const useGameSocket = () => {
     const [drawData, setDrawData] = useState('')
 
     useEffect(() => {
-        words && setOpenModal(true)
+        words.length && setOpenModal(true)
     }, [words])
 
     useEffect(() => {
@@ -39,7 +39,10 @@ export const useGameSocket = () => {
         if (!router.isReady) return
         const { id } = router.query
         if (!name) router.push(`/?lobby=${id}`)
-        if (!socket) return setSocket(io(`/${id}`))
+        if (!socket)
+            return setSocket(
+                io(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/${id}`)
+            )
 
         socket.once('error', () => router.push('/'))
 

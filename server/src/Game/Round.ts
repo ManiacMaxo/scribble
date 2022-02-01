@@ -1,14 +1,14 @@
 import { Namespace, Socket } from 'socket.io'
-import { ServerTurn } from './ServerTurn'
-import { RoundUser, User } from './types'
-import { getWords, sleep } from './utils'
+import { GameTurn } from '.'
+import { RoundUser, User } from '../types'
+import { getWords, sleep } from '../utils'
 
-export class ServerRound {
+export class GameRound {
     private maxTime: number
     private passed: RoundUser[]
     private notPassed: RoundUser[]
     private nsp: Namespace
-    public currentTurn?: ServerTurn
+    public currentTurn?: GameTurn
 
     constructor(
         users: Map<string, User>,
@@ -78,7 +78,7 @@ export class ServerRound {
                 timeout = setTimeout(resolve, 20000)
             })
 
-            this.currentTurn = new ServerTurn(
+            this.currentTurn = new GameTurn(
                 word,
                 currentUser,
                 this.maxTime,

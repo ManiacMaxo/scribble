@@ -1,17 +1,17 @@
 import { Namespace, Socket } from 'socket.io'
 import { v4 } from 'uuid'
-import { prisma } from '.'
-import { ServerRound } from './ServerRound'
-import { Message, User } from './types'
+import { GameRound } from '.'
+import { prisma } from '..'
+import { Message, User } from '../types'
 
-export class ServerLobby {
+export class GameLobby {
     public readonly id: string
     private name: string
     public users: Map<string, User>
     public readonly maxUsers: number
     private sockets: Map<string, Socket>
     private round: number
-    public currentRound?: ServerRound
+    public currentRound?: GameRound
     private maxRounds: number
     private maxTime: number
     private nsp?: Namespace
@@ -121,7 +121,7 @@ export class ServerLobby {
         })
 
         for (; this.round < this.maxRounds; this.round++) {
-            this.currentRound = new ServerRound(
+            this.currentRound = new GameRound(
                 this.users,
                 this.sockets,
                 this.maxTime,

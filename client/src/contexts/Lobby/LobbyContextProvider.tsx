@@ -8,7 +8,7 @@ import { LobbyContext } from './LobbyContext'
 
 export const LobbyContextProvider: React.FC = (props) => {
     const [canDraw, setCanDraw] = useState(false)
-    const [canChat, setCanChat] = useState<boolean>(!canDraw)
+    const [canChat, setCanChat] = useState(!canDraw)
 
     const [colour, setColour] = useState('black')
     const [radius, setRadius] = useState(12)
@@ -17,7 +17,7 @@ export const LobbyContextProvider: React.FC = (props) => {
     const [isFinished, setIsFinished] = useState(false)
 
     const [users, setUsers] = useState<Array<User>>([])
-    const [socket, setSocket] = useState<Socket | undefined>(undefined)
+    const [socket, setSocket] = useState<Socket | undefined>()
 
     const router = useRouter()
 

@@ -1,9 +1,9 @@
 import EventEmitter from 'events'
 import { Namespace } from 'socket.io'
-import { prisma } from '.'
-import { RoundUser, User } from './types'
+import { prisma } from '..'
+import { RoundUser, User } from '../types'
 
-export class ServerTurn {
+export class GameTurn {
     word: string
     hint: string
     currentUser: RoundUser

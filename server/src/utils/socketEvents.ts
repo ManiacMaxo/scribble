@@ -1,9 +1,9 @@
 import { Server, Socket } from 'socket.io'
 import { v4 } from 'uuid'
-import { ServerLobby } from './ServerLobby'
-import { User } from './types'
+import { GameLobby } from '../Game'
+import { User } from '../types'
 
-export const socketEvents = (io: Server, lobbies: Map<string, ServerLobby>) => {
+export const socketEvents = (io: Server, lobbies: Map<string, GameLobby>) => {
     const namespaces = io.of(/^\/\w+$/)
 
     namespaces.on('connection', (socket: Socket) => {

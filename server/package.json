@@ -6,13 +6,15 @@
   "main": "build/index.js",
   "scripts": {
     "build": "swc src -d build",
+    "build:tiny": "NODE_ENV=production spack",
     "dev": "nodemon .",
     "start": "NODE_ENV=production node .",
-    "start:dev": "NODE_ENV=development node --inspect ."
+    "start:dev": "NODE_ENV=development node ."
   },
   "nodemonConfig": {
     "watch": [
-      "src"
+      "src",
+      ".env"
     ],
     "ext": "ts",
     "exec": "yarn build && yarn start:dev"
@@ -36,12 +38,9 @@
     "@types/node": "^16.11.7",
     "@types/uuid": "^8.3.1",
     "chokidar": "^3.5.2",
-    "concurrently": "^6.4.0",
-    "husky": "^7.0.4",
     "nodemon": "^2.0.15",
     "prettier": "^2.4.1",
     "prisma": "^3.4.2",
-    "rimraf": "^3.0.2",
     "typescript": "^4.4.4"
   }
 }

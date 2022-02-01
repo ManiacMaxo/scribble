@@ -16,7 +16,7 @@ const Create: React.FC = () => {
 
     useEffect(() => {
         if (!url) return
-        setSocket(io(`/${url}`))
+        setSocket(io(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/${url}`))
         setGameLink(`${getDomain()}/play/${url}`)
     }, [url])
 

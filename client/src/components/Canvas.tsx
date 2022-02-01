@@ -1,6 +1,6 @@
 import { LobbyContext } from '@/contexts'
 import { useGameSocket } from '@/hooks'
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import CanvasDraw from 'react-canvas-draw'
 
 interface Props {
@@ -10,6 +10,7 @@ interface Props {
 const Canvas = React.forwardRef((props: Props, ref: any) => {
     const { setDrawData } = useGameSocket()
     const { canDraw, radius, colour, socket } = useContext(LobbyContext)
+    const [mounted, setMounted] = useState(false)
 
     const onCanvasChange = (canvas: CanvasDraw) => {
         if (!canDraw) return
@@ -30,6 +31,9 @@ const Canvas = React.forwardRef((props: Props, ref: any) => {
         }
     }, [socket, ref, canDraw])
 
+    useEffect(() => setMounted(true), [])
+
+    if (!mounted) return null
     return (
         <CanvasDraw
             ref={ref}

@@ -1,11 +1,4 @@
-import {
-    Canvas,
-    Chat,
-    DrawTools,
-    PostGame,
-    UserList,
-    WordsModal
-} from '@/components'
+import { Chat, DrawTools, PostGame, UserList, WordsModal } from '@/components'
 import { useGameSocket } from '@/hooks'
 import styles from '@/styles/play.module.scss'
 import React from 'react'
@@ -22,27 +15,26 @@ const Play: React.FC = () => {
         words
     } = useGameSocket()
 
-    return isFinished ? (
-        <PostGame users={endUsers} />
-    ) : (
-        <>
-            <div className={styles.root}>
-                <span className={styles.timer}>{`${seconds} seconds`}</span>
-                <header className={styles.header}>
-                    {canDraw ? (
-                        <DrawTools canvas={canvasRef} />
-                    ) : (
-                        <span className={styles.hint}>{word}</span>
-                    )}
-                </header>
-                <aside className={styles.users}>
-                    <UserList />
-                </aside>
-                <Canvas className={styles.canvas} ref={canvasRef} />
-                <Chat />
-            </div>
+    if (isFinished) return <PostGame users={endUsers} />
+    // if (false) return <Lobby />
+
+    return (
+        <div className={styles.root}>
+            <span className={styles.timer}>{`${seconds} seconds`}</span>
+            <header className={styles.header}>
+                {canDraw ? (
+                    <DrawTools canvas={canvasRef} />
+                ) : (
+                    <span className={styles.hint}>{word}</span>
+                )}
+            </header>
+            <aside className={styles.users}>
+                <UserList />
+            </aside>
+            {/* <Canvas className={styles.canvas} ref={canvasRef} /> */}
+            <Chat />
             <WordsModal open={openModal} words={words} />
-        </>
+        </div>
     )
 }
 
