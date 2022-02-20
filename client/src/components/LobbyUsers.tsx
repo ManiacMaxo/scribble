@@ -1,37 +1,38 @@
 import { LobbyContext } from '@/contexts'
 import React, { useContext } from 'react'
-import { Button, Card, Image } from 'semantic-ui-react'
 
 const LobbyUsers: React.FC = () => {
     const { users, socket } = useContext(LobbyContext)
     const id = localStorage.getItem('id')
+
     return (
-        <div>
-            <Card.Group centered>
-                {users.map((user) => (
-                    <Card key={user.id} style={{ width: '200px' }}>
-                        <Card.Content>
-                            <Image
-                                floated='right'
-                                size='mini'
-                                src={user.avatarURL}
-                            />
-                            <Card.Header>{user.name}</Card.Header>
-                            {id !== user.id ? (
-                                <Button
-                                    basic
-                                    color='red'
-                                    onClick={() =>
-                                        socket?.emit('kick', user.id)
-                                    }
-                                >
-                                    Remove
-                                </Button>
-                            ) : null}
-                        </Card.Content>
-                    </Card>
-                ))}
-            </Card.Group>
+        <div className='grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
+            {users.map((user) => (
+                <div
+                    key={user.id}
+                    className='flex gap-2 px-2 py-4 bg-white dark:bg-base-200 rounded-xl'
+                >
+                    <img
+                        src={user.avatarURL}
+                        alt={user.name}
+                        className='w-16 aspect-square'
+                    />
+
+                    <div className='flex flex-col justify-between flex-1'>
+                        <span className='block overflow-hidden text-lg text-ellipsis whitespace-nowrap'>
+                            {user.name}
+                        </span>
+                        {id !== user.id ? (
+                            <button
+                                className='block w-full btn btn-outline btn-error btn-sm'
+                                onClick={() => socket?.emit('kick', user.id)}
+                            >
+                                Kick
+                            </button>
+                        ) : null}
+                    </div>
+                </div>
+            ))}
         </div>
     )
 }

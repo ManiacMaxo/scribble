@@ -1,6 +1,6 @@
 import React from 'react'
 import { Socket } from 'socket.io-client'
-import { User } from '../../types'
+import { User } from '../../utils/types'
 
 export interface ILobbyContext {
     socket: Socket | undefined

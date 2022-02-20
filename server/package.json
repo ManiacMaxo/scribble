@@ -13,7 +13,7 @@
   },
   "nodemonConfig": {
     "watch": [
-      "src",
+      "src/",
       ".env"
     ],
     "ext": "ts",

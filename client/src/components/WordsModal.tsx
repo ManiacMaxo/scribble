@@ -1,6 +1,7 @@
 import { LobbyContext } from '@/contexts'
 import React, { useContext } from 'react'
-import { Button, Modal } from 'semantic-ui-react'
+import { Modal } from 'semantic-ui-react'
+import * as DialogPrimitive from '@radix-ui/react-dialog'
 
 interface Props {
     open: boolean
@@ -15,16 +16,29 @@ const WordsModal: React.FC<Props> = (props) => {
     }
 
     return (
-        <Modal size='tiny' open={props.open}>
-            <Modal.Header>Pick a word</Modal.Header>
-            <Modal.Content>
-                {props.words.map((word) => (
-                    <Button key={word} onClick={() => submitWord(word)}>
-                        {word}
-                    </Button>
-                ))}
-            </Modal.Content>
-        </Modal>
+        <DialogPrimitive.Root>
+            <DialogPrimitive.Portal>
+                <DialogPrimitive.Overlay className='fixed inset-0' />
+
+                <DialogPrimitive.Content className='rounded-xl'>
+                    <DialogPrimitive.Title>Pick a word</DialogPrimitive.Title>
+                </DialogPrimitive.Content>
+                <Modal size='tiny' open={props.open}>
+                    <Modal.Header>Pick a word</Modal.Header>
+                    <Modal.Content>
+                        {props.words.map((word) => (
+                            <button
+                                className='btn btn-primary'
+                                key={word}
+                                onClick={() => submitWord(word)}
+                            >
+                                {word}
+                            </button>
+                        ))}
+                    </Modal.Content>
+                </Modal>
+            </DialogPrimitive.Portal>
+        </DialogPrimitive.Root>
     )
 }
 

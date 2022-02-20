@@ -1,5 +1,5 @@
 import { UserContext } from '@/contexts'
-import { User } from '@/types'
+import { User } from '@/utils/types'
 import { useRouter } from 'next/router'
 import React, { useContext, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
@@ -52,6 +52,7 @@ export const LobbyContextProvider: React.FC = (props) => {
         })
 
         socket.on('userJoin', (data: User) => {
+            console.log('user join', data)
             if (users.find((u) => u.id === data.id)) return
             addUser(data)
         })

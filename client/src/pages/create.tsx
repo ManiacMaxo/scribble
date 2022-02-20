@@ -1,9 +1,9 @@
-import { LobbyCreator, LobbyUsers } from '@/components'
+import { Layout, LobbyCreator, LobbyUsers } from '@/components'
 import { LobbyContext } from '@/contexts'
 import { copyToClipboard } from '@/utils'
 import { useRouter } from 'next/router'
 import React, { useContext, useEffect, useState } from 'react'
-import { Button, Icon, Input, Step } from 'semantic-ui-react'
+import { BiCopy } from 'react-icons/bi'
 import { io } from 'socket.io-client'
 
 const Create: React.FC = () => {
@@ -17,14 +17,9 @@ const Create: React.FC = () => {
     useEffect(() => {
         if (!url) return
         setSocket(io(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/${url}`))
-        setGameLink(`${getDomain()}/play/${url}`)
+        const domain = new URL(window.location.href)
+        setGameLink(`${domain.origin}/play/${url}`)
     }, [url])
-
-    const getDomain = () => {
-        console.log(router.basePath)
-        const { protocol, hostname, port } = window.location
-        return protocol + '//' + hostname + (port ? ':' + port : '')
-    }
 
     const handleStart = () => {
         router.push(`/play/${url}`)
@@ -32,23 +27,17 @@ const Create: React.FC = () => {
     }
 
     return (
-        <>
-            <Step.Group ordered>
-                <Step active={isCreating} completed={!isCreating}>
-                    <Step.Content>
-                        <Step.Title>Settings</Step.Title>
-                        <Step.Description>
-                            Choose your game options
-                        </Step.Description>
-                    </Step.Content>
-                </Step>
+        <Layout>
+            <div className='flex mb-6'>
+                <div className={'flex flex-col justify-center py-2 px-4'}>
+                    <h2>Settings</h2>
+                    <span>Choose your game options</span>
+                </div>
 
-                <Step active={!isCreating}>
-                    <Step.Content>
-                        <Step.Title>Invite players</Step.Title>
-                    </Step.Content>
-                </Step>
-            </Step.Group>
+                <div className={'flex flex-col justify-center py-2 px-4'}>
+                    <h2>Invite players</h2>
+                </div>
+            </div>
             <div className='default-card'>
                 {isCreating ? (
                     <LobbyCreator
@@ -58,33 +47,35 @@ const Create: React.FC = () => {
                 ) : (
                     <>
                         <LobbyUsers />
-                        <Input
-                            value={gameLink}
-                            fluid
-                            action={
-                                <Button
-                                    color='blue'
-                                    icon
-                                    labelPosition='right'
+
+                        <div className='form-control'>
+                            <div className='input-group'>
+                                <input
+                                    type='text'
+                                    value={gameLink}
+                                    readOnly
+                                    className='flex-1 input input-bordered'
+                                />
+                                <button
+                                    className='gap-2 btn shrink-0 w-max '
                                     onClick={() => copyToClipboard(gameLink)}
                                 >
-                                    Copy
-                                    <Icon name='copy' />
-                                </Button>
-                            }
-                        />
-                        <Button
-                            fluid
-                            primary
+                                    Copy <BiCopy className='text-xl' />
+                                </button>
+                            </div>
+                        </div>
+
+                        <button
+                            className='btn btn-primary'
                             onClick={handleStart}
                             disabled={users.length < 3}
                         >
                             Start
-                        </Button>
+                        </button>
                     </>
                 )}
             </div>
-        </>
+        </Layout>
     )
 }
 

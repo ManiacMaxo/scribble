@@ -1,4 +1,4 @@
-import Axios from 'axios'
+import Axios, { AxiosError } from 'axios'
 import { toast } from 'react-toastify'
 
 export const axios = Axios.create({
@@ -10,7 +10,7 @@ axios.interceptors.response.use(
         if (process.env.NODE_ENV === 'development') console.log(res.data)
         return res
     },
-    (error) => {
-        toast.error(error.message ?? 'Network error')
+    (error: AxiosError) => {
+        toast.error(error.response?.data.message ?? 'Network error')
     }
 )

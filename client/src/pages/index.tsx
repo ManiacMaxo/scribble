@@ -1,14 +1,17 @@
-import { Avatar } from '@/components'
+import { Avatar, Layout } from '@/components'
 import { UserContext } from '@/contexts'
-import styles from '@/styles/home.module.scss'
 import { axios } from '@/utils'
+import Filter from 'bad-words'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { useContext } from 'react'
-import { Button, Divider, Header, Icon, Input } from 'semantic-ui-react'
+import React, { useContext, useState } from 'react'
 
 const Home: React.FC = () => {
     const { name, setName } = useContext(UserContext)
     const router = useRouter()
+
+    const profanityFilter = React.useRef(new Filter())
+    const [error, setError] = useState<string | null>(null)
 
     const joinLobby: any = async () => {
         if (!name) axios.get('/api/word').then((res) => setName(res.data))
@@ -23,44 +26,68 @@ const Home: React.FC = () => {
     }
 
     return (
-        <div className='default-card'>
-            <Header as='h1' icon textAlign='center'>
-                <Icon name='pencil square' />
-                <Header.Content>Scribble</Header.Content>
-            </Header>
+        <Layout>
+            <div className='container'>
+                <div className='default-card'>
+                    <Avatar />
+                    <div className='form-control'>
+                        <input
+                            className={`input ${
+                                error ? 'input-error' : 'input-primary'
+                            }`}
+                            placeholder='Enter your name'
+                            value={name ?? ''}
+                            onChange={(event) => {
+                                error && setError(null)
+                                setName(event.target.value)
+                            }}
+                            onBlur={() => {
+                                if (!name) return
+                                profanityFilter.current.isProfane(name) &&
+                                    setError('Profanity is not allowed')
+                            }}
+                            spellCheck='false'
+                        />
+                        {error && (
+                            <span className='label text-error-content'>
+                                {error}
+                            </span>
+                        )}
+                    </div>
+                    <div className='divider'>play</div>
+                    <div className='btn-group'>
+                        <Link href='/create'>
+                            <a className='flex-1 btn' role='button'>
+                                Create lobby
+                            </a>
+                        </Link>
+                        <button
+                            className='flex-1 btn btn-primary'
+                            onClick={joinLobby}
+                            disabled={!name || !!error}
+                        >
+                            Join lobby
+                        </button>
+                        <Link href='/lobbies'>
+                            <a className='flex-1 btn' role='button'>
+                                All lobbies
+                            </a>
+                        </Link>
+                    </div>
 
-            <Avatar />
-            <Input
-                fluid
-                placeholder='Enter your name'
-                value={name ?? ''}
-                onChange={(event) => setName(event.target.value)}
-                spellCheck='false'
-            />
-            <Divider horizontal>play</Divider>
-            <Button.Group widths='3'>
-                <Button onClick={() => router.push('/create')}>
-                    Create lobby
-                </Button>
-                <Button primary onClick={joinLobby}>
-                    Join lobby
-                </Button>
-                <Button onClick={() => router.push('/lobbies')}>
-                    All lobbies
-                </Button>
-            </Button.Group>
-
-            <span className={styles.footer}>
-                Made with love by{' '}
-                <a
-                    href='https://github.com/ManiacMaxo/'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                >
-                    ManiacMaxo
-                </a>
-            </span>
-        </div>
+                    <span className='mx-auto mt-2 text-xs text-center select-none w-fit text-neutral hover:underline'>
+                        Made with love by&nbsp;
+                        <a
+                            href='https://github.com/ManiacMaxo/'
+                            target='_blank'
+                            rel='noopener noreferrer'
+                        >
+                            ManiacMaxo
+                        </a>
+                    </span>
+                </div>
+            </div>
+        </Layout>
     )
 }
 

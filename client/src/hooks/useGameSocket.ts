@@ -1,5 +1,5 @@
 import { LobbyContext, UserContext } from '@/contexts'
-import { User } from '@/types'
+import { User } from '@/utils/types'
 import { useRouter } from 'next/router'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { io } from 'socket.io-client'
@@ -39,10 +39,10 @@ export const useGameSocket = () => {
         if (!router.isReady) return
         const { id } = router.query
         if (!name) router.push(`/?lobby=${id}`)
-        if (!socket)
-            return setSocket(
-                io(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/${id}`)
-            )
+        if (!socket) {
+            setSocket(io(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/${id}`))
+            return
+        }
 
         socket.once('error', () => router.push('/'))
 

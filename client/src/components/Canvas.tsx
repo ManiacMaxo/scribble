@@ -1,21 +1,25 @@
 import { LobbyContext } from '@/contexts'
 import { useGameSocket } from '@/hooks'
-import React, { useContext, useEffect, useState } from 'react'
-import CanvasDraw from 'react-canvas-draw'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 
 interface Props {
     className?: string
+    width?: number | string
+    height?: number | string
 }
 
-const Canvas = React.forwardRef((props: Props, ref: any) => {
+export enum Tool {
+    Pencil = 'pencil'
+}
+
+export interface ICanvas {}
+
+const Canvas: React.FC<Props> = (props) => {
+    const ref = useRef<HTMLCanvasElement>(null)
+
     const { setDrawData } = useGameSocket()
     const { canDraw, radius, colour, socket } = useContext(LobbyContext)
     const [mounted, setMounted] = useState(false)
-
-    const onCanvasChange = (canvas: CanvasDraw) => {
-        if (!canDraw) return
-        setDrawData(canvas.getSaveData())
-    }
 
     useEffect(() => {
         if (!socket) return
@@ -32,24 +36,9 @@ const Canvas = React.forwardRef((props: Props, ref: any) => {
     }, [socket, ref, canDraw])
 
     useEffect(() => setMounted(true), [])
-
     if (!mounted) return null
-    return (
-        <CanvasDraw
-            ref={ref}
-            className={props.className}
-            hideInterface
-            hideGrid
-            immediateLoading
-            lazyRadius={0}
-            canvasWidth='100%'
-            canvasHeight='100%'
-            brushRadius={radius}
-            brushColor={colour}
-            disabled={!canDraw}
-            onChange={onCanvasChange}
-        />
-    )
-})
+
+    return <canvas ref={ref} width='100%' height='100%' {...props} />
+}
 
 export { Canvas }

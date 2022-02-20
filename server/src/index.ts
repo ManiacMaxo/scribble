@@ -12,7 +12,7 @@ require('dotenv').config()
 const dev = process.env.NODE_ENV !== 'production'
 const port = process.env.PORT ?? 4000
 
-const corsOptions = { origin: [/gorchilov\.net$/, /(localhost)./] }
+const corsOptions = { origin: [process.env.APP_HOSTNAME, /(localhost)./] }
 
 const app = express()
 app.use(express.urlencoded({ extended: true }))
@@ -20,7 +20,7 @@ app.use(cors(corsOptions))
 app.use(express.json())
 
 const server = createServer(app)
-export const lobbies: Map<string, GameLobby> = new Map()
+export const lobbies = new Map<string, GameLobby>()
 export const prisma = new PrismaClient()
 
 app.use('/api', apiRouter)
@@ -33,7 +33,7 @@ const io = new Server(server, {
 })
 socketEvents(io, lobbies)
 
-server.listen(port, () => {
+server.listen(port, async () => {
     prisma.$connect()
     console.log(`Server listening on port ${port}...`)
 })

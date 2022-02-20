@@ -1,26 +1,27 @@
 import { LobbyContext } from '@/contexts'
 import React, { useContext } from 'react'
-import { Image, List } from 'semantic-ui-react'
 
 const UserList: React.FC = () => {
     const { users } = useContext(LobbyContext)
 
     return (
-        <List relaxed divided>
+        <ul className='space-y-3'>
             {users.map((user) => (
-                <List.Item key={user.id}>
-                    <Image
-                        avatar
+                <li key={user.id} className='flex items-center gap-2'>
+                    <img
                         src={user.avatarURL}
-                        style={{ borderRadius: 0 }}
+                        alt={user.name}
+                        className='w-10 aspect-square'
                     />
-                    <List.Content>
-                        <List.Header>{user.name}</List.Header>
-                        <List.Description>{user.points} pts</List.Description>
-                    </List.Content>
-                </List.Item>
+                    <div className='flex-1'>
+                        <span className='block overflow-hidden font-bold text-ellipsis'>
+                            {user.name}
+                        </span>
+                        <span>{user.points} pts</span>
+                    </div>
+                </li>
             ))}
-        </List>
+        </ul>
     )
 }
 

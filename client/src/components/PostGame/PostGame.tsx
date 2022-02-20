@@ -1,8 +1,8 @@
 import { LobbyContext } from '@/contexts'
-import { User } from '@/types'
-import React, { useContext } from 'react'
-import { Button, Header, Image, List } from 'semantic-ui-react'
-import styles from './PostGame.module.scss'
+import { User } from '@/utils/types'
+import Image from 'next/image'
+import React, { useContext, useMemo } from 'react'
+import { List } from 'semantic-ui-react'
 
 interface Props {
     users: User[]
@@ -11,17 +11,23 @@ interface Props {
 const PostGame: React.FC<Props> = (props) => {
     const { setIsFinished } = useContext(LobbyContext)
 
-    const orderedUsers = props.users.sort((a, b) => b.points - a.points)
+    const orderedUsers = useMemo(
+        () => props.users.sort((a, b) => b.points - a.points),
+        []
+    )
 
     return (
         <div className='default-card'>
-            <Header as='h1' textAlign='center'>
-                Final Rankings
-            </Header>
-            <List horizontal ordered size='massive' className={styles.podium}>
+            <h1 className='text-center'>Final Rankings</h1>
+            <List
+                horizontal
+                ordered
+                size='massive'
+                className='flex justify-between'
+            >
                 {orderedUsers.slice(0, 3).map((user) => (
                     <List.Item key={user.id}>
-                        <Image src={user.avatarURL} avatar />
+                        <Image src={user.avatarURL} className='avatar' />
                         <List.Content>
                             <List.Header>{user.name}</List.Header>
                             {user.points}
@@ -32,7 +38,7 @@ const PostGame: React.FC<Props> = (props) => {
             <List size='large'>
                 {orderedUsers.slice(3).map((user) => (
                     <List.Item key={user.id}>
-                        <Image src={user.avatarURL} avatar />
+                        <Image src={user.avatarURL} className='avatar' />
                         <List.Content>
                             <List.Header>{user.name}</List.Header>
                             {user.points}
@@ -40,9 +46,12 @@ const PostGame: React.FC<Props> = (props) => {
                     </List.Item>
                 ))}
             </List>
-            <Button primary onClick={() => setIsFinished(false)}>
+            <button
+                className='btn btn-primary'
+                onClick={() => setIsFinished(false)}
+            >
                 Continue
-            </Button>
+            </button>
         </div>
     )
 }

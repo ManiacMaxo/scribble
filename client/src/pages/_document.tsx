@@ -16,7 +16,7 @@ class Document extends NextDocument {
                         rel='stylesheet'
                     />
                 </Head>
-                <body>
+                <body className='transition-colors bg-slate-50 dark:bg-base-200 dark:text-base-content'>
                     <Main />
                     <NextScript />
                 </body>

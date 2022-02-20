@@ -1,8 +1,7 @@
 import { UserContext } from '@/contexts'
 import React, { useContext, useEffect, useState } from 'react'
 import { Carousel } from 'react-responsive-carousel'
-import { Image } from 'semantic-ui-react'
-import styles from './Avatar.module.scss'
+import Image from 'next/image'
 
 const Avatar: React.FC = () => {
     const { avatarURL, setAvatarURL } = useContext(UserContext)
@@ -33,10 +32,9 @@ const Avatar: React.FC = () => {
         >
             {avatars.map((id) => (
                 <Image
-                    size='small'
                     src={`/assets/avatars/${id}.png`}
                     key={id}
-                    className={styles.avatar}
+                    className='mx-auto select-none'
                 />
             ))}
         </Carousel>

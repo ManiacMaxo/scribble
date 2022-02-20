@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind utilities;
+@tailwind components;
+
+@layer components {
+    .default-card {
+        @apply flex flex-col gap-3 p-6 shadow-lg rounded-xl max-w-[700px] w-[min(100%,90vw)] mx-auto;
+        @apply shadow-neutral/75 bg-slate-100 dark:bg-base-100 dark:shadow-base-300;
+    }
+}
+
+.carousel .slide {
+    /* shim for react responsive carousel */
+    background: inherit !important;
+}

@@ -1,7 +1,7 @@
 import { Namespace, Socket } from 'socket.io'
 import { GameTurn } from '.'
 import { RoundUser, User } from '../types'
-import { getWords, sleep } from '../utils'
+import { getWords } from '../utils'
 
 export class GameRound {
     private maxTime: number
@@ -55,8 +55,6 @@ export class GameRound {
             if (!currentUser) break
             this.passed.push(currentUser)
             this.nsp.emit('timer', this.maxTime)
-
-            await sleep(5000)
 
             const words = await getWords()
             let word: string = words[Math.round(Math.random() * 2)]

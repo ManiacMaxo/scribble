@@ -1,6 +1,5 @@
 import { axios } from '@/utils'
 import React, { FormEvent, useState } from 'react'
-import { Button, Checkbox, Form, Select } from 'semantic-ui-react'
 
 interface Props {
     setUrl: any
@@ -13,9 +12,9 @@ const LobbyCreator: React.FC<Props> = (props) => {
     const [players, setPlayers] = useState('9')
     const [isPrivate, setIsPrivate] = useState(true)
 
-    const timesOptions = []
+    const timeOptions = []
     for (let i = 30; i <= 180; i += 15) {
-        timesOptions.push({
+        timeOptions.push({
             value: i,
             text: `${i} seconds`
         })
@@ -47,61 +46,72 @@ const LobbyCreator: React.FC<Props> = (props) => {
 
     return (
         <>
-            <h1>Create a lobby</h1>
-            <Form onSubmit={handleCreate}>
-                <Form.Group widths='equal'>
-                    <Form.Field>
-                        <Select
-                            id='time'
-                            placeholder='Select max round time'
-                            options={timesOptions}
-                            value={time}
-                            onChange={(_event, data) =>
-                                setTime(
-                                    typeof data.value === 'number'
-                                        ? data.value
-                                        : 90
-                                )
-                            }
-                        />
-                    </Form.Field>
-                    <Form.Field>
-                        <Select
-                            id='rounds'
-                            placeholder='Select number of rounds'
-                            options={roundsOptions}
-                            value={rounds}
-                            onChange={(_event, data) =>
-                                setRounds(
-                                    typeof data.value === 'number'
-                                        ? data.value
-                                        : 5
-                                )
-                            }
-                        />
-                    </Form.Field>
-                </Form.Group>
-                <Form.Input
-                    label='Max player count(up to 15)'
-                    type='number'
-                    max={15}
-                    min={3}
-                    value={players}
-                    onChange={(_e, data) => setPlayers(data.value)}
-                />
+            <h1 className='text-3xl'>Create a lobby</h1>
+            <form onSubmit={handleCreate} className='flex flex-col gap-2'>
+                <div className='flex gap-3'>
+                    <select
+                        name='time'
+                        id='time'
+                        className='select select-primary flex-1'
+                        placeholder='Select max round time'
+                        value={time}
+                        onChange={(e) => setTime(e.target.value as any)}
+                    >
+                        {timeOptions.map((option) => (
+                            <option key={option.value} value={option.value}>
+                                {option.text}
+                            </option>
+                        ))}
+                    </select>
 
-                <Form.Field>
-                    <Checkbox
-                        toggle
-                        checked={isPrivate}
-                        onChange={() => setIsPrivate((prev) => !prev)}
-                        label='Private lobby'
+                    <select
+                        className='select select-primary flex-1'
+                        name='rounds'
+                        id='rounds'
+                        placeholder='Select number of rounds'
+                        value={rounds}
+                        onChange={(e) => setRounds(e.target.value as any)}
+                    >
+                        {roundsOptions.map((option) => (
+                            <option key={option.value} value={option.value}>
+                                {option.text}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <div className='form-control'>
+                    <label className='label'>
+                        <span className='label-text'>
+                            Max player count(up to 15)
+                        </span>
+                    </label>
+                    <input
+                        type='number'
+                        className='input input-primary'
+                        min={3}
+                        max={15}
+                        value={players}
+                        onChange={(e) => setPlayers(e.target.value)}
                     />
-                </Form.Field>
-                <Button type='submit' primary>
+                </div>
+
+                <div className='form-control w-max'>
+                    <label className='cursor-pointer label gap-3'>
+                        <span className='label-text'>Private lobby</span>
+                        <input
+                            type='checkbox'
+                            className='toggle toggle-primary'
+                            checked={isPrivate}
+                            onChange={() => setIsPrivate((prev) => !prev)}
+                        />
+                    </label>
+                </div>
+
+                <button type='submit' className='btn btn-primary'>
                     Create
-                </Button>
-            </Form>
+                </button>
+            </form>
         </>
     )
 }
