@@ -1,10 +1,10 @@
 import { LobbyContext } from '@/contexts'
-import * as Slider from '@radix-ui/react-slider'
 import React, { useContext } from 'react'
 import { BiEraser, BiPencil, BiTrashAlt, BiUndo } from 'react-icons/bi'
 import { FaTint } from 'react-icons/fa'
 import { skribblio as colorTheme } from './colours'
 import classnames from 'classnames'
+import { Slider } from '@/components'
 
 interface Props {
     canvas: any
@@ -89,19 +89,13 @@ const DrawTools: React.FC<Props> = (props) => {
                         <BiTrashAlt />
                     </button>
                 </div>
-                <Slider.Root
+                <Slider
                     min={2}
                     max={50}
                     defaultValue={[12]}
                     onValueChange={(val) => setRadius(val[0])}
-                    className='absolute flex items-center w-full h-4 mt-1 select-none top-full touch-none'
-                    aria-label='radius'
-                >
-                    <Slider.Track className='rounded-full h-[2px] dark:bg-slate-50 grow'>
-                        <Slider.Range className='w-full h-full rounded-full bg-inherit' />
-                    </Slider.Track>
-                    <Slider.Thumb className='block w-4 h-4 transition-all rounded-full shadow dark:bg-slate-50 focus:shadow-base-300 focus:shadow-lg hover:bg-slate-100' />
-                </Slider.Root>
+                    className=''
+                />
             </div>
 
             <span>{word}</span>

@@ -43,7 +43,7 @@ const Play: React.FC = () => {
                     </aside>
                     {/* <Canvas className='col-start-2 row-start-2' ref={canvasRef} /> */}
                     <Chat />
-                    <WordsModal open={openModal} words={words} />
+                    <WordsModal isOpen={openModal} options={words} />
                 </div>
             </div>
         </Layout>

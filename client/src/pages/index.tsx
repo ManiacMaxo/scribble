@@ -75,12 +75,13 @@ const Home: React.FC = () => {
                         </Link>
                     </div>
 
-                    <span className='mx-auto mt-2 text-xs text-center select-none w-fit text-neutral hover:underline'>
+                    <span className='mx-auto mt-2 text-xs text-center select-none w-fit text-neutral group'>
                         Made with love by&nbsp;
                         <a
                             href='https://github.com/ManiacMaxo/'
                             target='_blank'
                             rel='noopener noreferrer'
+                            className='group-hover:underline'
                         >
                             ManiacMaxo
                         </a>

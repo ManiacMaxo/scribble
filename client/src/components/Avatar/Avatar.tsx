@@ -1,7 +1,6 @@
 import { UserContext } from '@/contexts'
 import React, { useContext, useEffect, useState } from 'react'
 import { Carousel } from 'react-responsive-carousel'
-import Image from 'next/image'
 
 const Avatar: React.FC = () => {
     const { avatarURL, setAvatarURL } = useContext(UserContext)
@@ -31,7 +30,7 @@ const Avatar: React.FC = () => {
             useKeyboardArrows
         >
             {avatars.map((id) => (
-                <Image
+                <img
                     src={`/assets/avatars/${id}.png`}
                     key={id}
                     className='mx-auto select-none'

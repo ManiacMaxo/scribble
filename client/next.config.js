@@ -3,7 +3,11 @@
  */
 module.exports = {
     experimentalFeatures: {
-        removeConsole: process.env.NODE_ENV === 'production',
-        outputStandalone: true
+        outputStandalone: true,
+        reactStrictMode: true
+    },
+    poweredByHeader: false,
+    compiler: {
+        removeConsole: process.env.NODE_ENV === 'production'
     }
 }
