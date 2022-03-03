@@ -35,7 +35,7 @@ const Chat: React.FC = () => {
                 username: 'Event',
                 avatarURL: '/assets/server.png',
                 content,
-                timestamp: new Date().toTimeString()
+                timestamp: new Date().toUTCString()
             })
         )
 

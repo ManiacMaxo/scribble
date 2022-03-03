@@ -11,6 +11,7 @@ export interface ILobbyContext {
     canChat: boolean
     isFinished: boolean
     users: User[]
+    id: string | null
     setSocket: (socket: Socket) => void
     setColour: (colour: string) => void
     setRadius: (radius: number) => void
@@ -30,6 +31,7 @@ export const LobbyContext = React.createContext<ILobbyContext>({
     canChat: true,
     isFinished: false,
     users: [],
+    id: null,
     setSocket: (_socket: Socket) => {},
     setColour: (_colour: string) => {},
     setRadius: (_radius: number) => {},

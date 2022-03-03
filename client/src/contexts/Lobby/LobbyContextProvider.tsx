@@ -10,6 +10,8 @@ export const LobbyContextProvider: React.FC = (props) => {
     const [canDraw, setCanDraw] = useState(false)
     const [canChat, setCanChat] = useState(!canDraw)
 
+    const [id, setId] = useState<null | string>(null)
+
     const [colour, setColour] = useState('black')
     const [radius, setRadius] = useState(12)
     const [word, setWord] = useState('')
@@ -43,7 +45,7 @@ export const LobbyContextProvider: React.FC = (props) => {
         })
 
         socket.on('id', (data: string) => {
-            localStorage.setItem('id', data)
+            setId(data)
         })
 
         socket.once('users', (data: User[]) => {
@@ -103,6 +105,7 @@ export const LobbyContextProvider: React.FC = (props) => {
                 canChat,
                 isFinished,
                 users,
+                id,
                 setSocket,
                 setColour,
                 setRadius,

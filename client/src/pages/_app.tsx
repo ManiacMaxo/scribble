@@ -8,7 +8,6 @@ import { AppProps } from 'next/app'
 import React from 'react'
 import { ToastContainer } from 'react-toastify'
 
-import 'react-responsive-carousel/lib/styles/carousel.min.css'
 import 'react-toastify/dist/ReactToastify.min.css'
 
 const AppWrapper: React.FC<AppProps> = ({ Component, pageProps }) => {

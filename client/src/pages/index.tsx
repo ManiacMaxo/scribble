@@ -1,7 +1,6 @@
 import { Avatar, Layout } from '@/components'
 import { UserContext } from '@/contexts'
 import { axios } from '@/utils'
-import Filter from 'bad-words'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useContext, useState } from 'react'
@@ -10,7 +9,6 @@ const Home: React.FC = () => {
     const { name, setName } = useContext(UserContext)
     const router = useRouter()
 
-    const profanityFilter = React.useRef(new Filter())
     const [error, setError] = useState<string | null>(null)
 
     const joinLobby: any = async () => {
@@ -40,11 +38,6 @@ const Home: React.FC = () => {
                             onChange={(event) => {
                                 error && setError(null)
                                 setName(event.target.value)
-                            }}
-                            onBlur={() => {
-                                if (!name) return
-                                profanityFilter.current.isProfane(name) &&
-                                    setError('Profanity is not allowed')
                             }}
                             spellCheck='false'
                         />

@@ -39,8 +39,8 @@ const LobbyCreator: React.FC<Props> = (props) => {
 
         axios
             .post('/api/create', {
-                time,
-                rounds,
+                time: time.value,
+                rounds: rounds.value,
                 players: parseInt(players),
                 isPrivate
             })

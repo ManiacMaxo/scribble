@@ -5,6 +5,8 @@ import { useRouter } from 'next/router'
 import React, { useContext, useEffect, useState } from 'react'
 import { BiCopy } from 'react-icons/bi'
 import { io } from 'socket.io-client'
+import { Tab } from '@headlessui/react'
+import classnames from 'classnames'
 
 const Create: React.FC = () => {
     const [isCreating, setIsCreating] = useState(true)
@@ -28,24 +30,46 @@ const Create: React.FC = () => {
 
     return (
         <Layout>
-            <div className='flex mb-6'>
-                <div className={'flex flex-col justify-center py-2 px-4'}>
-                    <h2>Settings</h2>
-                    <span>Choose your game options</span>
-                </div>
-
-                <div className={'flex flex-col justify-center py-2 px-4'}>
-                    <h2>Invite players</h2>
-                </div>
-            </div>
-            <div className='default-card'>
-                {isCreating ? (
-                    <LobbyCreator
-                        setUrl={setUrl}
-                        setIsCreating={setIsCreating}
-                    />
-                ) : (
-                    <>
+            <Tab.Group selectedIndex={isCreating ? 0 : 1}>
+                <Tab.List className='flex gap-3 mb-6'>
+                    <Tab
+                        disabled={!isCreating}
+                        className={({ selected }) =>
+                            classnames(
+                                'flex flex-col justify-center px-4 py-2 rounded-lg',
+                                selected
+                                    ? 'bg-primary text-primary-content'
+                                    : 'bg-slate-200 dark:bg-base-100'
+                            )
+                        }
+                    >
+                        <h2 className='text-lg'>Settings</h2>
+                        <span className='text-sm'>
+                            Choose your game options
+                        </span>
+                    </Tab>
+                    <Tab
+                        disabled={isCreating}
+                        className={({ selected }) =>
+                            classnames(
+                                'flex flex-col justify-center px-4 py-2 rounded-lg',
+                                selected
+                                    ? 'bg-primary text-primary-content'
+                                    : 'bg-slate-200 dark:bg-base-100'
+                            )
+                        }
+                    >
+                        <h2 className='text-lg'>Invite players</h2>
+                    </Tab>
+                </Tab.List>
+                <Tab.Panels as={React.Fragment}>
+                    <Tab.Panel className='default-card'>
+                        <LobbyCreator
+                            setUrl={setUrl}
+                            setIsCreating={setIsCreating}
+                        />
+                    </Tab.Panel>
+                    <Tab.Panel className='default-card'>
                         <LobbyUsers />
 
                         <div className='form-control'>
@@ -69,12 +93,17 @@ const Create: React.FC = () => {
                             className='btn btn-primary'
                             onClick={handleStart}
                             disabled={users.length < 3}
+                            title={
+                                users.length < 3
+                                    ? 'Lobby needs at least 3 players'
+                                    : 'Start the game'
+                            }
                         >
                             Start
                         </button>
-                    </>
-                )}
-            </div>
+                    </Tab.Panel>
+                </Tab.Panels>
+            </Tab.Group>
         </Layout>
     )
 }

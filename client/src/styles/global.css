@@ -4,7 +4,7 @@
 
 @layer components {
     .default-card {
-        @apply flex flex-col gap-3 p-6 shadow-lg rounded-xl max-w-[700px] w-[min(100%,90vw)] mx-auto;
+        @apply flex flex-col gap-3 p-6 shadow-lg rounded-xl max-w-[900px] w-[min(100%,90vw)] mx-auto;
         @apply shadow-neutral/75 bg-slate-100 dark:bg-base-100 dark:shadow-base-300;
     }
 }
