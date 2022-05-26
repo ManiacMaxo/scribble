@@ -6,7 +6,9 @@ import { toast } from 'react-toastify'
 import { Socket } from 'socket.io-client'
 import { LobbyContext } from './LobbyContext'
 
-export const LobbyContextProvider: React.FC = (props) => {
+export const LobbyContextProvider: React.FC<React.PropsWithChildren<{}>> = (
+    props
+) => {
     const [canDraw, setCanDraw] = useState(false)
     const [canChat, setCanChat] = useState(!canDraw)
 

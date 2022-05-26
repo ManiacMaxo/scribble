@@ -1,6 +1,6 @@
-import { LobbyContext } from '@/contexts'
-import React, { useContext } from 'react'
+import { useLobby } from '@/store/lobby'
 import { Dialog, Transition } from '@headlessui/react'
+import React from 'react'
 
 interface Props {
     isOpen: boolean
@@ -8,7 +8,7 @@ interface Props {
 }
 
 const WordsModal: React.FC<Props> = (props) => {
-    const { socket } = useContext(LobbyContext)
+    const socket = useLobby((s) => s.socket)
 
     const submitWord = (data: string) => socket?.emit('drawingResponse', data)
 
@@ -26,9 +26,9 @@ const WordsModal: React.FC<Props> = (props) => {
                 onClose={() => {}}
                 className='fixed inset-0 overflow-y-auto'
             >
-                <div className='flex items-center justify-center min-h-screen'>
+                <div className='flex min-h-screen items-center justify-center'>
                     <Dialog.Overlay className='fixed inset-0 opacity-50 dark:bg-slate-900' />
-                    <div className='relative p-6 rounded-xl dark:bg-slate-700 min-w-[500px]'>
+                    <div className='relative min-w-[500px] rounded-xl p-6 dark:bg-slate-700'>
                         <Dialog.Title className='mb-5 text-2xl'>
                             Pick a word
                         </Dialog.Title>
@@ -36,7 +36,7 @@ const WordsModal: React.FC<Props> = (props) => {
                         <div className='flex gap-3'>
                             {props.options.map((word) => (
                                 <button
-                                    className='flex-1 btn btn-primary'
+                                    className='btn btn-primary flex-1'
                                     key={word}
                                     onClick={() => submitWord(word)}
                                 >

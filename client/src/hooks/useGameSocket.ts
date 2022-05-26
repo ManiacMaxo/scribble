@@ -1,4 +1,5 @@
-import { LobbyContext, UserContext } from '@/contexts'
+import { LobbyContext } from '@/contexts'
+import { useUser } from '@/store/user'
 import { User } from '@/utils/types'
 import { useRouter } from 'next/router'
 import { useContext, useEffect, useRef, useState } from 'react'
@@ -6,7 +7,7 @@ import { io } from 'socket.io-client'
 
 export const useGameSocket = () => {
     const router = useRouter()
-    const { name } = useContext(UserContext)
+    const name = useUser((s) => s.name)
 
     const {
         isFinished,

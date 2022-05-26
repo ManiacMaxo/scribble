@@ -1,6 +1,6 @@
-import { LobbyContext } from '@/contexts'
 import { useGameSocket } from '@/hooks'
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import { useLobby } from '@/store/lobby'
+import React, { useEffect, useRef, useState } from 'react'
 
 interface Props {
     className?: string
@@ -14,12 +14,15 @@ export enum Tool {
 
 export interface ICanvas {}
 
-const Canvas: React.FC<Props> = (props) => {
+const Canvas: React.FC<React.PropsWithChildren<Props>> = (props) => {
     const ref = useRef<HTMLCanvasElement>(null)
+    const [mounted, setMounted] = useState(false)
 
     const { setDrawData } = useGameSocket()
-    const { canDraw, radius, colour, socket } = useContext(LobbyContext)
-    const [mounted, setMounted] = useState(false)
+    const canDraw = useLobby((s) => s.canDraw)
+    const socket = useLobby((s) => s.socket)
+    // const colour = useDraw((s) => s.colour)
+    // const size = useDraw((s) => s.size)
 
     useEffect(() => {
         if (!socket) return
@@ -27,7 +30,6 @@ const Canvas: React.FC<Props> = (props) => {
         socket.on('draw', (data: string) => {
             if (canDraw || !data) return
             console.log('got draw')
-            ref?.current?.loadSaveData(data)
         })
 
         return () => {

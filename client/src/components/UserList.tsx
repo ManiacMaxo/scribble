@@ -1,8 +1,8 @@
-import { LobbyContext } from '@/contexts'
-import React, { useContext } from 'react'
+import { useLobby } from '@/store/lobby'
+import React from 'react'
 
 const UserList: React.FC = () => {
-    const { users } = useContext(LobbyContext)
+    const users = useLobby((s) => s.users)
 
     return (
         <ul className='space-y-3'>
@@ -11,10 +11,10 @@ const UserList: React.FC = () => {
                     <img
                         src={user.avatarURL}
                         alt={user.name}
-                        className='w-10 aspect-square'
+                        className='aspect-square w-10'
                     />
                     <div className='flex-1'>
-                        <span className='block overflow-hidden font-bold text-ellipsis'>
+                        <span className='block overflow-hidden text-ellipsis font-bold'>
                             {user.name}
                         </span>
                         <span>{user.points} pts</span>

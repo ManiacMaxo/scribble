@@ -11,14 +11,14 @@ const Slider: React.FC<Props> = (props) => {
         <RSlider.Root
             {...rest}
             className={classnames(
-                'absolute flex items-center w-full h-4 mt-1 select-none top-full touch-none',
+                'absolute top-full mt-1 flex h-4 w-full touch-none select-none items-center',
                 className
             )}
         >
-            <RSlider.Track className='rounded-full h-[2px] dark:bg-slate-50 grow'>
-                <RSlider.Range className='w-full h-full rounded-full bg-inherit' />
+            <RSlider.Track className='h-[2px] grow rounded-full bg-slate-600 dark:bg-slate-50'>
+                <RSlider.Range className='h-full w-full rounded-full bg-inherit' />
             </RSlider.Track>
-            <RSlider.Thumb className='block w-4 transition-all rounded-full shadow aspect-square dark:bg-slate-50 focus:shadow-base-300 focus:shadow-lg hover:bg-slate-100' />
+            <RSlider.Thumb className='dark:focus:shadow-base-300 focus:shadow-base-300 block aspect-square w-4 cursor-pointer rounded-full bg-slate-500 shadow transition-all hover:bg-slate-400 focus:shadow-lg dark:bg-slate-50 dark:hover:bg-slate-100' />
         </RSlider.Root>
     )
 }

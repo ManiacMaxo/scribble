@@ -1,13 +1,10 @@
-import { LobbyContext } from '@/contexts'
-import React, { useContext } from 'react'
+import { useLobby } from '@/store/lobby'
+import React from 'react'
 
 const LobbyUsers: React.FC = () => {
-    const { users, socket, id } = useContext(LobbyContext)
-
-    const handleKick = (id: string) => {
-        if (!socket) return
-        socket.emit('kick', id)
-    }
+    const socket = useLobby((s) => s.socket)
+    const users = useLobby((s) => s.users)
+    const id = useLobby((s) => s.id)
 
     if (!socket) return null
     return (
@@ -15,23 +12,23 @@ const LobbyUsers: React.FC = () => {
             {users.map((user) => (
                 <div
                     key={user.id}
-                    className='flex gap-2 px-2 py-4 bg-white dark:bg-base-200 rounded-xl'
+                    className='dark:bg-base-200 flex gap-2 rounded-xl bg-white px-2 py-4'
                 >
                     <img
                         src={user.avatarURL}
                         alt={user.name}
-                        className='w-16 aspect-square'
+                        className='aspect-square w-16'
                     />
 
-                    <div className='flex flex-col justify-between flex-1'>
-                        <span className='block overflow-hidden text-lg text-ellipsis whitespace-nowrap'>
+                    <div className='flex flex-1 flex-col justify-between'>
+                        <span className='block overflow-hidden text-ellipsis whitespace-nowrap text-lg'>
                             {user.name}
                         </span>
 
                         {id !== user.id && (
                             <button
-                                className='block w-full btn btn-outline btn-error btn-sm'
-                                onClick={() => handleKick(user.id)}
+                                className='btn btn-outline btn-error btn-sm block w-full'
+                                onClick={() => socket.emit('kick', id)}
                             >
                                 Kick
                             </button>

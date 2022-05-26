@@ -1,21 +1,26 @@
-import { LobbyContext, UserContext } from '@/contexts'
+import { useLobby } from '@/store/lobby'
+import { useUser } from '@/store/user'
 import { Message } from '@/utils/types'
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { BiSend } from 'react-icons/bi'
 import { v4 } from 'uuid'
 
+const MAX_CHAT_HISTORY = 30
+
 const Chat: React.FC = () => {
-    const { socket, canChat, setCanChat } = useContext(LobbyContext)
-    const { name, avatarURL } = useContext(UserContext)
+    const socket = useLobby((s) => s.socket)
+    const canChat = useLobby((s) => s.canChat)
+
+    const name = useUser((s) => s.name)
+    const avatarURL = useUser((s) => s.avatarURL)
+
     const [messages, setMessages] = useState<Array<Message>>([])
     const [message, setMessage] = useState('')
     const bottomRef = useRef<HTMLDivElement>(null)
 
-    const maxChatHistory = 30
-
     const addMessage = (message: Message) => {
         setMessages((prev) => [
-            ...prev.slice(-maxChatHistory + 1),
+            ...prev.slice(-MAX_CHAT_HISTORY + 1),
             {
                 ...message,
                 timestamp: new Date(message.timestamp)
@@ -39,7 +44,7 @@ const Chat: React.FC = () => {
             })
         )
 
-        socket.on('correct', () => setCanChat(false))
+        socket.on('correct', () => useLobby.setState({ canChat: false }))
 
         return () => {
             socket.off('message')
@@ -56,7 +61,7 @@ const Chat: React.FC = () => {
 
         socket?.emit('message', {
             username: name,
-            avatarURL,
+            avatarURL: avatarURL(),
             content: message
         })
 
@@ -64,14 +69,14 @@ const Chat: React.FC = () => {
     }
 
     return (
-        <div className='flex flex-col justify-between h-full col-start-3 row-start-2 p-1 overflow-y-hidden'>
-            <div className='overflow-y-scroll h-[90%] flex flex-col gap-3'>
+        <div className='col-start-3 row-start-2 flex h-full flex-col justify-between overflow-y-hidden p-1'>
+            <div className='flex h-[90%] flex-col gap-3 overflow-y-scroll'>
                 {messages.map((message) => (
                     <div key={message.id} className='flex items-start gap-2'>
                         <img
                             src={message.avatarURL}
                             alt={message.username}
-                            className='w-10 aspect-square shrink-0'
+                            className='aspect-square w-10 shrink-0'
                         />
                         <div className='flex-1 space-y-1'>
                             <div className='flex items-end gap-x-1'>
@@ -82,7 +87,7 @@ const Chat: React.FC = () => {
                                     {message.timestamp}
                                 </span>
                             </div>
-                            <p className='text-sm break-all text-slate-500 dark:text-slate-300'>
+                            <p className='break-all text-sm text-slate-500 dark:text-slate-300'>
                                 {message.content}
                             </p>
                         </div>
@@ -91,28 +96,24 @@ const Chat: React.FC = () => {
                 <div ref={bottomRef} />
             </div>
             <form onSubmit={handleSubmit}>
-                <div className='form-control'>
-                    <div className='input-group'>
-                        <input
-                            type='text'
-                            value={message}
-                            onChange={(event) => setMessage(event.target.value)}
-                            className='flex-1 input input-bordered'
-                            maxLength={64}
-                            disabled={!canChat}
-                            placeholder={
-                                canChat
-                                    ? 'Enter your guess'
-                                    : "You can't chat now"
-                            }
-                        />
-                        <button
-                            className='btn btn-primary shrink-0 w-max'
-                            disabled={!canChat}
-                        >
-                            <BiSend className='text-xl' />
-                        </button>
-                    </div>
+                <div className='input-group'>
+                    <input
+                        type='text'
+                        value={message}
+                        onChange={(event) => setMessage(event.target.value)}
+                        className='input input-bordered flex-1 focus:z-[1]'
+                        maxLength={64}
+                        disabled={!canChat}
+                        placeholder={
+                            canChat ? 'Enter your guess' : "You can't chat now"
+                        }
+                    />
+                    <button
+                        className='btn btn-primary w-max shrink-0'
+                        disabled={!canChat}
+                    >
+                        <BiSend className='text-xl' />
+                    </button>
                 </div>
             </form>
         </div>

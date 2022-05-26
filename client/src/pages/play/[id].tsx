@@ -7,9 +7,10 @@ import {
     WordsModal
 } from '@/components'
 import { useGameSocket } from '@/hooks'
+import { NextPage } from 'next'
 import React from 'react'
 
-const Play: React.FC = () => {
+const Play: NextPage = () => {
     const {
         isFinished,
         endUsers,
@@ -27,11 +28,11 @@ const Play: React.FC = () => {
     return (
         <Layout>
             <div className='container'>
-                <div className='rounded-lg h-[700px] p-4 shadow-xl shadow-neutral/50 bg-slate-100 dark:bg-base-100 dark:shadow-base-300 grid gap-2.5 grid-cols-[1fr_5fr_2fr] grid-rows-[1fr_7fr]'>
-                    <strong className='flex items-center content-center col-start-1 row-start-1 text-lg tabular-nums'>
+                <div className='shadow-neutral/50 dark:bg-base-100 dark:shadow-base-300 grid h-[700px] grid-cols-[1fr_5fr_2fr] grid-rows-[1fr_7fr] gap-2.5 rounded-lg bg-slate-100 p-4 shadow-xl'>
+                    <strong className='col-start-1 row-start-1 flex content-center items-center text-lg tabular-nums'>
                         {seconds ? `${seconds} seconds` : 'Loading...'}
                     </strong>
-                    <header className='flex items-center justify-around col-start-2 col-end-4 row-start-1'>
+                    <header className='col-start-2 col-end-4 row-start-1 flex items-center justify-around'>
                         <DrawTools canvas={canvasRef} />
                         {/* {canDraw ? (
                         ) : (

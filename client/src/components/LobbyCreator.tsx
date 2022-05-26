@@ -1,6 +1,6 @@
 import { Select } from '@/components'
 import { axios } from '@/utils'
-import React, { FormEvent, useMemo, useState } from 'react'
+import React, { FormEvent, useState } from 'react'
 
 interface Props {
     setUrl: any
@@ -9,30 +9,22 @@ interface Props {
 
 const MAX_PLAYER_COUNT = 16
 
+const TIME_OPTIONS = [...Array(11)].map((_, i) => ({
+    value: i * 15 + 30,
+    text: `${i * 15 + 30} seconds`
+}))
+
+const ROUND_OPTIONS = [...Array(10).keys()].map((val) => ({
+    value: val + 1,
+    text: `${val + 1} round${val + 1 > 1 ? 's' : ''}`
+}))
+
 const LobbyCreator: React.FC<Props> = (props) => {
     const [players, setPlayers] = useState('9')
     const [isPrivate, setIsPrivate] = useState(true)
 
-    const timeOptions = useMemo(
-        () =>
-            [...Array(11)].map((_, i) => ({
-                value: i * 15 + 30,
-                text: `${i * 15 + 30} seconds`
-            })),
-        []
-    )
-
-    const roundsOptions = useMemo(
-        () =>
-            [...Array(10).keys()].map((val) => ({
-                value: val + 1,
-                text: `${val + 1} round${val + 1 > 1 ? 's' : ''}`
-            })),
-        []
-    )
-
-    const [time, setTime] = useState(timeOptions[3])
-    const [rounds, setRounds] = useState(roundsOptions[5])
+    const [time, setTime] = useState(TIME_OPTIONS[3])
+    const [rounds, setRounds] = useState(ROUND_OPTIONS[5])
 
     const handleCreate = (e: FormEvent) => {
         e.preventDefault()
@@ -58,7 +50,7 @@ const LobbyCreator: React.FC<Props> = (props) => {
                     <Select
                         value={time}
                         onChange={setTime}
-                        options={timeOptions}
+                        options={TIME_OPTIONS}
                         optionText='text'
                         className='flex-1'
                     />
@@ -66,7 +58,7 @@ const LobbyCreator: React.FC<Props> = (props) => {
                     <Select
                         value={rounds}
                         onChange={setRounds}
-                        options={roundsOptions}
+                        options={ROUND_OPTIONS}
                         optionText='text'
                         className='flex-1'
                     />
@@ -89,7 +81,7 @@ const LobbyCreator: React.FC<Props> = (props) => {
                 </div>
 
                 <div className='form-control w-max'>
-                    <label className='gap-3 cursor-pointer label'>
+                    <label className='label cursor-pointer gap-3'>
                         <span className='label-text'>Private lobby</span>
                         <input
                             type='checkbox'

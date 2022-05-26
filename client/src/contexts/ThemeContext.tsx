@@ -10,7 +10,7 @@ export const ThemeContext = createContext<IThemeContext>({
     setTheme: () => {}
 })
 
-export const ThemeProvider: React.FC = (props) => {
+export const ThemeProvider: React.FC<React.PropsWithChildren<{}>> = (props) => {
     const [theme, setTheme] = useState<string>()
 
     useEffect(() => {
@@ -26,10 +26,7 @@ export const ThemeProvider: React.FC = (props) => {
         if (theme === undefined) return
         localStorage.setItem('theme', theme)
         document.documentElement.setAttribute('data-theme', theme)
-        document.documentElement.classList.add(theme)
-        document.documentElement.classList.remove(
-            theme === 'light' ? 'dark' : 'light'
-        )
+        document.documentElement.classList.toggle('dark')
     }, [theme])
 
     return (

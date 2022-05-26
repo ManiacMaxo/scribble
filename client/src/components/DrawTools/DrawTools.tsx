@@ -1,46 +1,53 @@
-import { LobbyContext } from '@/contexts'
-import React, { useContext } from 'react'
+import { Slider } from '@/components'
+import { MAX_BRUSH_SIZE, MIN_BRUSH_SIZE, useDraw } from '@/store/draw'
+import { useLobby } from '@/store/lobby'
+import classnames from 'classnames'
+import React from 'react'
 import { BiEraser, BiPencil, BiTrashAlt, BiUndo } from 'react-icons/bi'
 import { FaTint } from 'react-icons/fa'
-import { skribblio as colorTheme } from './colours'
-import classnames from 'classnames'
-import { Slider } from '@/components'
+import { skribblio as colourTheme } from './colours'
 
 interface Props {
     canvas: any
 }
 
-const DrawTools: React.FC<Props> = (props) => {
-    const { colours, len } = colorTheme
-
-    const { colour, setColour, setRadius, word, socket } =
-        useContext(LobbyContext)
+const DrawTools: React.FC<Props> = (_props) => {
+    const word = useLobby((s) => s.word)
+    const size = useDraw((s) => s.size)
+    const colour = useDraw((s) => s.colour)
+    const mode = useDraw((s) => s.mode)
+    const changeColour = useDraw((s) => s.changeColour)
 
     const getBorderRadius = (index: number) => {
         if (index === 0) return 'rounded-tl-md'
-        if (index === colours.length / 2 - 1) return 'rounded-tr-md'
-        if (index === colours.length - 1) return 'rounded-br-md'
-        if (index === colours.length / 2) return 'rounded-bl-md'
+        if (index === colourTheme.length / 2 - 1) return 'rounded-tr-md'
+        if (index === colourTheme.length - 1) return 'rounded-br-md'
+        if (index === colourTheme.length / 2) return 'rounded-bl-md'
     }
 
     return (
         <>
             <div
                 className='grid'
-                style={{ gridTemplateColumns: `repeat(${len}, 30px)` }}
+                style={{
+                    gridTemplateColumns: `repeat(${Math.ceil(
+                        colourTheme.length / 2
+                    )}, 2rem)`
+                }}
             >
-                {colours.map((clr: string, index) => (
+                {colourTheme.map((clr, index) => (
                     <button
                         key={clr}
                         className={classnames(
-                            'w-full h-5 border-4',
+                            'h-5 w-full border-4 focus:z-[1]',
                             getBorderRadius(index),
-                            clr === colour
+                            mode !== 'erase' && clr === colour
                                 ? 'border-neutral-500'
                                 : 'border-transparent'
                         )}
                         style={{ background: clr }}
-                        onClick={() => setColour(clr)}
+                        disabled={clr === colour}
+                        onClick={() => clr !== colour && changeColour(clr)}
                     />
                 ))}
             </div>
@@ -48,53 +55,47 @@ const DrawTools: React.FC<Props> = (props) => {
             <div className='relative flex'>
                 <div className='btn-group'>
                     <button
-                        className='btn'
+                        className='btn focus:z-[1]'
                         title='draw'
-                        onClick={() => setColour('black')}
+                        onClick={() => useDraw.setState({ mode: 'draw' })}
                     >
                         <BiPencil />
                     </button>
                     <button
-                        className='btn'
+                        className='btn focus:z-[1]'
                         title='eraser'
-                        onClick={() => setColour('white')}
+                        onClick={() => useDraw.setState({ mode: 'erase' })}
                     >
                         <BiEraser />
                     </button>
-                    <button className='btn' title='fill' onClick={() => {}}>
+                    <button
+                        className='btn focus:z-[1]'
+                        title='fill'
+                        disabled
+                        onClick={() => useDraw.setState({ mode: 'fill' })}
+                    >
                         <FaTint />
                     </button>
                     <button
-                        className='btn'
+                        className='btn focus:z-[1]'
                         title='undo'
-                        onClick={() => props.canvas.current.undo()}
+                        onClick={() => {}}
                     >
                         <BiUndo />
                     </button>
                     <button
-                        className='btn'
+                        className='btn focus:z-[1]'
                         title='clear'
-                        onClick={() => {
-                            props.canvas.current.clear()
-                            socket?.emit(
-                                'draw',
-                                JSON.stringify({
-                                    lines: [],
-                                    height: 0,
-                                    width: 0
-                                })
-                            )
-                        }}
+                        onClick={() => {}}
                     >
                         <BiTrashAlt />
                     </button>
                 </div>
                 <Slider
-                    min={2}
-                    max={50}
-                    defaultValue={[12]}
-                    onValueChange={(val) => setRadius(val[0])}
-                    className=''
+                    min={MIN_BRUSH_SIZE}
+                    max={MAX_BRUSH_SIZE}
+                    value={[size]}
+                    onValueChange={(val) => useDraw.setState({ size: val[0] })}
                 />
             </div>
 
