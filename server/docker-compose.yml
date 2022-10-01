@@ -1,12 +1,13 @@
 services:
   postgres:
+    container_name: scribble-db
     image: postgres
     restart: unless-stopped
     ports:
       - '${DB_PORT}:5432'
     environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_NAME-scribble}
+      POSTGRES_USER: ${DB_USER-scribble}
       POSTGRES_PASSWORD: ${DB_PASS}
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:

@@ -1,7 +1,7 @@
+import { PrismaClient } from '@prisma/client'
 import { Namespace, Socket } from 'socket.io'
 import { v4 } from 'uuid'
 import { GameRound } from '.'
-import { prisma } from '..'
 import { Message, User } from '../types'
 
 export class GameLobby {
@@ -18,18 +18,20 @@ export class GameLobby {
     public isRunning: boolean
     public readonly isCustom: boolean
     public readonly isPrivate: boolean
+    private client: PrismaClient
 
     constructor(
         maxUsers = 9,
         maxRounds = 6,
         maxTime = 120,
         isPrivate = false,
-        isCustom = false
+        isCustom = false,
+        client: PrismaClient
     ) {
         this.id = Math.random()
             .toString(36)
             .replace(/[^a-z]+/g, '')
-            .substr(0, 5)
+            .substring(0, 5)
         this.name = `Lobby ${this.id}`
 
         this.users = new Map()
@@ -43,6 +45,7 @@ export class GameLobby {
         this.isPrivate = isPrivate
         this.isCustom = isCustom
         this.isRunning = false
+        this.client = client
     }
 
     init(nsp: Namespace) {
@@ -115,7 +118,7 @@ export class GameLobby {
         this.isRunning = true
         this.nsp.emit('start')
 
-        const game = await prisma.game.create({
+        const game = await this.client.game.create({
             data: { lobby: this.id },
             include: { rounds: true }
         })
@@ -125,10 +128,11 @@ export class GameLobby {
                 this.users,
                 this.sockets,
                 this.maxTime,
-                this.nsp
+                this.nsp,
+                this.client
             )
 
-            prisma.round.create({
+            await this.client.round.create({
                 data: { gameId: game.id }
             })
 
@@ -149,3 +153,5 @@ export class GameLobby {
         if (this.users.size >= 3) this.run()
     }
 }
+
+export const lobbies = new Map<string, GameLobby>()

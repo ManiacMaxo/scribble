@@ -1,6 +1,6 @@
+import { PrismaClient } from '@prisma/client'
 import EventEmitter from 'events'
 import { Namespace } from 'socket.io'
-import { prisma } from '..'
 import { RoundUser, User } from '../types'
 
 export class GameTurn {
@@ -13,13 +13,15 @@ export class GameTurn {
     correct: number
     nsp: Namespace
     emitter: EventEmitter
+    private client: PrismaClient
 
     constructor(
         word: string,
         currentUser: RoundUser,
         maxTime: number,
         numUsers: number,
-        namespace: Namespace
+        namespace: Namespace,
+        client: PrismaClient
     ) {
         this.word = word
         this.hint = word.replace(/\w/g, '_')
@@ -30,12 +32,13 @@ export class GameTurn {
         this.correct = 0
         this.nsp = namespace
         this.emitter = new EventEmitter()
+        this.client = client
     }
 
     run() {
         let interval: NodeJS.Timeout
 
-        prisma.word.update({
+        this.client.word.update({
             where: { string: this.word },
             data: { timesShown: { increment: 1 } }
         })
@@ -50,13 +53,13 @@ export class GameTurn {
                 this.nsp.emit('turnEnd')
                 this.nsp.emit('serverMessage', `The word was ${this.word}`)
 
-                await prisma.turn.create({
+                await this.client.turn.create({
                     data: { correct: this.correct, word: this.word }
                 })
 
                 resolve(true)
 
-                const repoWord = await prisma.word.findFirst({
+                const repoWord = await this.client.word.findFirst({
                     where: { string: this.word }
                 })
 
@@ -67,7 +70,7 @@ export class GameTurn {
                             repoWord.averageRoundDuration) /
                         repoWord.timesChosen
 
-                    prisma.word.update({
+                    await this.client.word.update({
                         where: { string: this.word },
                         data: {
                             averageRoundDuration: repoWord.averageRoundDuration

@@ -1,3 +1,4 @@
+import { PrismaClient } from '@prisma/client'
 import { Namespace, Socket } from 'socket.io'
 import { GameTurn } from '.'
 import { RoundUser, User } from '../types'
@@ -9,12 +10,14 @@ export class GameRound {
     private notPassed: RoundUser[]
     private nsp: Namespace
     public currentTurn?: GameTurn
+    private client: PrismaClient
 
     constructor(
         users: Map<string, User>,
         sockets: Map<string, Socket>,
         maxTime: number,
-        namespace: Namespace
+        namespace: Namespace,
+        client: PrismaClient
     ) {
         this.maxTime = maxTime
 
@@ -25,6 +28,7 @@ export class GameRound {
         }))
 
         this.nsp = namespace
+        this.client = client
     }
 
     addUser(user: User, socket: Socket) {
@@ -56,7 +60,7 @@ export class GameRound {
             this.passed.push(currentUser)
             this.nsp.emit('timer', this.maxTime)
 
-            const words = await getWords()
+            const words = await getWords(this.client)
             let word: string = words[Math.round(Math.random() * 2)]
             currentUser.socket.emit('drawing', words)
 
@@ -81,7 +85,8 @@ export class GameRound {
                 currentUser,
                 this.maxTime,
                 this.passed.length + this.notPassed.length,
-                this.nsp
+                this.nsp,
+                this.client
             )
             await this.currentTurn.run()
         }

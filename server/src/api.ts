@@ -1,44 +1,85 @@
-import { Router } from 'express'
-import { lobbies } from '.'
+import { JsonSchemaToTsProvider } from '@fastify/type-provider-json-schema-to-ts'
+import { FastifyInstance } from 'fastify'
 import words from '../data/randomWords.json'
-import { GameLobby } from './Game'
+import { GameLobby, lobbies } from './lib'
 import { getPublicLobbies } from './utils'
 
-const router = Router()
+interface ApiOptions {}
 
-router.get('/find', (_req, res) => {
-    const publicLobbies = getPublicLobbies(lobbies)
+export const apiPlugin = (
+    fastify: FastifyInstance,
+    _opts: ApiOptions,
+    done: () => void
+): void => {
+    const server = fastify.withTypeProvider<JsonSchemaToTsProvider>()
 
-    if (publicLobbies.length === 0) {
-        const lobby = new GameLobby()
-        lobbies.set(lobby.id, lobby)
-        return res.send(lobby.id)
-    }
+    server.get('/find', (_req, res) => {
+        const publicLobbies = getPublicLobbies(lobbies)
 
-    const random = Math.floor(Math.random() * publicLobbies.length)
-    return res.send(publicLobbies[random].id)
-})
+        if (publicLobbies.length === 0) {
+            const lobby = new GameLobby()
+            lobbies.set(lobby.id, lobby)
+            return res.send(lobby.id)
+        }
 
-router.get('/lobbies', (req, res) => {
-    const items = req.query.limit ? parseInt(req.query.limit as string) : 10
-    const publicLobbies = getPublicLobbies(lobbies)
-        .slice(0, items)
-        .map((l: GameLobby) => l.toResponse())
-    return res.send(publicLobbies)
-})
+        const random = Math.floor(Math.random() * publicLobbies.length)
+        return res.send(publicLobbies[random].id)
+    })
 
-router.post('/create', (req, res) => {
-    const { time, rounds, players, isPrivate } = req.body
+    server.get(
+        '/lobbies',
+        {
+            schema: {
+                querystring: {
+                    type: 'object',
+                    properties: {
+                        limit: { type: 'number' },
+                        offset: { type: 'number' }
+                    }
+                }
+            } as const
+        },
+        (req, res) => {
+            const items = req.query.limit
+                ? parseInt(req.query.limit as string)
+                : 10
+            const publicLobbies = getPublicLobbies(lobbies)
+                .slice(0, items)
+                .map((l: GameLobby) => l.toResponse())
+            return res.send(publicLobbies)
+        }
+    )
 
-    const lobby = new GameLobby(players, rounds, time, isPrivate, true)
-    lobbies.set(lobby.id, lobby)
+    server.post(
+        '/create',
+        {
+            schema: {
+                body: {
+                    type: 'object',
+                    properties: {
+                        time: { type: 'number' },
+                        rounds: { type: 'number' },
+                        players: { type: 'number' },
+                        isPrivate: { type: 'boolean' }
+                    },
+                    required: ['time', 'rounds', 'players']
+                }
+            }
+        },
+        (req, res) => {
+            const { time, rounds, players, isPrivate } = req.body
 
-    return res.send(lobby.id)
-})
+            const lobby = new GameLobby(players, rounds, time, isPrivate, true)
+            lobbies.set(lobby.id, lobby)
 
-router.get('/word', (_req, res) => {
-    const random = Math.round(Math.random() * words.length)
-    return res.send(words[random])
-})
+            return res.send(lobby.id)
+        }
+    )
 
-export default router
+    server.get('/word', (_req, res) => {
+        const random = Math.round(Math.random() * words.length)
+        return res.send(words[random])
+    })
+
+    done()
+}

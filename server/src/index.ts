@@ -1,39 +1,45 @@
-import { PrismaClient } from '@prisma/client'
-import cors from 'cors'
-import express from 'express'
-import { createServer } from 'http'
-import { Server } from 'socket.io'
-import apiRouter from './api'
-import { GameLobby } from './Game'
+import cors from '@fastify/cors'
+import Fastify from 'fastify'
+import { apiPlugin } from './api'
+import { lobbies } from './lib'
+import prismaPlugin from './plugins/prisma'
+import socketioPlugin from './plugins/socketio'
 import { socketEvents } from './utils'
 
 require('dotenv').config()
 
 const dev = process.env.NODE_ENV !== 'production'
-const port = process.env.PORT ?? 4000
+const port = (process.env.PORT ?? 4000) as number
 
-const corsOptions = { origin: [process.env.APP_HOSTNAME, /(localhost)./] }
+const corsOptions = {
+    origin: [process.env.APP_HOSTNAME as string, /(localhost)./]
+}
 
-const app = express()
-app.use(express.urlencoded({ extended: true }))
-app.use(cors(corsOptions))
-app.use(express.json())
+const app = Fastify({
+    logger: true
+})
 
-const server = createServer(app)
-export const lobbies = new Map<string, GameLobby>()
-export const prisma = new PrismaClient()
+app.register(cors, {
+    origin: corsOptions.origin
+})
 
-app.use('/api', apiRouter)
-
-const io = new Server(server, {
+app.register(apiPlugin, { prefix: '/api' })
+app.register(prismaPlugin)
+app.register(socketioPlugin, {
     pingInterval: 10000,
     pingTimeout: 5000,
     cookie: !dev,
     cors: corsOptions
 })
-socketEvents(io, lobbies)
 
-server.listen(port, async () => {
-    prisma.$connect()
-    console.log(`Server listening on port ${port}...`)
-})
+const start = async () => {
+    try {
+        await app.listen({ port, host: '0.0.0.0' })
+        socketEvents(app.io, lobbies)
+    } catch (err) {
+        app.log.error(err)
+        process.exit(1)
+    }
+}
+
+start()

@@ -1,6 +1,6 @@
 import { Server, Socket } from 'socket.io'
 import { v4 } from 'uuid'
-import { GameLobby } from '../Game'
+import { GameLobby } from '../lib'
 import { User } from '../types'
 
 export const socketEvents = (io: Server, lobbies: Map<string, GameLobby>) => {
